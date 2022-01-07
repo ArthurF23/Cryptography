@@ -63,8 +63,8 @@ namespace encryption {
     for (int i=2; i < 10; i++) {
       if ((KEY::key%i) == 0) {
         return i;
-      }
-    }
+      };
+    };
     return 1;
   }
 
@@ -121,7 +121,7 @@ namespace encryption {
       }
     }
     //Add more random patterns to the result to confuse people
-    for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max); i++) {
+    for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max) + input.length(); i++) {
       output.insert(encdec::get_random_num(0, output.length()), encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)]);
     }
     return output;
