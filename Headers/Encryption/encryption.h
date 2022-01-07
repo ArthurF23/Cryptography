@@ -11,9 +11,9 @@ namespace encryption {
         private:
         struct defaults {
           public:
-          static constexpr int default_key_min_value = 10000000;
-          static constexpr int default_key_max_value = 99999999;
-          static constexpr short default_key_length = 8;
+          static constexpr unsigned int default_key_min_value = 10000000;
+          static constexpr unsigned int default_key_max_value = 99999999;
+          static constexpr unsigned short default_key_length = 8;
         };
         public:
         //This is the info for key generation and usage. Dont mess with these as it will change a lot of things.

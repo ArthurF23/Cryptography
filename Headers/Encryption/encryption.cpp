@@ -3,6 +3,7 @@
 #include "encryption.h"
 
 namespace encryption {
+  //These will make people think that they have found the pattern when they havent
   string encdec::constants::useless_pattern::random_bs[encdec::constants::useless_pattern::arr_length] = {
           ">._>",
           ">>._",
@@ -48,7 +49,7 @@ namespace encryption {
       return encdec::start_example();
     };
     cout << "Key: " << KEY::key << endl << "Result: " << endl << output_str << endl;
-    cout << "Press any key to continue" << endl;
+    cout << "Press any key to continue " << endl;
     cin.ignore();
     return encdec::start_example();
   }
