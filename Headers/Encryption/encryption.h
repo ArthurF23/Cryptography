@@ -46,7 +46,7 @@ namespace encryption {
     static bool validate_key(string inp);
 
     public:
-    static void start(); //Example function
+    static void start_example(); //Example function
     static string encrypt(string input);
     static string decrypt(string input);
     static bool get_key(); //True = key valid | False = key invalid

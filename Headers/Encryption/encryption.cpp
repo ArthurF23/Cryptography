@@ -25,7 +25,7 @@ namespace encryption {
           ">_>>",
           "_.>>"
         };
-  void encdec::start() {
+  void encdec::start_example() {
     cout << "Are you Encrypting or Decrypting?" << endl << "e/d" << endl;
     char user_choice;
     cin >> user_choice;
@@ -45,12 +45,12 @@ namespace encryption {
     }
     else {
       cout << "ERR please try again" << endl;
-      return encdec::start();
+      return encdec::start_example();
     };
     cout << "Key: " << KEY::key << endl << "Result: " << endl << output_str << endl;
     cout << "Press any key to continue" << endl;
     cin.ignore();
-    return encdec::start();
+    return encdec::start_example();
   }
   bool encdec::isNumberString(string input) {
     for (char &c : input) {
