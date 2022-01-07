@@ -140,6 +140,7 @@ namespace encryption {
         filtered += c;
       };
     };
+    
     int scramble = filtered[0]-'0';
     filtered = filtered.substr(1, filtered.length());
 
