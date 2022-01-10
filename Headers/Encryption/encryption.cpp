@@ -28,10 +28,7 @@ namespace encryption {
         };
   void encdec::start_example() {
     cout << "Are you Encrypting or Decrypting?" << endl << "e/d" << endl;
-    char user_choice;
-    cin >> user_choice;
-    cout << "Please input the text" << endl << "Input here:" << endl;
-    string user_inputted_string;
+    char user_choice; cin >> user_choice; cout << "Please input the text" << endl << "Input here:" << endl; string user_inputted_string;
     cin.ignore();
     getline(cin >> noskipws, user_inputted_string);
     
@@ -157,9 +154,7 @@ namespace encryption {
 
   bool encdec::get_key() {
     cout << "Please input " << encdec::constants::key_info::key_length << " digit numeric key: " << endl;
-    string user_input;
-    cin >> user_input;
-    cout << endl << "# " << user_input << " #" << endl;
+    string user_input; cin >> user_input; cout << endl << "# " << user_input << " #" << endl;
     if (encdec::validate_key(user_input)) {
       KEY::key = stoi(user_input);
       return true;
