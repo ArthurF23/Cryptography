@@ -1,6 +1,16 @@
+/*
+I gave everything default values so it is easier to edit values by
+erasing the call to the varible and replacing it with the wanted number
+and the defaults are there for when the defaults are wanted again, just type in the varible. Since i used constexpr there shoudlnt be any
+slow down or lare memory consumption if my understanting of constexpr
+is correct. Please do correct and critique me, i like to learn
+*/
+
+#define DEFAULT_KEY_NUM 0;
+
 namespace encryption {
   namespace KEY {
-    static int key = 0;
+    static int key = DEFAULT_KEY_NUM;
   }
   static string output_str;
   class encdec {
