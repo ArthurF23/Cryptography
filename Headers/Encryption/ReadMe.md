@@ -60,7 +60,7 @@ Key Divisor (Scramble): 2
 
 12th Letter: 36077477 "e"
 
-When Decrypting, it takes the key and divides it by 2, then subrtacts that from the chunk/letter to get the ASCII char number.
+When Decrypting, it takes the key and divides it by the scramble which is 2, then subrtacts that from the chunk/letter to get the ASCII char number.
 
 72154752 / 2 = 36077376
 
