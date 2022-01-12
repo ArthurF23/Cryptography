@@ -57,7 +57,7 @@ namespace encryption {
     return true;
   }
 
-  int encdec::decide_scramble() {
+  unsigned int encdec::decide_scramble() {
     for (int i=2; i < 10; i++) {
       if ((KEY::key%i) == 0) {
         return i;
@@ -66,14 +66,14 @@ namespace encryption {
     return 1;
   }
 
-  int encdec::get_random_num(int min, int max) {
+ unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
     return dist6(rng);
   }
 
-  int encdec::generate_key() {
+  unsigned int encdec::generate_key() {
     return encdec::get_random_num(encdec::constants::key_info::key_min_value, encdec::constants::key_info::key_max_value);
   }
 
@@ -91,7 +91,7 @@ namespace encryption {
     return false;
   }
 
-  string encdec::get_bloat(int min = encdec::constants::bloat::bloat_min, int max = encdec::constants::bloat::bloat_max) {
+  string encdec::get_bloat(unsigned int min = encdec::constants::bloat::bloat_min, unsigned int max = encdec::constants::bloat::bloat_max) {
     int bloat = encdec::get_random_num(min, max); //How many random characters will bloat the actual message
     string bloat_string;
       for (int x = 0; x < bloat; x++) {
@@ -118,10 +118,10 @@ namespace encryption {
         output.insert(encdec::get_random_num(0, output.length()), encdec::get_bloat());
       }
     }
-    //Add more random patterns to the result to confuse people
+    //Add more random patterns to the result to confuse those trying to decrypt the message
     for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max) + input.length(); i++) {
       output.insert(encdec::get_random_num(0, output.length()), encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)]);
-    }
+    };
     return output;
   }
 
@@ -165,4 +165,4 @@ namespace encryption {
     }
     return false;
   }
-}
+};
