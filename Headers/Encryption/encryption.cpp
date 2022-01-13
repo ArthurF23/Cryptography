@@ -82,8 +82,10 @@ namespace encryption {
   }
 
   bool encdec::validate_key(string inp) {
-    if (encdec::isNumberString(inp) && inp.length() == encdec::constants::key_info::key_length) {
-      return true;
+    if (encdec::isNumberString(inp)) {
+      if (inp.length() == encdec::constants::key_info::key_length && stoi(inp) >= encdec::constants::key_info::key_min_value) {
+        return true;
+      };
     }
     else {
       return false;
