@@ -103,32 +103,36 @@ namespace encryption {
     return bloat_string;
   }
 
-  string encdec::encrypt(string input) {
+  string encdec::encrypt(string input, FLAGS bloat, FLAGS pattern) {
     cout << "# " << input << " #" << endl;
     string output;
     int scramble = encdec::decide_scramble();
     //Hide the scramble number in a whole ton of bloat
-    output = encdec::get_bloat(10, 20) + to_string(scramble) + encdec::get_bloat(10, 20);
+    output = (bloat == FLAGS::do_bloat ? encdec::get_bloat(10, 20) : "") + to_string(scramble) + (bloat == FLAGS::do_bloat ? encdec::get_bloat(10, 20) : "");
     
     for (int i = 0; i < input.length(); i++) {
       char input_v2 = input[i];
       int input_v3 = input_v2;
       //Magic happens
       //Bloat the string with nonsense to make it harder to decrypt
-      output += to_string(input_v3 + (KEY::key/scramble)) + encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)] + encdec::get_bloat();
-      for (int x = 0; x < encdec::get_random_num(encdec::constants::bloat::bloat_repeat_min, encdec::constants::bloat::bloat_repeat_max); x++) {
-        output.insert(encdec::get_random_num(0, output.length()), encdec::get_bloat());
-      }
-    }
+      output += to_string(input_v3 + (KEY::key/scramble)) + (pattern == FLAGS::do_rand_pattern ? encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)] : "") + (bloat == FLAGS::do_bloat ? encdec::get_bloat() : "");
+      if (bloat == FLAGS::do_bloat) {
+        for (int x = 0; x < encdec::get_random_num(encdec::constants::bloat::bloat_repeat_min, encdec::constants::bloat::bloat_repeat_max); x++) {
+          output.insert(encdec::get_random_num(0, output.length()), encdec::get_bloat());
+        };
+      };
+    };
     //Add more random patterns to the result to confuse those trying to decrypt the message
-    for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max) + input.length(); i++) {
-      output.insert(encdec::get_random_num(0, output.length()), encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)]);
+    if (pattern == FLAGS::do_rand_pattern) {
+      for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max) + input.length(); i++) {
+        output.insert(encdec::get_random_num(0, output.length()), encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)]);
+      };
     };
     return output;
   }
 
   string encdec::decrypt(string input) {
-    if (KEY::key == 0) {
+    if (KEY::key == KEY::DEFAULT_KEY_NUM) {
       return "ERR NO KEY\n Please use encryption::KEY::key = {key} to set the key before usage.";
     };
     string output;

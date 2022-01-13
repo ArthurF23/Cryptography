@@ -6,11 +6,12 @@ slow down or lare memory consumption if my understanting of constexpr
 is correct. Please do correct and critique me, i like to learn
 */
 
-//The default key value
-#define DEFAULT_KEY_NUM 0;
+
 
 namespace encryption {
   namespace KEY {
+    //The default key value
+    static constexpr unsigned short DEFAULT_KEY_NUM = 0;
     //This is THE key, made like this so you can just pre set the key and it's used throught the header seamlessly orbyou can prompt the user for a key and generate a key easily or anything with KEY::key
     static unsigned int key = DEFAULT_KEY_NUM;
   }
@@ -131,6 +132,12 @@ namespace encryption {
     static string get_bloat(unsigned int min, unsigned int max);
 
     public:
+    enum FLAGS {
+      no_bloat = 0x00,
+      do_bloat = 0x01,
+      no_rand_pattern = 0x10,
+      do_rand_pattern = 0x11
+    };
     //Checks to see if the key is valid
     static bool validate_key(string inp);
     //Key generator
@@ -138,7 +145,7 @@ namespace encryption {
     //Example Function
     static void start_example();
     //Encrypt input string
-    static string encrypt(string input);
+    static string encrypt(string input, FLAGS bloat = FLAGS::do_bloat, FLAGS pattern = FLAGS::do_rand_pattern);
     //Decrypt input string
     static string decrypt(string input);
     //Part of example, prompts user for key

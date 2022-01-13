@@ -81,10 +81,10 @@ won't spend much time using.
 
 `generate_key()` is what generates a key, which is a random number between the minimum and maximum key values. It calls the `get_random_num()` function to do so.
 
-`encrypt()` takes a string input that it will encrypt, first it creates the output string which is so far undefined, and it gets the scramble number by calling the private function `decide_scramble()` which takes the key and sees if it can be evenly divided by a number 2-9, if it can, it returns that number, if there isn't it returns 1 which will be used instead since dividing by 1 doesn't do anything. After that, the scramble number is inputed into the output between two strings of bloat 10-20 characters long. After that, there is a loop that takes every character in the input string and adds it to the key divided by the scramble then behind that a random pattern chunk and a bloat string is added. That looks like this: 
+`encrypt()` takes a string input that it will encrypt, including two flags. These are to toggle bloat and the random pattern, for this explanation we will assume both are enabled, the default is also enabled. First it creates the output string which is so far undefined, and it gets the scramble number by calling the private function `decide_scramble()` which takes the key and sees if it can be evenly divided by a number 2-9, if it can, it returns that number, if there isn't it returns 1 which will be used instead since dividing by 1 doesn't do anything. After that, the scramble number is inputed into the output between two strings of bloat 10-20 characters long. After that, there is a loop that takes every character in the input string and adds it to the key divided by the scramble then behind that a random pattern chunk and a bloat string is added. That looks like this (heavy use of the ternary operator) : 
 
 ```
-output += to_string(input_v3 + (KEY::key/scramble)) + encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)] + encdec::get_bloat();
+ output += to_string(input_v3 + (KEY::key/scramble)) + (pattern == FLAGS::do_rand_pattern ? encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)] : "") + (bloat == FLAGS::do_bloat ? encdec::get_bloat() : "");
 ```
 
 After that, a random amount of bloat strings within the paramaters found in constants, are inserted in random places in the output after each character is added to the output. Finally after all the characters have been added to the output, more random pattern chunks are randomly added a random amount of times with the set parameters, randomly in the output, then the function returns the output string.
@@ -94,3 +94,20 @@ After that, a random amount of bloat strings within the paramaters found in cons
 `output += char(stoi(chunk) - (KEY::key/scramble));`
 
 After that, the function returns the decrypted output.
+
+### Flags
+`no_bloat = 0x00`
+
+Flag to disable bloat
+
+`do_bloat = 0x01`
+
+Flag to enable bloat
+
+`no_rand_pattern = 0x10`
+
+Flag to disable random pattern
+
+`do_rand_pattern = 0x11`
+
+Flag to enable random pattern
