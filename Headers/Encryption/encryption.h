@@ -141,6 +141,7 @@ namespace encryption {
     static string encrypt(string input);
     //Decrypt input string
     static string decrypt(string input);
+    //Part of example, prompts user for key
     static bool get_key(); //True = key valid | False = key invalid
   }; 
 }
