@@ -1,6 +1,4 @@
 #pragma once
-#include <bits/stdc++.h>
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <istream>
