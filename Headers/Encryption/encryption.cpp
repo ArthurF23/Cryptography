@@ -58,7 +58,7 @@ namespace encryption {
   }
 
   unsigned int encdec::decide_scramble() {
-    for (int i=2; i < 10; i++) {
+    for (int i=encdec::constants::scramble_info::starting_divisor; i < encdec::constants::scramble_info::ending_divisor+1; i++) {
       if ((KEY::key%i) == 0) {
         return i;
       };
@@ -66,7 +66,7 @@ namespace encryption {
     return 1;
   }
 
- unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
+  unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
@@ -138,7 +138,7 @@ namespace encryption {
       };
     };
     
-    int scramble = filtered[0]-'0';
+    const unsigned short scramble = filtered[0]-'0';
     filtered = filtered.substr(1, filtered.length());
 
     for (int i = 0; i < filtered.length() - 1; i+=encdec::constants::key_info::key_length) {
@@ -148,7 +148,7 @@ namespace encryption {
         chunk += filtered[i+x];
       }
       output += char(stoi(chunk) - (KEY::key/scramble));
-    }
+    };
     return output;
   }
 
