@@ -4,8 +4,11 @@
 #include <random>
 #include <bitset>
 #include <ios>
+#include <stdio.h>
 #include <mutex>
 #include <atomic>
+#include <typeinfo>
+#include <sstream>
 using namespace std;
 
 typedef bitset<8> byte_;  

@@ -436,16 +436,21 @@ namespace encryption {
   string AES::encrypt(string input) {
     string output;
     word w[4*(Nr+1)];
+    const int inp_len = input.length();
+    printf("%d \n", inp_len);
     mutex mtxx;
     mtxx.lock();
-    //loop is broken
-    for (unsigned short loop = 0; loop != input.length(); loop++) {
+    static unsigned int loop;
+    for (loop = 0; loop < 10; loop++) {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
-      cout << "d:" << hex_val[0] << endl;
+      //cout << "d:" << hex_val[0] << endl;
       cypher_encrypt(hex_val, w);
-      cout << "e:" <<  hex_val[0] << endl;
-      cout << loop << endl;
+      //cout << "e:" <<  hex_val[0] << endl;
+      printf("%d \n", loop);
+      
+      //make it not be binary but an actual char value
+      output += hex_val[0].to_string();
     };
     mtxx.unlock();
     cout << "Output: " << output << endl;
