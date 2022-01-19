@@ -218,6 +218,7 @@ namespace encryption {
 
       static string hex_to_string(byte_ inp[mtx_size]);
       static byte_ char_to_byte_(char inp);
+      static char binary_to_char(byte_ input);
 
       static void KeyExpansion(word w[4*(Nr+1)]);
 
@@ -226,7 +227,7 @@ namespace encryption {
 
       public:
       static void start_example();
-      static string encrypt(string input);
+      static string encrypt(string input, int string_length);
       static string decrypt(string input);
       static void generate_key();
     };

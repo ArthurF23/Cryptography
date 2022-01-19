@@ -364,13 +364,29 @@ namespace encryption {
 
   //Basically converting char to hex
   byte_ AES::char_to_byte_(char inp) {
-    byte_ result;
-    char *l_pCharRes = new (char);
-    sprintf(l_pCharRes, "%X", int(inp));
-    int l_intResult = stoi(l_pCharRes);
-    result = l_intResult;
-    return result;
+    return static_cast<byte_>(inp);
   }
+
+//Now working
+  char AES::binary_to_char(byte_ input) {
+    unsigned int num = 0;
+    string byte_str = input.to_string();
+    for (short i = 7; i > -1; i--) {
+      if (byte_str[i] == '1') {
+        if (i == 0) {
+          num += 1;
+        }
+        else {
+          unsigned int squared = 1;
+          for (unsigned short x = 0; x < i-1; x++) {
+            squared = squared * 2;
+          };
+          num += squared;
+        };
+      };
+    };
+    return char(num);
+  };
 
   //////////////////////////////////////////////////////
   ////////Encrypt & Decrypt Functions///////////////////
@@ -433,15 +449,16 @@ namespace encryption {
   /////////that input and output strings/////////////////
   ///////////////////////////////////////////////////////
 
-  string AES::encrypt(string input) {
+  //Loop is still broken and outputted characters arent the same amount as inputted, meaning some are lost. And Loop isnt working unless the loop is constant and not based on input length
+  string AES::encrypt(string input, int length) {
     string output;
     word w[4*(Nr+1)];
-    const int inp_len = input.length();
-    printf("%d \n", inp_len);
+    //const int inp_len = (input.length());
+    printf("%d \n", length);
     mutex mtxx;
     mtxx.lock();
-    static unsigned int loop;
-    for (loop = 0; loop < 10; loop++) {
+    static unsigned int loop = 0;
+    for (loop = 0; loop < length; loop++) {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
       //cout << "d:" << hex_val[0] << endl;
@@ -450,10 +467,10 @@ namespace encryption {
       printf("%d \n", loop);
       
       //make it not be binary but an actual char value
-      output += hex_val[0].to_string();
+      output += binary_to_char(hex_val[0]);
     };
     mtxx.unlock();
-    cout << "Output: " << output << endl;
+    cout << "Output: " << endl << output << endl;
     return output;
   };
 
@@ -468,7 +485,7 @@ namespace encryption {
 
     string actual_string = "bruh lmfao";
 
-      //Output key  
+    //Output key  
     cout << "The key is:";  
     for(int i=0; i<mtx_size; ++i) {
       cout << hex << AESKEY::key[i].to_ulong() << " ";
@@ -481,7 +498,7 @@ namespace encryption {
     cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
 
      //Encryption, output ciphertext  
-    actual_string = encrypt(actual_string);  
+    actual_string = encrypt(actual_string, actual_string.length());  
     cout << "Encrypted ciphertext:"<< endl << actual_string << endl; 
 
     //Decrypt, output plaintext  
