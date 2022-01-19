@@ -367,24 +367,20 @@ namespace encryption {
     return static_cast<byte_>(inp);
   }
 
-//Now working
+//Now working... again
   char AES::binary_to_char(byte_ input) {
+    mutex mtxx;
     unsigned int num = 0;
     string byte_str = input.to_string();
+    int base = 1;
+    mtxx.lock();
     for (short i = 7; i > -1; i--) {
       if (byte_str[i] == '1') {
-        if (i == 0) {
-          num += 1;
-        }
-        else {
-          unsigned int squared = 1;
-          for (unsigned short x = 0; x < i-1; x++) {
-            squared = squared * 2;
-          };
-          num += squared;
-        };
+        num += base;
       };
+      base *= 2;
     };
+    mtxx.unlock();
     return char(num);
   };
 
@@ -467,8 +463,15 @@ namespace encryption {
     for (loop = 0; loop < length; loop++) {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
+
+      cout << hex_val[0] << endl;
+
       cypher_encrypt(hex_val, w);
+
+      //cout << "    " << hex_val[0] << endl;
+
       output += binary_to_char(hex_val[0]);
+      //cout << "Bruh " << output[0] << " " << char_to_byte_(output[0]) << endl; 
     };
     mtxx.unlock();
     return output;
@@ -487,17 +490,22 @@ namespace encryption {
     for (loop = 0; loop < length; loop++) {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
+
+      cout << hex_val[0] << " " << input[loop] << endl;
+
       cypher_decrypt(hex_val, w);
+
+      //cout << "    " << hex_val[0] << endl;
+
       output += binary_to_char(hex_val[0]);
+      //cout << output[0] << " " << char_to_byte_(output[0]) << endl; 
     };
     mtxx.unlock();
     return output;
   };
 
   void AES::start_example() {
-    byte_ plain[mtx_size] = {0x54, 0x65, 0x73, 0x74, 0x20, 0x45, 0x78, 0x61,  0x6D, 0x70, 0x6C, 0x65, 0x2E, 0x2E, 0x2E, 0x2E};
-
-    string actual_string = "bruh lmfao";
+    string actual_string = "b";
 
     //Output key  
     cout << "The key is:";  
@@ -514,6 +522,10 @@ namespace encryption {
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
     cout << "Encrypted ciphertext:"<< endl << actual_string << endl; 
+
+    for (int i = 0; i < actual_string.length(); i++) {
+      cout << char_to_byte_(actual_string[i]) << endl;
+    }
 
     //Decrypt, output plaintext  
     actual_string = decrypt(actual_string, actual_string.length());
