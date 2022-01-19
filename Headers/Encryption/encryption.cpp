@@ -210,9 +210,9 @@ namespace encryption {
   };
 
   void AES::KeyExpansion(word w[4*(Nr+1)]) {  
-    word temp;  
+    word temp;
     int i = 0;  
-    //The first four of w [] are input key s  
+    //The first four of w [] are input keys  
     while(i < Nk) {  
         w[i] = Word(AESKEY::key[4*i], AESKEY::key[4*i+1], AESKEY::key[4*i+2], AESKEY::key[4*i+3]);  
         ++i;  
@@ -230,8 +230,8 @@ namespace encryption {
         w[i] = w[i-Nk] ^ temp;  
       };
       ++i;  
-    };  
-  };  
+    };
+  };
 
   void AES::SubBytes(byte_ mtx[mtx_size]) {  
     for(int i=0; i<mtx_size; ++i)  {  
@@ -443,40 +443,54 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
+  word AES::global_word[4*(Nr+1)];
+
+  void AES::aes_init() {
+    KeyExpansion(AES::global_word);
+  }
+
 
   ///////////////////////////////////////////////////////
   /////////Pass through encrypt & decrypt functions//////
   /////////that input and output strings/////////////////
   ///////////////////////////////////////////////////////
 
-  //Loop is still broken and outputted characters arent the same amount as inputted, meaning some are lost. And Loop isnt working unless the loop is constant and not based on input length
   string AES::encrypt(string input, int length) {
     string output;
     word w[4*(Nr+1)];
-    //const int inp_len = (input.length());
-    printf("%d \n", length);
+    for (int i = 0; i < 4*(Nr+1); i++) {
+      w[i] = global_word[i];
+    };
     mutex mtxx;
     mtxx.lock();
     static unsigned int loop = 0;
     for (loop = 0; loop < length; loop++) {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
-      //cout << "d:" << hex_val[0] << endl;
       cypher_encrypt(hex_val, w);
-      //cout << "e:" <<  hex_val[0] << endl;
-      printf("%d \n", loop);
-      
-      //make it not be binary but an actual char value
       output += binary_to_char(hex_val[0]);
     };
     mtxx.unlock();
-    cout << "Output: " << endl << output << endl;
     return output;
   };
 
-  string AES::decrypt(string input) {
+  //Now do this crap
+  string AES::decrypt(string input, int length) {
     string output;
-
+    word w[4*(Nr+1)];
+    for (int i = 0; i < 4*(Nr+1); i++) {
+      w[i] = global_word[i];
+    };
+    mutex mtxx;
+    mtxx.lock();
+    static unsigned int loop = 0;
+    for (loop = 0; loop < length; loop++) {
+      //Figure out how to convert to hex and feed AES algorithm one letter at a time
+      byte_ hex_val[1] = {char_to_byte_(input[loop])};
+      cypher_decrypt(hex_val, w);
+      output += binary_to_char(hex_val[0]);
+    };
+    mtxx.unlock();
     return output;
   };
 
@@ -492,18 +506,18 @@ namespace encryption {
     };
     cout << endl;
 
-    word w[4*(Nr+1)];  
-    KeyExpansion(w);
-
     cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
 
-     //Encryption, output ciphertext  
+
+    aes_init();
+
+    //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
     cout << "Encrypted ciphertext:"<< endl << actual_string << endl; 
 
     //Decrypt, output plaintext  
-    cypher_decrypt(plain, w);  
-    cout << "Decrypted plaintext:"<< endl << hex_to_string(plain) << endl;
+    actual_string = decrypt(actual_string, actual_string.length());
+    cout << "Decrypted plaintext:"<< endl << actual_string << endl;
   };
 
 };

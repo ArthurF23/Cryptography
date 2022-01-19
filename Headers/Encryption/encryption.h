@@ -225,10 +225,14 @@ namespace encryption {
       static void cypher_encrypt(byte_ in[mtx_size], word w[4*(Nr+1)]);
       static void cypher_decrypt(byte_ in[mtx_size], word w[4*(Nr+1)]);
 
+      static word global_word[4*(Nr+1)]; //Needs to be initilized
+
       public:
       static void start_example();
       static string encrypt(string input, int string_length);
-      static string decrypt(string input);
+      static string decrypt(string input, int string_length);
+      //Call before use
+      static void aes_init();
       static void generate_key();
     };
 };
