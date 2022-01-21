@@ -367,7 +367,7 @@ namespace encryption {
     return static_cast<byte_>(inp);
   }
 
-//Now working... again
+//Now working
   char AES::binary_to_char(byte_ input) {
     mutex mtxx;
     unsigned int num = 0;
@@ -384,6 +384,185 @@ namespace encryption {
     return char(num);
   };
 
+  //New
+  string AES::binary_to_hex(byte_ inp) {
+    string output;
+    stringstream ss;
+    ss << hex << inp.to_ulong();
+    ss >> output;
+    return output;
+  };
+
+  byte_ AES::bit_assign(int a, int b, int c, int d, int e, int f, int g, int h) {
+    byte_ result;
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    result[4] = e;
+    result[5] = f;
+    result[6] = g;
+    result[7] = h;
+    return result;
+  }
+
+  byte_ AES::hex2byte_helper(char inp, byte_ bInp, short pos) {
+    //Use pos to know if youre on the 1st or 2nd character
+    //Lookup table increases performance but uses more memory
+    //pos = 1 is first letter and array positions 4-7
+    //pos = 2 is second letter and array position 0-3
+    switch (inp) {
+      case 'a':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 0, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 1, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case 'b':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 0, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 1, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case 'c':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 1, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 0, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+      
+      case 'd':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 1, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 0, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case 'e':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 1, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 1, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case 'f':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 1, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 1, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+      
+      case '1':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 0, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 0, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '2':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 0, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 1, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '3':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 0, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 1, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '4':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 1, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 0, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '5':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 1, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 0, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '6':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 1, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 1, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+      
+      case '7':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 1, 0);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 1, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '8':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 0, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(0, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+
+      case '9':
+        if (pos == 1) {
+          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 0, 1);
+        }
+        else if (pos == 2) {
+          bInp = bit_assign(1, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
+        }
+        break;
+    }
+    return bInp;
+  }
+
+  byte_ AES::hex_str_to_byte(char inp1, char inp2) {
+    byte_ result;
+    //individual bits can be changed by using it like an array
+    //say you have byte = 0b10000000
+    //the 1 is on byte[7] so it is indexed "in reverse"
+    //so take the index and set it equal to either 0 or 1 to change it
+    //byte[0] = 1
+    //now that bit is 1 and not zero
+
+    result = hex2byte_helper(inp1, result, 1);
+    result = hex2byte_helper(inp2, result, 2);
+    return result;
+  }
   //////////////////////////////////////////////////////
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
@@ -464,20 +643,16 @@ namespace encryption {
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
       byte_ hex_val[1] = {char_to_byte_(input[loop])};
 
-      cout << hex_val[0] << endl;
-
       cypher_encrypt(hex_val, w);
 
-      //cout << "    " << hex_val[0] << endl;
-
-      output += binary_to_char(hex_val[0]);
-      //cout << "Bruh " << output[0] << " " << char_to_byte_(output[0]) << endl; 
+      //Make the binary turn to hex then make that a string
+      output += binary_to_hex(hex_val[0]);
     };
     mtxx.unlock();
     return output;
   };
 
-  //Now do this crap
+  //Change to take hex input
   string AES::decrypt(string input, int length) {
     string output;
     word w[4*(Nr+1)];
@@ -487,18 +662,13 @@ namespace encryption {
     mutex mtxx;
     mtxx.lock();
     static unsigned int loop = 0;
-    for (loop = 0; loop < length; loop++) {
-      //Figure out how to convert to hex and feed AES algorithm one letter at a time
-      byte_ hex_val[1] = {char_to_byte_(input[loop])};
+    for (loop = 0; loop < length; loop+=2) {
+      //broken, still isnt decrypting properly
 
-      cout << hex_val[0] << " " << input[loop] << endl;
-
+      byte_ hex_val[1] = {hex_str_to_byte(input[loop], input[loop+1])}; //Hex to binary works properly
       cypher_decrypt(hex_val, w);
-
-      //cout << "    " << hex_val[0] << endl;
-
+      cout << hex_val[0] << endl;
       output += binary_to_char(hex_val[0]);
-      //cout << output[0] << " " << char_to_byte_(output[0]) << endl; 
     };
     mtxx.unlock();
     return output;
@@ -507,7 +677,8 @@ namespace encryption {
   void AES::start_example() {
     string actual_string = "b";
 
-    //Output key  
+    //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
+    //Output key
     cout << "The key is:";  
     for(int i=0; i<mtx_size; ++i) {
       cout << hex << AESKEY::key[i].to_ulong() << " ";
@@ -523,13 +694,8 @@ namespace encryption {
     actual_string = encrypt(actual_string, actual_string.length());  
     cout << "Encrypted ciphertext:"<< endl << actual_string << endl; 
 
-    for (int i = 0; i < actual_string.length(); i++) {
-      cout << char_to_byte_(actual_string[i]) << endl;
-    }
-
     //Decrypt, output plaintext  
     actual_string = decrypt(actual_string, actual_string.length());
     cout << "Decrypted plaintext:"<< endl << actual_string << endl;
   };
-
 };

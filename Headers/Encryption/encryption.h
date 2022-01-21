@@ -216,9 +216,14 @@ namespace encryption {
       static void InvShiftRows(byte_ mtx[mtx_size]);
       static void InvMixColumns(byte_ mtx[mtx_size]);
 
+      //Conversions
       static string hex_to_string(byte_ inp[mtx_size]);
       static byte_ char_to_byte_(char inp);
       static char binary_to_char(byte_ input);
+      static string binary_to_hex(byte_ inp);
+      static byte_ hex_str_to_byte(char inp1, char inp2);
+      static byte_ hex2byte_helper(char inp, byte_ bInp, short pos);
+      static byte_ bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
 
       static void KeyExpansion(word w[4*(Nr+1)]);
 
