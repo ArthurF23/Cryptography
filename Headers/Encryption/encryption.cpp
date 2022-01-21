@@ -571,7 +571,7 @@ namespace encryption {
     word key[4];  
     AES clone;
     for(int i=0; i<4; ++i) {
-      key[i] = w[i];  
+      key[i] = w[i];
     };
 
     clone.AddRoundKey(in, key);  
@@ -639,20 +639,34 @@ namespace encryption {
     mutex mtxx;
     mtxx.lock();
     static unsigned int loop = 0;
-    for (loop = 0; loop < length; loop++) {
+    for (loop = 0; loop < length; loop+=mtx_size) {
+      
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
-      byte_ hex_val[1] = {char_to_byte_(input[loop])};
+      byte_ hex_val[mtx_size];// {char_to_byte_(input[loop])};
+
+      for (int x = 0; x < mtx_size; x++) {
+        if (x < length) {
+          hex_val[x] = char_to_byte_(input[loop+x]);
+        }
+        else {
+          hex_val[x] = 0x20; //space
+        };
+      };
 
       cypher_encrypt(hex_val, w);
 
       //Make the binary turn to hex then make that a string
-      output += binary_to_hex(hex_val[0]);
+      for (int x = 0; x < mtx_size; x++) {
+        output += binary_to_hex(hex_val[x]);
+      };
     };
     mtxx.unlock();
+    for (int i = 0; i < 4*(Nr+1); i++) {
+      global_word[i] = w[i];
+    };
     return output;
   };
 
-  //Change to take hex input
   string AES::decrypt(string input, int length) {
     string output;
     word w[4*(Nr+1)];
@@ -662,21 +676,32 @@ namespace encryption {
     mutex mtxx;
     mtxx.lock();
     static unsigned int loop = 0;
-    for (loop = 0; loop < length; loop+=2) {
+    for (loop = 0; loop < length; loop+=mtx_size) {
       //broken, still isnt decrypting properly
-
-      byte_ hex_val[1] = {hex_str_to_byte(input[loop], input[loop+1])}; //Hex to binary works properly
+      byte_ hex_val[mtx_size];// {hex_str_to_byte(input[loop], input[loop+1])}; 
+      for (int x = 0; x < mtx_size; x+=2) {
+        if (x < length) {
+          hex_val[x] = hex_str_to_byte(input[loop+x], input[(loop+x)+1]);
+        }
+        else {
+          hex_val[x] = 0x20; //space
+        };
+      };
+      //Hex to binary works properly
       cypher_decrypt(hex_val, w);
-      cout << hex_val[0] << endl;
-      output += binary_to_char(hex_val[0]);
+      for (int x = 0; x < mtx_size; x++) {
+        output += binary_to_char(hex_val[x]);
+      };
     };
-    mtxx.unlock();
+    for (int i = 0; i < 4*(Nr+1); i++) {
+      global_word[i] = w[i];
+    };
     return output;
   };
 
-  void AES::start_example() {
-    string actual_string = "b";
-
+  int AES::start_example() {
+    string actual_string = "bruh bruh";
+    
     //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
     //Output key
     cout << "The key is:";  
@@ -692,10 +717,12 @@ namespace encryption {
 
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
-    cout << "Encrypted ciphertext:"<< endl << actual_string << endl; 
+    cout << "Encrypted ciphertext:" << endl << actual_string << endl; 
 
     //Decrypt, output plaintext  
     actual_string = decrypt(actual_string, actual_string.length());
-    cout << "Decrypted plaintext:"<< endl << actual_string << endl;
+    cout << "Decrypted plaintext:" << endl << actual_string << endl;
+    cin.ignore();
+    return 0;
   };
 };

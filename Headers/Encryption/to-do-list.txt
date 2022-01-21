@@ -1,3 +1,9 @@
 1/20/22 Change encryption output to output hex, then change the decrypt function to handle hex input to handle out of range ascii characters.
 
-Completed? No, make decrypt take hex input
+1/21/22 Note: I think the problem is that the algorythm was intended to take 8 chars at a time, therefor it is freaking out when i feed it one at a time.
+
+Changed encrypt and decrypt to take the specified amount from the example. still no luck.
+
+It works when you do it how the example does it. whats different here?
+
+Completed? No, make decrypt work.

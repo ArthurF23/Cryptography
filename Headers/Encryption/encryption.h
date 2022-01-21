@@ -233,7 +233,7 @@ namespace encryption {
       static word global_word[4*(Nr+1)]; //Needs to be initilized
 
       public:
-      static void start_example();
+      static int start_example();
       static string encrypt(string input, int string_length);
       static string decrypt(string input, int string_length);
       //Call before use
