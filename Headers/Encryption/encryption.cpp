@@ -657,9 +657,7 @@ namespace encryption {
         };
       };
 
-      cout << hex_val[0]<<endl;
       cypher_encrypt(hex_val, w);
-      cout << hex_val[0]/*.to_ulong()*/ /*hex*/ << endl; //array 0-15 defined on line 649 mtx_size = 16
       //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
 
       //Make the binary turn to hex then make that a string
@@ -687,9 +685,8 @@ namespace encryption {
       w[i] = global_word[i];
     };
 
-    AESbyte SPACE[1]= {SPACE_BYTE};
-    string qw = encrypt(" ", 1);
-    SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
+    AESbyte SPACE[mtx_size]= {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};
+    cypher_encrypt(SPACE, w);
 
     cout << "Generated space " << SPACE[0].to_ulong() << endl;
 
@@ -697,7 +694,7 @@ namespace encryption {
 
     for (loop = 0; loop < length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
-      static AESbyte hex_val[arrSize];
+      static AESbyte hex_val[arrSize] = {SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0], SPACE[0]};
       //for loop somehow corrupted the array so im doing it manually
       printf("Loop count: %d \n", loop);
       if ((loop+1) <= length) {
@@ -732,70 +729,22 @@ namespace encryption {
                                     hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
                                     if ((loop+31) <= length) {
                                       hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
-                                    }
-                                    else {
-                                      hex_val[15] = SPACE[0];
                                     };
-                                  }
-                                  else {
-                                    hex_val[14] = SPACE[0];
                                   };
-                                }
-                                else {
-                                  hex_val[13] = SPACE[0];
                                 };
-                              }
-                              else {
-                                hex_val[12] = SPACE[0];
                               };
-                            }
-                            else {
-                              hex_val[11] = SPACE[0];
                             };
-                          }
-                          else {
-                            hex_val[10] = SPACE[0];
                           };
-                        }
-                        else {
-                          hex_val[9] = SPACE[0];
                         };
-                      }
-                      else {
-                        hex_val[8] = SPACE[0];
                       };
-                    }
-                    else {
-                      hex_val[7] = SPACE[0];
                     };
-                  }
-                  else {
-                    hex_val[6] = SPACE[0];
                   };
-                }
-                else {
-                  hex_val[5] = SPACE[0];
                 };
-              }
-              else {
-                hex_val[4] = SPACE[0];
               };
-            }
-            else {
-              hex_val[3] = SPACE[0];
             };
-          }
-          else {
-            hex_val[2] = SPACE[0];
           };
-        }
-        else {
-          hex_val[1] = SPACE[0];
         };
-      }
-      else {
-        hex_val[0] = SPACE[0];
-      };
+      };                                   
       
 
       //Somehow extra 0's are being added in between the function above and the loop below the check
@@ -821,7 +770,7 @@ namespace encryption {
   /////////////
 
   int AES::start_example() {
-    string actual_string = "bruh bruh";
+    string actual_string = "bruh bruh Bruh Bruh Bruh";
     
     //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
     //Output key
@@ -839,7 +788,7 @@ namespace encryption {
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
     cout << "Encrypted ciphertext:" << endl << actual_string << endl; 
-
+    printf("Actual length %d \n", actual_string.length());
     //Decrypt, output plaintext  
     actual_string = decrypt(actual_string, actual_string.length());
     cout << "Decrypted plaintext:" << endl << actual_string << endl;
