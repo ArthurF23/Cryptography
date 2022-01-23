@@ -175,6 +175,8 @@ namespace encryption {
   ///////// AES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////
 
+  AESbyte AES::SPACE[mtx_size] = {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};
+
   AESword AES::Word(AESbyte& k1, AESbyte& k2, AESbyte& k3, AESbyte& k4) {
     AESword result(0x00000000);  
     AESword temp;  
@@ -622,6 +624,14 @@ namespace encryption {
 
   void AES::aes_init() {
     KeyExpansion(AES::global_word);
+    AESword w[word_size];
+    for (int i = 0; i < word_size; i++) {
+      w[i] = global_word[i];
+    };
+    cypher_encrypt(SPACE, w);
+    for (int i = 0; i < word_size; i++) {
+      global_word[i] = w[i];
+    };
   }
 
 
@@ -653,7 +663,7 @@ namespace encryption {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
-          hex_val[x] = 0b00000010;
+          hex_val[x] = SPACE_BYTE;
         };
       };
 
@@ -685,17 +695,11 @@ namespace encryption {
       w[i] = global_word[i];
     };
 
-    AESbyte SPACE[1]= {0x20};
-    string qw = encrypt(" ", 1);
-    SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
-
-    cout << SPACE[0].to_ulong() << endl;
-
     static unsigned int loop = 0;
 
     for (loop = 0; loop < length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
-      static AESbyte hex_val[arrSize];
+      static AESbyte hex_val[arrSize] = {SPACE[0], SPACE[1], SPACE[2], SPACE[3], SPACE[4], SPACE[5], SPACE[6], SPACE[7], SPACE[8], SPACE[9], SPACE[10], SPACE[11], SPACE[12], SPACE[13], SPACE[14], SPACE[15]};
       //for loop somehow corrupted the array so im doing it manually
       printf("Loop count: %d \n", loop);
       if ((loop+1) <= length) {
@@ -730,73 +734,24 @@ namespace encryption {
                                     hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
                                     if ((loop+31) <= length) {
                                       hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
-                                    }
-                                    else {
-                                      hex_val[15] = SPACE[0];
                                     };
-                                  }
-                                  else {
-                                    hex_val[14] = SPACE[0];
                                   };
-                                }
-                                else {
-                                  hex_val[13] = SPACE[0];
                                 };
-                              }
-                              else {
-                                hex_val[12] = SPACE[0];
                               };
-                            }
-                            else {
-                              hex_val[11] = SPACE[0];
                             };
-                          }
-                          else {
-                            hex_val[10] = SPACE[0];
                           };
-                        }
-                        else {
-                          hex_val[9] = SPACE[0];
                         };
-                      }
-                      else {
-                        hex_val[8] = SPACE[0];
                       };
-                    }
-                    else {
-                      hex_val[7] = SPACE[0];
                     };
-                  }
-                  else {
-                    hex_val[6] = SPACE[0];
                   };
-                }
-                else {
-                  hex_val[5] = SPACE[0];
                 };
-              }
-              else {
-                hex_val[4] = SPACE[0];
               };
-            }
-            else {
-              hex_val[3] = SPACE[0];
             };
-          }
-          else {
-            hex_val[2] = SPACE[0];
           };
-        }
-        else {
-          hex_val[1] = SPACE[0];
         };
-      }
-      else {
-        hex_val[0] = SPACE[0];
-      };
+      };                                   
       
-
-      //Somehow extra 0's are being added in between the function above and the loop below the check
+      //Checker
       for (int y = 0; y < arrSize; y+=1) {
         cout << hex_val[y].to_ulong();
       }
@@ -810,7 +765,7 @@ namespace encryption {
     for (int i = 0; i < word_size; i++) {
       global_word[i] = w[i];
     };
-    printf("%d | %d \n", length, loop);
+    printf("length %d | loop %d \n", length, loop);
     return output;
   };
 
@@ -819,26 +774,38 @@ namespace encryption {
   /////////////
 
   int AES::start_example() {
-    string actual_string = "bruh bruh";
+    string actual_string = "bruh bruh Bruh Bruh Bruh Bruh av";
     
     //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
+
+    aes_init(); //Call before use 
+
     //Output key
-    cout << "The key is:";  
+    cout << "The key is:";
     for(int i=0; i<mtx_size; ++i) {
       cout << hex << AESKEY::key[i].to_ulong() << " ";
     };
     cout << endl;
 
+    /*AESbyte bruh[mtx_size] = {0x42, SPACE[1], SPACE[2], SPACE[3], SPACE[4], SPACE[5], SPACE[6], SPACE[7], SPACE[8], SPACE[9], SPACE[10], SPACE[11], SPACE[12], SPACE[13], SPACE[14], SPACE[15]};
+    AESword w[word_size];
+    for (int i = 0; i < word_size; i++) {
+      w[i] = global_word[i];
+    };
+    AESbyte b[16] = {SPACE[0], SPACE[1], SPACE[2], SPACE[3]};
+    cypher_decrypt(b, w);
+    for (int i = 0; i < word_size; i++) {
+      global_word[i] = w[i];
+    };
+    cout << "PLEASE WORK: " << bruh[0] << endl;
+    */
     cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
-
-
-    aes_init();
 
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
-    cout << "Encrypted ciphertext:" << endl << actual_string << endl; 
+    cout << "Encrypted ciphertext:" << endl << actual_string << endl;
 
-    //Decrypt, output plaintext  
+    //Decrypt, output plaintext 
     actual_string = decrypt(actual_string, actual_string.length());
     cout << "Decrypted plaintext:" << endl << actual_string << endl;
     cin.ignore();

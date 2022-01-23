@@ -13,3 +13,5 @@ EVERYTHING IN ENCRYPT WORKS IT'S SOULY IN THE DECRYPT FUNCTION
 Completed? yes
 
 1/23/22 Fix decrypt to take any length of string and decrypt properly. May need to modify encrypt to fill empty spaces with a specific value which will be removed after decrypt but before it's added to the output string.
+
+1/23/22 Once the AES encryption and decryption works compentently, implement key generation
