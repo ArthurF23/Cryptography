@@ -11,5 +11,5 @@
 #include <sstream>
 using namespace std;
 
-typedef bitset<8> byte_;  
-typedef bitset<32> word;
+typedef bitset<8> AESbyte;  
+typedef bitset<32> AESword;

@@ -175,9 +175,9 @@ namespace encryption {
   ///////// AES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////
 
-  word AES::Word(byte_& k1, byte_& k2, byte_& k3, byte_& k4) {
-    word result(0x00000000);  
-    word temp;  
+  AESword AES::Word(AESbyte& k1, AESbyte& k2, AESbyte& k3, AESbyte& k4) {
+    AESword result(0x00000000);  
+    AESword temp;  
     temp = k1.to_ulong();  // K1  
     temp <<= 24;  
     result |= temp;  
@@ -192,26 +192,26 @@ namespace encryption {
     return result;  
   };
 
-  word AES::RotWord(word& rw) {
-    word high = rw << 8;  
-    word low = rw >> 24;  
+  AESword AES::RotWord(AESword& rw) {
+    AESword high = rw << 8;  
+    AESword low = rw >> 24;  
     return high | low;  
   };
 
-  word AES::SubWord(word& sw)  {  
-    word temp;  
+  AESword AES::SubWord(AESword& sw)  {  
+    AESword temp;  
     for(int i=0; i<32; i+=8)  {  
         int row = sw[i+7]*8 + sw[i+6]*4 + sw[i+5]*2 + sw[i+4];  
         int col = sw[i+3]*8 + sw[i+2]*4 + sw[i+1]*2 + sw[i];  
-        byte_ val = AES::S_Box[row][col];  
+        AESbyte val = AES::S_Box[row][col];  
         for(int j=0; j<8; ++j)  
             temp[i+j] = val[j];  
     };  
     return temp;  
   };
 
-  void AES::KeyExpansion(word w[word_size]) {  
-    word temp;
+  void AES::KeyExpansion(AESword w[word_size]) {  
+    AESword temp;
     int i = 0;  
     //The first four of w [] are input keys  
     while(i < Nk) {  
@@ -224,7 +224,7 @@ namespace encryption {
     while(i < word_size) {  
       temp = w[i-1]; //Record the previous word  
       if(i % Nk == 0) {
-        word rwt = RotWord(temp);
+        AESword rwt = RotWord(temp);
         w[i] = w[i-Nk] ^ SubWord(rwt) ^ Rcon[i/Nk-1];  
       }
       else {
@@ -234,7 +234,7 @@ namespace encryption {
     };
   };
 
-  void AES::SubBytes(byte_ mtx[mtx_size]) {  
+  void AES::SubBytes(AESbyte mtx[mtx_size]) {  
     for(int i=0; i<mtx_size; ++i)  {  
         int row = mtx[i][7]*8 + mtx[i][6]*4 + mtx[i][5]*2 + mtx[i][4];  
         int col = mtx[i][3]*8 + mtx[i][2]*4 + mtx[i][1]*2 + mtx[i][0];  
@@ -242,9 +242,9 @@ namespace encryption {
     };
   };
 
-  void AES::ShiftRows(byte_ mtx[mtx_size]) {  
+  void AES::ShiftRows(AESbyte mtx[mtx_size]) {  
     //The second line circle moves one bit to the left  
-    byte_ temp = mtx[4];  
+    AESbyte temp = mtx[4];  
     for(int i=0; i<3; ++i) {
       mtx[i+4] = mtx[i+5];
     };
@@ -267,14 +267,14 @@ namespace encryption {
   
   //Multiplication over Finite Fields GF(2^8) 
     
-  byte_ AES::GFMul(byte_ a, byte_ b) {   
-      byte_ p = 0;  
-      byte_ hi_bit_set;  
+  AESbyte AES::GFMul(AESbyte a, AESbyte b) {   
+      AESbyte p = 0;  
+      AESbyte hi_bit_set;  
       for (int counter = 0; counter < 8; counter++) {  
-          if ((b & byte_(1)) != 0) {  
+          if ((b & AESbyte(1)) != 0) {  
               p ^= a;  
           }  
-          hi_bit_set = (byte_) (a & byte_(0x80));  
+          hi_bit_set = (AESbyte) (a & AESbyte(0x80));  
           a <<= 1;  
           if (hi_bit_set != 0) {  
               a ^= 0x1b; /* x^8 + x^4 + x^3 + x + 1 */  
@@ -284,8 +284,8 @@ namespace encryption {
       return p;  
   };
 
-  void AES::MixColumns(byte_ mtx[mtx_size])  {  
-    byte_ arr[4];  
+  void AES::MixColumns(AESbyte mtx[mtx_size])  {  
+    AESbyte arr[4];  
     for(int i=0; i<4; ++i)  {  
         for(int j=0; j<4; ++j) {
           arr[j] = mtx[i+j*4];  
@@ -297,21 +297,21 @@ namespace encryption {
     }; 
   };
 
-  void AES::AddRoundKey(byte_ mtx[mtx_size], word k[4]) {  
+  void AES::AddRoundKey(AESbyte mtx[mtx_size], AESword k[4]) {  
     for(int i=0; i<4; ++i) {  
-      word k1 = k[i] >> 24;  
-      word k2 = (k[i] << 8) >> 24;  
-      word k3 = (k[i] << 16) >> 24;  
-      word k4 = (k[i] << 24) >> 24;  
+      AESword k1 = k[i] >> 24;  
+      AESword k2 = (k[i] << 8) >> 24;  
+      AESword k3 = (k[i] << 16) >> 24;  
+      AESword k4 = (k[i] << 24) >> 24;  
         
-      mtx[i] = mtx[i] ^ byte_(k1.to_ulong());  
-      mtx[i+4] = mtx[i+4] ^ byte_(k2.to_ulong());  
-      mtx[i+8] = mtx[i+8] ^ byte_(k3.to_ulong());  
-      mtx[i+12] = mtx[i+12] ^ byte_(k4.to_ulong());  
+      mtx[i] = mtx[i] ^ AESbyte(k1.to_ulong());  
+      mtx[i+4] = mtx[i+4] ^ AESbyte(k2.to_ulong());  
+      mtx[i+8] = mtx[i+8] ^ AESbyte(k3.to_ulong());  
+      mtx[i+12] = mtx[i+12] ^ AESbyte(k4.to_ulong());  
     };  
   };
 
-  void AES::InvSubBytes(byte_ mtx[mtx_size]) {  
+  void AES::InvSubBytes(AESbyte mtx[mtx_size]) {  
     for(int i=0; i<mtx_size; ++i) {  
       int row = mtx[i][7]*8 + mtx[i][6]*4 + mtx[i][5]*2 + mtx[i][4];  
       int col = mtx[i][3]*8 + mtx[i][2]*4 + mtx[i][1]*2 + mtx[i][0];  
@@ -319,9 +319,9 @@ namespace encryption {
     };
   };
 
-  void AES::InvShiftRows(byte_ mtx[mtx_size]) {  
+  void AES::InvShiftRows(AESbyte mtx[mtx_size]) {  
     //The second line circle moves one bit to the right  
-    byte_ temp = mtx[7];  
+    AESbyte temp = mtx[7];  
     for(int i=3; i>0; --i)  
         mtx[i+4] = mtx[i+3];  
     mtx[4] = temp;  
@@ -338,8 +338,8 @@ namespace encryption {
     mtx[15] = temp;  
   };  
 
-  void AES::InvMixColumns(byte_ mtx[mtx_size]) {  
-    byte_ arr[4];  
+  void AES::InvMixColumns(AESbyte mtx[mtx_size]) {  
+    AESbyte arr[4];  
     for(int i=0; i<4; ++i) {  
         for(int j=0; j<4; ++j) {
           arr[j] = mtx[i+j*4];  
@@ -351,7 +351,7 @@ namespace encryption {
     };
   };
 
-  string AES::hex_to_string(byte_ inp[mtx_size]) {
+  string AES::hex_to_string(AESbyte inp[mtx_size]) {
     string output;
     for (int i=0; i < mtx_size; i++) {
       output += static_cast<char>(inp[i].to_ulong());
@@ -364,12 +364,12 @@ namespace encryption {
   };
 
   //Basically converting char to hex
-  byte_ AES::char_to_byte_(char inp) {
-    return static_cast<byte_>(inp);
+  AESbyte AES::char_to_byte_(char inp) {
+    return static_cast<AESbyte>(inp);
   }
 
 //Now working
-  char AES::binary_to_char(byte_ input) {
+  char AES::binary_to_char(AESbyte input) {
     mutex mtxx;
     unsigned int num = 0;
     string byte_str = input.to_string();
@@ -385,7 +385,7 @@ namespace encryption {
     return char(num);
   };
 
-  string AES::binary_to_hex(byte_ inp) {
+  string AES::binary_to_hex(AESbyte inp) {
     string output;
     stringstream ss;
     ss << hex << inp.to_ulong();
@@ -393,8 +393,8 @@ namespace encryption {
     return output;
   };
 
-  byte_ AES::bit_assign(int a, int b, int c, int d, int e, int f, int g, int h) {
-    byte_ result;
+  AESbyte AES::bit_assign(int a, int b, int c, int d, int e, int f, int g, int h) {
+    AESbyte result;
     result[0] = a;
     result[1] = b;
     result[2] = c;
@@ -406,7 +406,7 @@ namespace encryption {
     return result;
   }
 
-  byte_ AES::hex2byte_helper(char inp, byte_ bInp, short pos) {
+  AESbyte AES::hex2byte_helper(char inp, AESbyte bInp, short pos) {
     //Use pos to know if youre on the 1st or 2nd character
     //Lookup table increases performance but uses more memory
     //pos = 1 is first letter and array positions 4-7
@@ -550,8 +550,8 @@ namespace encryption {
     return bInp;
   }
 
-  byte_ AES::hex_str_to_byte(char inp1, char inp2) {
-    byte_ result;
+  AESbyte AES::hex_str_to_byte(char inp1, char inp2) {
+    AESbyte result;
     //individual bits can be changed by using it like an array
     //say you have byte = 0b10000000
     //the 1 is on byte[7] so it is indexed "in reverse"
@@ -567,8 +567,8 @@ namespace encryption {
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
 
-  void AES::cypher_encrypt(byte_ in[mtx_size], word w[word_size]) {  
-    word key[4];  
+  void AES::cypher_encrypt(AESbyte in[mtx_size], AESword w[word_size]) {  
+    AESword key[4];  
     AES clone;
     for(int i=0; i<4; ++i) {
       key[i] = w[i];
@@ -594,8 +594,8 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  void AES::cypher_decrypt(byte_ in[mtx_size], word w[word_size])  {  
-    word key[4];
+  void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[word_size])  {  
+    AESword key[4];
     AES clone;
     for(int i=0; i<4; ++i) {
       key[i] = w[4*Nr+i];  
@@ -618,7 +618,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  word AES::global_word[word_size];
+  AESword AES::global_word[word_size];
 
   void AES::aes_init() {
     KeyExpansion(AES::global_word);
@@ -636,7 +636,7 @@ namespace encryption {
 
   string AES::encrypt(string input, int length) {
     string output;
-    word w[word_size];
+    AESword w[word_size];
     for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
@@ -646,7 +646,7 @@ namespace encryption {
     for (loop = 0; loop < length; loop+=mtx_size) {
       
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
-      byte_ hex_val[mtx_size];// {char_to_byte_(input[loop])};
+      AESbyte hex_val[mtx_size];// {char_to_byte_(input[loop])};
 
       for (int x = 0; x < mtx_size; x++) {
         if (x < length) {
@@ -680,12 +680,12 @@ namespace encryption {
     string output;
     constexpr unsigned short arrSize = mtx_size;
     printf("Length: %d \n", (int)length);
-    word w[word_size];
+    AESword w[word_size];
     for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
 
-    byte_ SPACE[1]= {0x20};
+    AESbyte SPACE[1]= {0x20};
     string qw = encrypt(" ", 1);
     SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
 
@@ -695,7 +695,7 @@ namespace encryption {
 
     for (loop = 0; loop < length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
-      static byte_ hex_val[arrSize];
+      static AESbyte hex_val[arrSize];
       //for loop somehow corrupted the array so im doing it manually
       printf("Loop count: %d \n", loop);
       if ((loop+1) <= length) {

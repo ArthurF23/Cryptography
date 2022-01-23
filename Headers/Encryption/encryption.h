@@ -17,7 +17,7 @@ namespace encryption {
     static unsigned int key = DEFAULT_KEY_NUM;
   }
   namespace AESKEY {
-    static byte_ key[GLOBAL_MTX_SIZE] =  {0x2b, 0x7e, 0x15, 0x16,   
+    static AESbyte key[GLOBAL_MTX_SIZE] =  {0x2b, 0x7e, 0x15, 0x16,   
     0x28, 0xae, 0xd2, 0xa6,   
     0xab, 0xf7, 0x15, 0x88,   
     0x09, 0xcf, 0x4f, 0x3c};
@@ -165,7 +165,7 @@ namespace encryption {
       static constexpr short Nr = 10;  //AES-128 requires 10 rounds of encryption  
       static constexpr short Nk = 4;   //Nk Represents the number of word s that are input keys
       static constexpr short word_size = (4*(Nr+1));
-      static constexpr byte_ S_Box[mtx_size][mtx_size] = {  
+      static constexpr AESbyte S_Box[mtx_size][mtx_size] = {  
         {0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76},  
         {0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0},  
         {0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15},  
@@ -183,7 +183,7 @@ namespace encryption {
         {0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF},  
         {0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16}  
         };  
-      static constexpr byte_ Inv_S_Box[mtx_size][mtx_size] = {  
+      static constexpr AESbyte Inv_S_Box[mtx_size][mtx_size] = {  
         {0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB},  
         {0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB},  
         {0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E},  
@@ -202,35 +202,35 @@ namespace encryption {
         {0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D}  
         };  
       //Round constant, used in key expansion. (AES-128 only takes 10 rounds)  
-      static constexpr word Rcon[10] = {0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000}; 
+      static constexpr AESword Rcon[10] = {0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000}; 
 
-      static word Word(byte_& k1, byte_& k2, byte_& k3, byte_& k4);
-      static word RotWord(word& rw);
-      static word SubWord(word& sw);
-      static void SubBytes(byte_ mtx[mtx_size]);
-      static void ShiftRows(byte_ mtx[mtx_size]);
-      static byte_ GFMul(byte_ a, byte_ b);
-      static void MixColumns(byte_ mtx[mtx_size]);
-      static void AddRoundKey(byte_ mtx[mtx_size], word k[4]);
-      static void InvSubBytes(byte_ mtx[mtx_size]);
-      static void InvShiftRows(byte_ mtx[mtx_size]);
-      static void InvMixColumns(byte_ mtx[mtx_size]);
+      static AESword Word(AESbyte& k1, AESbyte& k2, AESbyte& k3, AESbyte& k4);
+      static AESword RotWord(AESword& rw);
+      static AESword SubWord(AESword& sw);
+      static void SubBytes(AESbyte mtx[mtx_size]);
+      static void ShiftRows(AESbyte mtx[mtx_size]);
+      static AESbyte GFMul(AESbyte a, AESbyte b);
+      static void MixColumns(AESbyte mtx[mtx_size]);
+      static void AddRoundKey(AESbyte mtx[mtx_size], AESword k[4]);
+      static void InvSubBytes(AESbyte mtx[mtx_size]);
+      static void InvShiftRows(AESbyte mtx[mtx_size]);
+      static void InvMixColumns(AESbyte mtx[mtx_size]);
 
       //Conversions
-      static string hex_to_string(byte_ inp[mtx_size]);
-      static byte_ char_to_byte_(char inp);
-      static char binary_to_char(byte_ input);
-      static string binary_to_hex(byte_ inp);
-      static byte_ hex_str_to_byte(char inp1, char inp2);
-      static byte_ hex2byte_helper(char inp, byte_ bInp, short pos);
-      static byte_ bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
+      static string hex_to_string(AESbyte inp[mtx_size]);
+      static AESbyte char_to_byte_(char inp);
+      static char binary_to_char(AESbyte input);
+      static string binary_to_hex(AESbyte inp);
+      static AESbyte hex_str_to_byte(char inp1, char inp2);
+      static AESbyte hex2byte_helper(char inp, AESbyte bInp, short pos);
+      static AESbyte bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
 
-      static void KeyExpansion(word w[word_size]);
+      static void KeyExpansion(AESword w[word_size]);
 
-      static void cypher_encrypt(byte_ in[mtx_size], word w[word_size]);
-      static void cypher_decrypt(byte_ in[mtx_size], word w[word_size]);
+      static void cypher_encrypt(AESbyte in[mtx_size], AESword w[word_size]);
+      static void cypher_decrypt(AESbyte in[mtx_size], AESword w[word_size]);
 
-      static word global_word[word_size]; //Needs to be initilized
+      static AESword global_word[word_size]; //Needs to be initilized
 
       public:
       static int start_example();
