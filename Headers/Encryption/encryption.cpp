@@ -804,7 +804,7 @@ namespace encryption {
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += /*binary_to_char*/(hex_val[n].to_string());
+        output += binary_to_char(hex_val[n]/*.to_string()*/);
       };
     };
     for (int i = 0; i < word_size; i++) {
