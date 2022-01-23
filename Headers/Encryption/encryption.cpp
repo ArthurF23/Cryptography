@@ -170,6 +170,7 @@ namespace encryption {
     }
     return false;
   };
+  
   /////////////////////////////////////////////////////////
   ///////// AES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////
@@ -209,7 +210,7 @@ namespace encryption {
     return temp;  
   };
 
-  void AES::KeyExpansion(word w[4*(Nr+1)]) {  
+  void AES::KeyExpansion(word w[word_size]) {  
     word temp;
     int i = 0;  
     //The first four of w [] are input keys  
@@ -220,7 +221,7 @@ namespace encryption {
   
     i = Nk;  
   
-    while(i < 4*(Nr+1)) {  
+    while(i < word_size) {  
       temp = w[i-1]; //Record the previous word  
       if(i % Nk == 0) {
         word rwt = RotWord(temp);
@@ -384,7 +385,6 @@ namespace encryption {
     return char(num);
   };
 
-  //New
   string AES::binary_to_hex(byte_ inp) {
     string output;
     stringstream ss;
@@ -567,7 +567,7 @@ namespace encryption {
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
 
-  void AES::cypher_encrypt(byte_ in[mtx_size], word w[4*(Nr+1)]) {  
+  void AES::cypher_encrypt(byte_ in[mtx_size], word w[word_size]) {  
     word key[4];  
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -594,7 +594,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  void AES::cypher_decrypt(byte_ in[mtx_size], word w[4*(Nr+1)])  {  
+  void AES::cypher_decrypt(byte_ in[mtx_size], word w[word_size])  {  
     word key[4];
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -618,7 +618,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  word AES::global_word[4*(Nr+1)];
+  word AES::global_word[word_size];
 
   void AES::aes_init() {
     KeyExpansion(AES::global_word);
@@ -630,10 +630,14 @@ namespace encryption {
   /////////that input and output strings/////////////////
   ///////////////////////////////////////////////////////
 
+  /////////////
+  ///Encrypt///
+  /////////////
+
   string AES::encrypt(string input, int length) {
     string output;
-    word w[4*(Nr+1)];
-    for (int i = 0; i < 4*(Nr+1); i++) {
+    word w[word_size];
+    for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
     mutex mtxx;
@@ -649,7 +653,7 @@ namespace encryption {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
-          hex_val[x] = 0x20; //space
+          hex_val[x] = 0x20;
         };
       };
 
@@ -658,23 +662,34 @@ namespace encryption {
 
       //Make the binary turn to hex then make that a string
       for (int x = 0; x < mtx_size; x++) {
-        output += binary_to_hex(hex_val[x]); //Translates coreectly
+        output += binary_to_hex(hex_val[x]); //Translates correctly
       };
     };
     mtxx.unlock();
-    for (int i = 0; i < 4*(Nr+1); i++) {
+    for (int i = 0; i < word_size; i++) {
       global_word[i] = w[i];
     };
     return output;
   };
 
+  /////////////
+  ///Decrypt///
+  /////////////
+
   string AES::decrypt(string input, int length) {
     string output;
     constexpr unsigned short arrSize = mtx_size;
-    word w[4*(Nr+1)];
-    for (int i = 0; i < 4*(Nr+1); i++) {
+    printf("Length: %d \n", (int)length);
+    word w[word_size];
+    for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
+
+    byte_ SPACE[1]= {0x20};
+    string qw = encrypt(" ", 1);
+    SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
+
+    cout << SPACE[0].to_ulong() << endl;
 
     static unsigned int loop = 0;
 
@@ -682,6 +697,7 @@ namespace encryption {
       //broken, still isnt decrypting properly
       static byte_ hex_val[arrSize];
       //for loop somehow corrupted the array so im doing it manually
+      printf("Loop count: %d \n", loop);
       if ((loop+1) <= length) {
         hex_val[0] = hex_str_to_byte(input[loop], input[loop+1]);
         if ((loop+3) <= length) {
@@ -714,21 +730,69 @@ namespace encryption {
                                     hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
                                     if ((loop+31) <= length) {
                                       hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
+                                    }
+                                    else {
+                                      hex_val[15] = SPACE[0];
                                     };
+                                  }
+                                  else {
+                                    hex_val[14] = SPACE[0];
                                   };
+                                }
+                                else {
+                                  hex_val[13] = SPACE[0];
                                 };
+                              }
+                              else {
+                                hex_val[12] = SPACE[0];
                               };
+                            }
+                            else {
+                              hex_val[11] = SPACE[0];
                             };
+                          }
+                          else {
+                            hex_val[10] = SPACE[0];
                           };
+                        }
+                        else {
+                          hex_val[9] = SPACE[0];
                         };
+                      }
+                      else {
+                        hex_val[8] = SPACE[0];
                       };
+                    }
+                    else {
+                      hex_val[7] = SPACE[0];
                     };
+                  }
+                  else {
+                    hex_val[6] = SPACE[0];
                   };
+                }
+                else {
+                  hex_val[5] = SPACE[0];
                 };
+              }
+              else {
+                hex_val[4] = SPACE[0];
               };
+            }
+            else {
+              hex_val[3] = SPACE[0];
             };
+          }
+          else {
+            hex_val[2] = SPACE[0];
           };
+        }
+        else {
+          hex_val[1] = SPACE[0];
         };
+      }
+      else {
+        hex_val[0] = SPACE[0];
       };
       
 
@@ -740,15 +804,19 @@ namespace encryption {
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += binary_to_char(hex_val[n]/*.to_string()*/);
+        output += /*binary_to_char*/(hex_val[n].to_string());
       };
     };
-    for (int i = 0; i < 4*(Nr+1); i++) {
+    for (int i = 0; i < word_size; i++) {
       global_word[i] = w[i];
     };
-    printf("%d | %d ", length, loop);
+    printf("%d | %d \n", length, loop);
     return output;
   };
+
+  /////////////
+  ///Example///
+  /////////////
 
   int AES::start_example() {
     string actual_string = "bruh bruh";
