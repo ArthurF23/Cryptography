@@ -678,7 +678,7 @@ namespace encryption {
 
     static unsigned int loop = 0;
 
-    for (loop = 0; loop <= length; loop+=arrSize*2) {
+    for (loop = 0; loop < length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
       static byte_ hex_val[arrSize];
       //for loop somehow corrupted the array so im doing it manually
