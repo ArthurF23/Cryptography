@@ -602,13 +602,13 @@ namespace encryption {
     };
     clone.AddRoundKey(in, key);  
 
-    for(int round=Nr-1; round>0; --round) {  
-        clone.InvShiftRows(in);  
-        clone.InvSubBytes(in);  
-        for(int i=0; i<4; ++i)  
-            key[i] = w[4*round+i];  
-        clone.AddRoundKey(in, key);  
-        clone.InvMixColumns(in);  
+    for(int round=Nr-1; round>0; --round) {
+      clone.InvShiftRows(in);  
+      clone.InvSubBytes(in);  
+      for(int i=0; i<4; ++i)  
+          key[i] = w[4*round+i];  
+      clone.AddRoundKey(in, key);  
+      clone.InvMixColumns(in);  
     }  
 
     clone.InvShiftRows(in);  
@@ -654,10 +654,11 @@ namespace encryption {
       };
 
       cypher_encrypt(hex_val, w);
+      //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
 
       //Make the binary turn to hex then make that a string
       for (int x = 0; x < mtx_size; x++) {
-        output += binary_to_hex(hex_val[x]);
+        output += binary_to_hex(hex_val[x]); //Translates coreectly
       };
     };
     mtxx.unlock();
@@ -669,33 +670,83 @@ namespace encryption {
 
   string AES::decrypt(string input, int length) {
     string output;
+    constexpr unsigned short arrSize = mtx_size;
     word w[4*(Nr+1)];
     for (int i = 0; i < 4*(Nr+1); i++) {
       w[i] = global_word[i];
     };
-    mutex mtxx;
-    mtxx.lock();
+
     static unsigned int loop = 0;
-    for (loop = 0; loop < length; loop+=mtx_size) {
+
+    for (loop = 0; loop <= length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
-      byte_ hex_val[mtx_size];// {hex_str_to_byte(input[loop], input[loop+1])}; 
-      for (int x = 0; x < mtx_size; x+=2) {
-        if (x < length) {
-          hex_val[x] = hex_str_to_byte(input[loop+x], input[(loop+x)+1]);
-        }
-        else {
-          hex_val[x] = 0x20; //space
+      static byte_ hex_val[arrSize];
+      //for loop somehow corrupted the array so im doing it manually
+      if ((loop+1) <= length) {
+        hex_val[0] = hex_str_to_byte(input[loop], input[loop+1]);
+        if ((loop+3) <= length) {
+          hex_val[1] = hex_str_to_byte(input[loop+2], input[loop+3]);
+          if ((loop+5) <= length) {
+            hex_val[2] = hex_str_to_byte(input[loop+4], input[loop+5]);
+            if ((loop+7) <= length) {
+              hex_val[3] = hex_str_to_byte(input[loop+6], input[loop+7]);
+              if ((loop+9) <= length) {
+                hex_val[4] = hex_str_to_byte(input[loop+8], input[loop+9]);
+                if ((loop+11) <= length) {
+                  hex_val[5] = hex_str_to_byte(input[loop+10], input[loop+11]);
+                  if ((loop+13) <= length) {
+                    hex_val[6] = hex_str_to_byte(input[loop+12], input[loop+13]);
+                    if ((loop+15) <= length) {
+                      hex_val[7] = hex_str_to_byte(input[loop+14], input[loop+15]);
+                      if ((loop+17) <= length) {
+                        hex_val[8] = hex_str_to_byte(input[loop+16], input[loop+17]);
+                        if ((loop+19) <= length) {
+                          hex_val[9] = hex_str_to_byte(input[loop+18], input[loop+19]);
+                          if ((loop+21) <= length) {
+                            hex_val[10] = hex_str_to_byte(input[loop+20], input[loop+21]);
+                            if ((loop+23) <= length) {
+                              hex_val[11] = hex_str_to_byte(input[loop+22], input[loop+23]);
+                              if ((loop+25) <= length) {
+                                hex_val[12] = hex_str_to_byte(input[loop+24], input[loop+25]);
+                                if ((loop+27) <= length) {
+                                  hex_val[13] = hex_str_to_byte(input[loop+26], input[loop+27]);
+                                  if ((loop+29) <= length) {
+                                    hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
+                                    if ((loop+31) <= length) {
+                                      hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
+                                    };
+                                  };
+                                };
+                              };
+                            };
+                          };
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
         };
       };
-      //Hex to binary works properly
+      
+
+      //Somehow extra 0's are being added in between the function above and the loop below the check
+      for (int y = 0; y < arrSize; y+=1) {
+        cout << hex_val[y].to_ulong();
+      }
+      cout << endl;
+      
       cypher_decrypt(hex_val, w);
-      for (int x = 0; x < mtx_size; x++) {
-        output += binary_to_char(hex_val[x]);
+      for (int n = 0; n < arrSize; n++) {
+        output += binary_to_char(hex_val[n]/*.to_string()*/);
       };
     };
     for (int i = 0; i < 4*(Nr+1); i++) {
       global_word[i] = w[i];
     };
+    printf("%d | %d ", length, loop);
     return output;
   };
 

@@ -1,3 +1,12 @@
 {
-  "files": {}
+  "files": {
+    "Headers/Encryption/encryption.cpp": [
+      {
+        "id": "9fdb9f7e-349b-4c22-bb6c-d68e9e13994b",
+        "line": 681,
+        "version": 34589,
+        "index": 20901
+      }
+    ]
+  }
 }
