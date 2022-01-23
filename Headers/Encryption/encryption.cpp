@@ -653,7 +653,7 @@ namespace encryption {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
-          hex_val[x] = 0x20;
+          hex_val[x] = 0b00000010;
         };
       };
 
