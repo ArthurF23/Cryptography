@@ -653,11 +653,13 @@ namespace encryption {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
-          hex_val[x] = 0b00000010;
+          hex_val[x] = SPACE_BYTE;
         };
       };
 
+      cout << hex_val[0]<<endl;
       cypher_encrypt(hex_val, w);
+      cout << hex_val[0]/*.to_ulong()*/ /*hex*/ << endl; //array 0-15 defined on line 649 mtx_size = 16
       //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
 
       //Make the binary turn to hex then make that a string
@@ -685,11 +687,11 @@ namespace encryption {
       w[i] = global_word[i];
     };
 
-    AESbyte SPACE[1]= {0x20};
+    AESbyte SPACE[1]= {SPACE_BYTE};
     string qw = encrypt(" ", 1);
     SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
 
-    cout << SPACE[0].to_ulong() << endl;
+    cout << "Generated space " << SPACE[0].to_ulong() << endl;
 
     static unsigned int loop = 0;
 
