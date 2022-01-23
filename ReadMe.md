@@ -96,19 +96,19 @@ After that, a random amount of bloat strings within the paramaters found in cons
 After that, the function returns the decrypted output.
 
 ### Flags
-`no_bloat = 0x00`
+`no_bloat = 0b00`
 
 Flag to disable bloat
 
-`do_bloat = 0x01`
+`do_bloat = 0b01`
 
 Flag to enable bloat
 
-`no_rand_pattern = 0x10`
+`no_rand_pattern = 0b10`
 
 Flag to disable random pattern
 
-`do_rand_pattern = 0x11`
+`do_rand_pattern = 0b11`
 
 Flag to enable random pattern
 

@@ -140,10 +140,10 @@ namespace encryption {
 
     public:
     enum FLAGS {
-      no_bloat = 0x00,
-      do_bloat = 0x01,
-      no_rand_pattern = 0x10,
-      do_rand_pattern = 0x11
+      no_bloat = 0b00,
+      do_bloat = 0b01,
+      no_rand_pattern = 0b10,
+      do_rand_pattern = 0b11
     };
     //Checks to see if the key is valid
     static bool validate_key(string inp);
