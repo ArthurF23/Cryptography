@@ -656,24 +656,29 @@ namespace encryption {
     for (loop = 0; loop < length; loop+=mtx_size) {
       
       //Figure out how to convert to hex and feed AES algorithm one letter at a time
-      AESbyte hex_val[mtx_size];// {char_to_byte_(input[loop])};
-
+      AESbyte hex_val[mtx_size] = {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};// {char_to_byte_(input[loop])};
+      cout << "Char 2 byte: ";
       for (int x = 0; x < mtx_size; x++) {
-        if (x < length) {
+        if ((loop+x) < length) {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
           hex_val[x] = SPACE_BYTE;
         };
+        cout << hex_val[x].to_ulong();
       };
-
+      cout << endl;
+      
       cypher_encrypt(hex_val, w);
       //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
 
       //Make the binary turn to hex then make that a string
+      cout << "EncryptedHex ";
       for (int x = 0; x < mtx_size; x++) {
+        cout << hex_val[x].to_ulong();
         output += binary_to_hex(hex_val[x]); //Translates correctly
       };
+      cout << endl;
     };
     mtxx.unlock();
     for (int i = 0; i < word_size; i++) {
@@ -752,6 +757,7 @@ namespace encryption {
       };                                   
       
       //Checker
+      cout << "Checker: ";
       for (int y = 0; y < arrSize; y+=1) {
         cout << hex_val[y].to_ulong();
       }
@@ -774,7 +780,7 @@ namespace encryption {
   /////////////
 
   int AES::start_example() {
-    string actual_string = "bruh bruh Bruh Bruh Bruh Bruh av";
+    string actual_string = "bruh bruh Bruh Bruh Bruh Bruh a Does this actually work finally like what the frick dude this has been so long";
     
     //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
 
