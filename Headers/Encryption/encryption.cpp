@@ -548,6 +548,15 @@ namespace encryption {
           bInp = bit_assign(1, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
         }
         break;
+
+      default:
+        if (pos == 1) {
+            bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 0, 0);
+          }
+          else if (pos == 2) {
+            bInp = bit_assign(0, 0, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+          }
+        break;
     }
     return bInp;
   }
@@ -646,6 +655,7 @@ namespace encryption {
 
   string AES::encrypt(string input, int length) {
     string output;
+    //Perhaps add something that increases the length to equal length%32 by adding ~ 's 
     AESword w[word_size];
     for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
@@ -668,17 +678,28 @@ namespace encryption {
         cout << hex_val[x].to_ulong();
       };
       cout << endl;
-      
+
       cypher_encrypt(hex_val, w);
       //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
 
       //Make the binary turn to hex then make that a string
       cout << "EncryptedHex ";
+      string output_beta;
       for (int x = 0; x < mtx_size; x++) {
         cout << hex_val[x].to_ulong();
-        output += binary_to_hex(hex_val[x]); //Translates correctly
+        output_beta += binary_to_hex(hex_val[x]); //Translates correctly
       };
       cout << endl;
+      cout << "Output Beta Length: " << to_string(output_beta.length()) << endl;
+      if (output_beta.length() != (mtx_size*2)) {
+        for (int j = 0; j != ((mtx_size*2) - output_beta.length())+1; j++) {
+          output_beta+="a";
+          if (output_beta.length() >= (mtx_size*2)) {break;};
+        };
+      }
+      cout << "Output beta: " << output_beta << endl;
+      output += output_beta;
+      
     };
     mtxx.unlock();
     for (int i = 0; i < word_size; i++) {
