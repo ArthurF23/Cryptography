@@ -693,7 +693,8 @@ namespace encryption {
       cout << "Output Beta Length: " << to_string(output_beta.length()) << endl;
       if (output_beta.length() != (mtx_size*2)) {
         for (int j = 0; j != ((mtx_size*2) - output_beta.length())+1; j++) {
-          output_beta+="a";
+          if (output_beta.length()%2 == 0) {output_beta+="8c";}
+          else {output_beta+="0";};
           if (output_beta.length() >= (mtx_size*2)) {break;};
         };
       }
