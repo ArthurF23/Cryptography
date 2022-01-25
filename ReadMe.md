@@ -118,3 +118,5 @@ Flag to enable random pattern
 As I learn how AES works I will change the code to an even more customized and polished version. I must give credit to https://programmer.group/c-implementation-of-aes-encryption-algorithms.html as I used lots of their code to get the encryption working and it isnt mine. As I figure out how the code works, I will use my own, but as of now, I am using theirs and that is their property. Please support them.
 
 My current issue with the code is the example was made to only take a specific amount of characters at a time which would be constants in the code. I have made the example for AES work, but it still does not take a dynamic amount of characters.
+
+If anyone is revewing my code and sees a solution, please let me know, any help is appreciated and would be credited.
