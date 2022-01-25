@@ -387,7 +387,7 @@ namespace encryption {
     return char(num);
   };
 
-  string AES::binary_to_hex(AESbyte inp) {
+  string AES::binary_to_hex_str(AESbyte inp) {
     string output;
     stringstream ss;
     ss << hex << inp.to_ulong();
@@ -687,7 +687,7 @@ namespace encryption {
       string output_beta;
       for (int x = 0; x < mtx_size; x++) {
         cout << hex_val[x].to_ulong();
-        output_beta += binary_to_hex(hex_val[x]); //Translates correctly
+        output_beta += binary_to_hex_str(hex_val[x]); //Translates correctly
       };
       cout << endl;
       cout << "Output Beta Length: " << to_string(output_beta.length()) << endl;

@@ -226,7 +226,7 @@ namespace encryption {
       static string hex_to_string(AESbyte inp[mtx_size]);
       static AESbyte char_to_byte_(char inp);
       static char binary_to_char(AESbyte input);
-      static string binary_to_hex(AESbyte inp);
+      static string binary_to_hex_str(AESbyte inp);
       static AESbyte hex_str_to_byte(char inp1, char inp2);
       static AESbyte hex2byte_helper(char inp, AESbyte bInp, short pos);
       static AESbyte bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
