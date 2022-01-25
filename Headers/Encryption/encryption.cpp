@@ -726,7 +726,7 @@ namespace encryption {
 
     for (loop = 0; loop < length; loop+=arrSize*2) {
       //broken, still isnt decrypting properly
-      static AESbyte hex_val[arrSize] = {SPACE[0], SPACE[1], SPACE[2], SPACE[3], SPACE[4], SPACE[5], SPACE[6], SPACE[7], SPACE[8], SPACE[9], SPACE[10], SPACE[11], SPACE[12], SPACE[13], SPACE[14], SPACE[15]};
+      static AESbyte hex_val[arrSize];/* = {SPACE[0], SPACE[1], SPACE[2], SPACE[3], SPACE[4], SPACE[5], SPACE[6], SPACE[7], SPACE[8], SPACE[9], SPACE[10], SPACE[11], SPACE[12], SPACE[13], SPACE[14], SPACE[15]};*/
       //for loop somehow corrupted the array so im doing it manually
       printf("Loop count: %d \n", loop);
       if ((loop+1) <= length && input[loop] != fillerChar && input[loop+1] != fillerChar) {

@@ -161,9 +161,9 @@ namespace encryption {
 
   class AES {
     private:
-      static constexpr AESbyte SPACE_BYTE = 0b01111110;//~
+      static constexpr AESbyte SPACE_BYTE = 0b00000000;//0b01111110;//~
       //Space = 0b00100000
-      static constexpr char fillerChar = '%';
+      static constexpr char fillerChar = ' ';
       static constexpr short mtx_size = GLOBAL_MTX_SIZE;
       static constexpr short Nr = 10;  //AES-128 requires 10 rounds of encryption  
       static constexpr short Nk = 4;   //Nk Represents the number of word s that are input keys
