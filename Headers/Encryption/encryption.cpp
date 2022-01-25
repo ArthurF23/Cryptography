@@ -694,7 +694,7 @@ namespace encryption {
       if (output_beta.length() != (mtx_size*2)) {
         for (int j = 0; j != ((mtx_size*2) - output_beta.length())+1; j++) {
           //Length matches but I think I need to get rid of the % in decrypt somehow
-          output_beta+="%";
+          output_beta+=fillerChar;
           if (output_beta.length() >= (mtx_size*2)) {break;};
         };
       }
@@ -729,37 +729,37 @@ namespace encryption {
       static AESbyte hex_val[arrSize] = {SPACE[0], SPACE[1], SPACE[2], SPACE[3], SPACE[4], SPACE[5], SPACE[6], SPACE[7], SPACE[8], SPACE[9], SPACE[10], SPACE[11], SPACE[12], SPACE[13], SPACE[14], SPACE[15]};
       //for loop somehow corrupted the array so im doing it manually
       printf("Loop count: %d \n", loop);
-      if ((loop+1) <= length) {
+      if ((loop+1) <= length && input[loop] != fillerChar && input[loop+1] != fillerChar) {
         hex_val[0] = hex_str_to_byte(input[loop], input[loop+1]);
-        if ((loop+3) <= length) {
+        if ((loop+3) <= length && input[loop+2] != fillerChar && input[loop+3] != fillerChar) {
           hex_val[1] = hex_str_to_byte(input[loop+2], input[loop+3]);
-          if ((loop+5) <= length) {
+          if ((loop+5) <= length && input[loop+4] != fillerChar && input[loop+5] != fillerChar) {
             hex_val[2] = hex_str_to_byte(input[loop+4], input[loop+5]);
-            if ((loop+7) <= length) {
+            if ((loop+7) <= length && input[loop+6] != fillerChar && input[loop+7] != fillerChar) {
               hex_val[3] = hex_str_to_byte(input[loop+6], input[loop+7]);
-              if ((loop+9) <= length) {
+              if ((loop+9) <= length && input[loop+8] != fillerChar && input[loop+9] != fillerChar) {
                 hex_val[4] = hex_str_to_byte(input[loop+8], input[loop+9]);
-                if ((loop+11) <= length) {
+                if ((loop+11) <= length && input[loop+10] != fillerChar && input[loop+11] != fillerChar) {
                   hex_val[5] = hex_str_to_byte(input[loop+10], input[loop+11]);
-                  if ((loop+13) <= length) {
+                  if ((loop+13) <= length && input[loop+12] != fillerChar && input[loop+13] != fillerChar) {
                     hex_val[6] = hex_str_to_byte(input[loop+12], input[loop+13]);
-                    if ((loop+15) <= length) {
+                    if ((loop+15) <= length && input[loop+14] != fillerChar && input[loop+15] != fillerChar) {
                       hex_val[7] = hex_str_to_byte(input[loop+14], input[loop+15]);
-                      if ((loop+17) <= length) {
+                      if ((loop+17) <= length && input[loop+16] != fillerChar && input[loop+17] != fillerChar) {
                         hex_val[8] = hex_str_to_byte(input[loop+16], input[loop+17]);
-                        if ((loop+19) <= length) {
+                        if ((loop+19) <= length && input[loop+18] != fillerChar && input[loop+19] != fillerChar) {
                           hex_val[9] = hex_str_to_byte(input[loop+18], input[loop+19]);
-                          if ((loop+21) <= length) {
+                          if ((loop+21) <= length && input[loop+20] != fillerChar && input[loop+21] != fillerChar) {
                             hex_val[10] = hex_str_to_byte(input[loop+20], input[loop+21]);
-                            if ((loop+23) <= length) {
+                            if ((loop+23) <= length && input[loop+22] != fillerChar && input[loop+23] != fillerChar) {
                               hex_val[11] = hex_str_to_byte(input[loop+22], input[loop+23]);
-                              if ((loop+25) <= length) {
+                              if ((loop+25) <= length && input[loop+24] != fillerChar && input[loop+25] != fillerChar) {
                                 hex_val[12] = hex_str_to_byte(input[loop+24], input[loop+25]);
-                                if ((loop+27) <= length) {
+                                if ((loop+27) <= length && input[loop+26] != fillerChar && input[loop+27] != fillerChar) {
                                   hex_val[13] = hex_str_to_byte(input[loop+26], input[loop+27]);
-                                  if ((loop+29) <= length) {
+                                  if ((loop+29) <= length && input[loop+28] != fillerChar && input[loop+29] != fillerChar) {
                                     hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
-                                    if ((loop+31) <= length) {
+                                    if ((loop+31) <= length && input[loop+30] != fillerChar && input[loop+31] != fillerChar) {
                                       hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
                                     };
                                   };
