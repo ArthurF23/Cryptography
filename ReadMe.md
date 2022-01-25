@@ -123,3 +123,6 @@ My current issue with the code is the example was made to only take a specific a
 Fix all outputted strings from encrypt to match an expected length
 
 Take imputted strings into decrypt and fix them by adding compatible hex chars on the end
+
+
+Any help would be much appreciated.
