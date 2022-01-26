@@ -14,4 +14,8 @@ Completed? yes
 
 1/23/22 Fix decrypt to take any length of string and decrypt properly. May need to modify encrypt to fill empty spaces with a specific value which will be removed after decrypt but before it's added to the output string.
 
+1/26/22 Note: Make it use binary at this point because hex is broken so just use binary. Make it all output and input binary it will just work better
+
+Completed? no
+
 1/23/22 Once the AES encryption and decryption works compentently, implement key generation
