@@ -182,4 +182,4 @@ string example_str = "0010101000110110"; //Not an actual encrypted string
 string decrypted_str = "aa";
 ```
 
-I plan to add more features and a lot more to this header in the future, thank you again for down.
+I plan to add more features and a lot more to this header in the future, thank you again for downloading.
