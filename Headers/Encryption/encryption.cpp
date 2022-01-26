@@ -549,6 +549,22 @@ namespace encryption {
     return output;
   };
 
+  ////////////////
+  ///File Stuff///
+  ////////////////
+
+  string AES::encryptFF(string path) {
+   string output; 
+
+   return output;
+  };
+
+  string AES::decryptFF(string path) {
+    string output;
+
+    return output;
+  };
+
   /////////////
   ///Example///
   /////////////
