@@ -17,5 +17,5 @@ int main() {
       cout << "Err please input 1 or 2" << endl;
       return main();
   };
-  return 0;
+  return main();
 }

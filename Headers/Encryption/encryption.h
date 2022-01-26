@@ -150,7 +150,7 @@ namespace encryption {
     //Key generator
     static unsigned int generate_key();
     //Example Function
-    static void start_example();
+    static int start_example();
     //Encrypt input string
     static string encrypt(string input, FLAGS bloat = FLAGS::do_bloat, FLAGS pattern = FLAGS::do_rand_pattern);
     //Decrypt input string
@@ -161,10 +161,14 @@ namespace encryption {
 
   class AES {
     private:
+      static constexpr AESbyte SPACE_BYTE = 0b00000000;//0b01111110;//~
+      //Space = 0b00100000
+      static constexpr short bitsInByte = 8;
       static constexpr short mtx_size = GLOBAL_MTX_SIZE;
       static constexpr short Nr = 10;  //AES-128 requires 10 rounds of encryption  
       static constexpr short Nk = 4;   //Nk Represents the number of word s that are input keys
       static constexpr short word_size = (4*(Nr+1));
+
       static constexpr AESbyte S_Box[mtx_size][mtx_size] = {  
         {0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76},  
         {0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0},  
@@ -220,10 +224,11 @@ namespace encryption {
       static string hex_to_string(AESbyte inp[mtx_size]);
       static AESbyte char_to_byte_(char inp);
       static char binary_to_char(AESbyte input);
-      static string binary_to_hex(AESbyte inp);
+      static string binary_to_hex_str(AESbyte inp);
       static AESbyte hex_str_to_byte(char inp1, char inp2);
       static AESbyte hex2byte_helper(char inp, AESbyte bInp, short pos);
       static AESbyte bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
+      static AESbyte binStr_to_byte(string input);
 
       static void KeyExpansion(AESword w[word_size]);
 

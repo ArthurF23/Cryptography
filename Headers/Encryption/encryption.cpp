@@ -25,7 +25,7 @@ namespace encryption {
           ">_>>",
           "_.>>"
         };
-  void encdec::start_example() {
+    int encdec::start_example() {
     cout << "Are you Encrypting or Decrypting?" << endl << "e/d" << endl;
     char user_choice; cin >> user_choice; cout << "Please input the text" << endl << "Input here:" << endl; string user_inputted_string;
     cin.ignore();
@@ -47,7 +47,7 @@ namespace encryption {
     cout << "Key: " << KEY::key << endl << "Result: " << endl << output_str << endl;
     cout << "Press any key to continue " << endl;
     cin.ignore();
-    return encdec::start_example();
+    return 0;
   }
   bool encdec::isNumberString(string input) {
     for (char &c : input) {
@@ -385,7 +385,7 @@ namespace encryption {
     return char(num);
   };
 
-  string AES::binary_to_hex(AESbyte inp) {
+  string AES::binary_to_hex_str(AESbyte inp) {
     string output;
     stringstream ss;
     ss << hex << inp.to_ulong();
@@ -546,6 +546,15 @@ namespace encryption {
           bInp = bit_assign(1, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
         }
         break;
+
+      default:
+        if (pos == 1) {
+            bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 0, 0);
+          }
+          else if (pos == 2) {
+            bInp = bit_assign(0, 0, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
+          }
+        break;
     }
     return bInp;
   }
@@ -624,6 +633,16 @@ namespace encryption {
     KeyExpansion(AES::global_word);
   }
 
+  AESbyte AES::binStr_to_byte(string input) {
+    AESbyte result;
+    for (int i = 0, y = bitsInByte-1; i < bitsInByte; i++, y--) {
+      if (input[y] == '1') {
+        result[i] = 1;
+      }
+    };
+    return result;
+  }
+
 
   ///////////////////////////////////////////////////////
   /////////Pass through encrypt & decrypt functions//////
@@ -645,25 +664,24 @@ namespace encryption {
     static unsigned int loop = 0;
     for (loop = 0; loop < length; loop+=mtx_size) {
       
-      //Figure out how to convert to hex and feed AES algorithm one letter at a time
-      AESbyte hex_val[mtx_size];// {char_to_byte_(input[loop])};
+      AESbyte hex_val[mtx_size] = {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};
 
       for (int x = 0; x < mtx_size; x++) {
-        if (x < length) {
+        if ((loop+x) < length) {
           hex_val[x] = char_to_byte_(input[loop+x]);
         }
         else {
-          hex_val[x] = 0x20;
+          hex_val[x] = SPACE_BYTE;
         };
       };
+      cout << endl;
 
       cypher_encrypt(hex_val, w);
-      //cypher_decrypt(hex_val, w); //OH MY GOD THIS WORKS IT ACTUALLY OUTPUTTED THE STRING CORRECTLY THE PROBLEM SOULY LIES INBETWEEN THIS OUTPUTTING AND IT DECRYPTING OH MY GOD AHHHHH WHY DIDNT I THINK OF DOING THIS BEFORE
-
       //Make the binary turn to hex then make that a string
       for (int x = 0; x < mtx_size; x++) {
-        output += binary_to_hex(hex_val[x]); //Translates correctly
+        output += hex_val[x].to_string(); //Binary output
       };
+      
     };
     mtxx.unlock();
     for (int i = 0; i < word_size; i++) {
@@ -679,138 +697,28 @@ namespace encryption {
   string AES::decrypt(string input, int length) {
     string output;
     constexpr unsigned short arrSize = mtx_size;
-    printf("Length: %d \n", (int)length);
     AESword w[word_size];
     for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
 
-    AESbyte SPACE[1]= {0x20};
-    string qw = encrypt(" ", 1);
-    SPACE[0] = hex_str_to_byte(qw[0], qw[1]);
-
-    cout << SPACE[0].to_ulong() << endl;
-
     static unsigned int loop = 0;
 
-    for (loop = 0; loop < length; loop+=arrSize*2) {
-      //broken, still isnt decrypting properly
-      static AESbyte hex_val[arrSize];
-      //for loop somehow corrupted the array so im doing it manually
-      printf("Loop count: %d \n", loop);
-      if ((loop+1) <= length) {
-        hex_val[0] = hex_str_to_byte(input[loop], input[loop+1]);
-        if ((loop+3) <= length) {
-          hex_val[1] = hex_str_to_byte(input[loop+2], input[loop+3]);
-          if ((loop+5) <= length) {
-            hex_val[2] = hex_str_to_byte(input[loop+4], input[loop+5]);
-            if ((loop+7) <= length) {
-              hex_val[3] = hex_str_to_byte(input[loop+6], input[loop+7]);
-              if ((loop+9) <= length) {
-                hex_val[4] = hex_str_to_byte(input[loop+8], input[loop+9]);
-                if ((loop+11) <= length) {
-                  hex_val[5] = hex_str_to_byte(input[loop+10], input[loop+11]);
-                  if ((loop+13) <= length) {
-                    hex_val[6] = hex_str_to_byte(input[loop+12], input[loop+13]);
-                    if ((loop+15) <= length) {
-                      hex_val[7] = hex_str_to_byte(input[loop+14], input[loop+15]);
-                      if ((loop+17) <= length) {
-                        hex_val[8] = hex_str_to_byte(input[loop+16], input[loop+17]);
-                        if ((loop+19) <= length) {
-                          hex_val[9] = hex_str_to_byte(input[loop+18], input[loop+19]);
-                          if ((loop+21) <= length) {
-                            hex_val[10] = hex_str_to_byte(input[loop+20], input[loop+21]);
-                            if ((loop+23) <= length) {
-                              hex_val[11] = hex_str_to_byte(input[loop+22], input[loop+23]);
-                              if ((loop+25) <= length) {
-                                hex_val[12] = hex_str_to_byte(input[loop+24], input[loop+25]);
-                                if ((loop+27) <= length) {
-                                  hex_val[13] = hex_str_to_byte(input[loop+26], input[loop+27]);
-                                  if ((loop+29) <= length) {
-                                    hex_val[14] = hex_str_to_byte(input[loop+28], input[loop+29]);
-                                    if ((loop+31) <= length) {
-                                      hex_val[15] = hex_str_to_byte(input[loop+30], input[loop+31]);
-                                    }
-                                    else {
-                                      hex_val[15] = SPACE[0];
-                                    };
-                                  }
-                                  else {
-                                    hex_val[14] = SPACE[0];
-                                  };
-                                }
-                                else {
-                                  hex_val[13] = SPACE[0];
-                                };
-                              }
-                              else {
-                                hex_val[12] = SPACE[0];
-                              };
-                            }
-                            else {
-                              hex_val[11] = SPACE[0];
-                            };
-                          }
-                          else {
-                            hex_val[10] = SPACE[0];
-                          };
-                        }
-                        else {
-                          hex_val[9] = SPACE[0];
-                        };
-                      }
-                      else {
-                        hex_val[8] = SPACE[0];
-                      };
-                    }
-                    else {
-                      hex_val[7] = SPACE[0];
-                    };
-                  }
-                  else {
-                    hex_val[6] = SPACE[0];
-                  };
-                }
-                else {
-                  hex_val[5] = SPACE[0];
-                };
-              }
-              else {
-                hex_val[4] = SPACE[0];
-              };
-            }
-            else {
-              hex_val[3] = SPACE[0];
-            };
-          }
-          else {
-            hex_val[2] = SPACE[0];
-          };
-        }
-        else {
-          hex_val[1] = SPACE[0];
-        };
-      }
-      else {
-        hex_val[0] = SPACE[0];
-      };
-      
+    for (loop = 0; loop < length; loop+=arrSize*bitsInByte) {
 
-      //Somehow extra 0's are being added in between the function above and the loop below the check
-      for (int y = 0; y < arrSize; y+=1) {
-        cout << hex_val[y].to_ulong();
+      static AESbyte hex_val[arrSize];
+      for (int x = loop, p = 0; p < arrSize; x+=bitsInByte, p++) {
+        hex_val[p] = binStr_to_byte(input.substr(x, x+bitsInByte));
       }
-      cout << endl;
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += binary_to_char(hex_val[n]/*.to_string()*/);
+        output += binary_to_char(hex_val[n]);
       };
     };
     for (int i = 0; i < word_size; i++) {
       global_word[i] = w[i];
     };
-    printf("%d | %d \n", length, loop);
     return output;
   };
 
@@ -819,28 +727,32 @@ namespace encryption {
   /////////////
 
   int AES::start_example() {
-    string actual_string = "bruh bruh";
-    
-    //byte_ bit = 0b01000001; assign binary using 0b{binary} like 0b01000001
+    string actual_string;
+
+    aes_init(); //Call before use 
+
     //Output key
-    cout << "The key is:";  
+    cout << "The key is:";
     for(int i=0; i<mtx_size; ++i) {
       cout << hex << AESKEY::key[i].to_ulong() << " ";
     };
     cout << endl;
 
+    cout << "Input what you would like encrypted:" << endl;
+    cin.ignore();
+    getline(cin >> noskipws, actual_string);
+    
+
     cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
-
-
-    aes_init();
 
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string, actual_string.length());  
-    cout << "Encrypted ciphertext:" << endl << actual_string << endl; 
+    cout << "Encrypted ciphertext:" << endl << actual_string << endl;
 
-    //Decrypt, output plaintext  
+    //Decrypt, output plaintext 
     actual_string = decrypt(actual_string, actual_string.length());
     cout << "Decrypted plaintext:" << endl << actual_string << endl;
+    cout << "Press any key to continue" << endl;
     cin.ignore();
     return 0;
   };
