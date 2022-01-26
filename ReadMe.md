@@ -140,7 +140,6 @@ Unless you're modifying the header you won't have much use for these but the AES
   == OR ==
   AESbyte value = 0b01001100;
   AESKEY::key = value;
-
 ```
 
 #### `OPTIONS`
