@@ -117,5 +117,5 @@ Flag to enable random pattern
 
 As I learn how AES works I will change the code to an even more customized and polished version. I must give credit to https://programmer.group/c-implementation-of-aes-encryption-algorithms.html as I used lots of their code to get the encryption working and it isnt mine. As I figure out how the code works, I will use my own, but as of now, I am using theirs and that is their property. Please support them.
 
-As of 1/26/22 AES is officially working, now I plan to clean up the code and make it work and look better.
+As of 1/26/22 AES is officially working, now I plan to clean up the code and make it work and look better, and the ReadMe will be updated to show how to use the AES within a few days. 
 
