@@ -1,6 +1,8 @@
-### Thank you for using my header.
+## Thank you for using my header.
 
-Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it. Also, I am currently working on adding AES encryption once I can figure out how all that works.
+Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
+
+### Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
 
 It is possible to change how much bloat is in the encryption by going to encryption.h and finding the bloat struct and changing the non default values.
@@ -113,9 +115,72 @@ Flag to disable random pattern
 Flag to enable random pattern
 
 
-### AES
+## AES
 
 As I learn how AES works I will change the code to an even more customized and polished version. I must give credit to https://programmer.group/c-implementation-of-aes-encryption-algorithms.html as I used lots of their code to get the encryption working and it isnt mine. As I figure out how the code works, I will use my own, but as of now, I am using theirs and that is their property. Please support them.
 
-As of 1/26/22 AES is officially working, now I plan to clean up the code and make it work and look better, and the ReadMe will be updated to show how to use the AES within a few days. 
+As of 1/26/22 AES is officially working, now I plan to clean up the code and make it work and look better.
 
+### How to use
+
+
+#### Types
+`AESbyte` is 8 bits
+
+`AESword` is 32 bits
+
+Unless you're modifying the header you won't have much use for these but the AESbyte is the typedef for the key amongst other varibles. 
+
+#### `AESKEY::Key`
+
+`AESKEY::key` is the key for AES and is an array which has a length of 16 and the type is `AESbyte`. If you are assigning a key manually you can do this:
+
+```
+  AESKEY::key[0] = 0b00100010;
+  == OR ==
+  AESbyte value = 0b01001100;
+  AESKEY::key = value;
+
+```
+
+#### `OPTIONS`
+The enum OPTIONS is the enum to determine key generation. Use `OPTIONS::doGenerateKey` in `AES::aes_init()` if you want a randomly generated key, if you don't, then use `OPTIONS::noGenerateKey` instead.
+
+#### `aes_init()`
+You must call this function before using any encryption or decryption.
+
+This function has 2 parameters
+
+`AES::aes_init(OPTIONS opt, string dummykey = "")`
+
+The first parameter is the previous section's OPTION enum. If you choose to generate a key you would put `OPTIONS::doGenerateKey` here like so: `AES::aes_init(OPTIONS::doGenerateKey)`.
+
+If you do not want to generate a key then you will want to input a key of 16 bytes (that's 128 bits and since there's no spaces, the length of the string needs to be 128) in the form of a string with no spaces to avoid errors. That will look like:
+
+```
+string exampleKey = "00110001001100100011001100110100001101010011011000110111001110000011100100110000001100010011001000110011001101000011010100110110";
+
+AES::aes_init(OPTIONS::noGenerateKey, exampleKey)
+```
+
+#### `encrypt()`
+
+This is **the** encryption function for AES, it has 1 parameter and that is the string input. The function returns the encrypted string so it would be used like this:
+
+```
+string example_str = "Test String";
+string encrypted_str = AES::encrypt(example_str);
+```
+
+The string it outputs is in binary due to certian issues with outputting hex or ASCII characters, I'll look into that in the future. 
+
+#### `decrypt()`
+
+This is **the** decrypt function for AES, it too has 1 parameter just like `AES::encrypt()` input the binary string that the encrypt function outputted and make sure the key is the same and you'll have your original text. 
+
+```
+string example_str = "0010101000110110"; //Not an actual encrypted string
+string decrypted_str = "aa";
+```
+
+I plan to add more features and a lot more to this header in the future, thank you again for down.

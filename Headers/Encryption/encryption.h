@@ -221,14 +221,11 @@ namespace encryption {
       static void InvMixColumns(AESbyte mtx[mtx_size]);
 
       //Conversions
-      static string hex_to_string(AESbyte inp[mtx_size]);
       static AESbyte char_to_byte_(char inp);
       static char binary_to_char(AESbyte input);
-      static string binary_to_hex_str(AESbyte inp);
-      static AESbyte hex_str_to_byte(char inp1, char inp2);
-      static AESbyte hex2byte_helper(char inp, AESbyte bInp, short pos);
-      static AESbyte bit_assign(int a, int b, int c, int d, int e, int f, int g, int h);
       static AESbyte binStr_to_byte(string input);
+      //Random number generation function
+      static unsigned int getRandomNum(unsigned int min, unsigned int max);
 
       static void KeyExpansion(AESword w[word_size]);
 
@@ -236,13 +233,19 @@ namespace encryption {
       static void cypher_decrypt(AESbyte in[mtx_size], AESword w[word_size]);
 
       static AESword global_word[word_size]; //Needs to be initilized
+      
+      static void generate_key();
 
       public:
+      enum OPTIONS {
+        doGenerateKey = 0b00000000, 
+        noGenerateKey = 0b00000001
+      };
       static int start_example();
-      static string encrypt(string input, int string_length);
-      static string decrypt(string input, int string_length);
+      static string encrypt(string input);
+      static string decrypt(string input);
       //Call before use
-      static void aes_init();
-      static void generate_key();
+      static void aes_init(OPTIONS genkey, string dummykey);
+
     };
 };

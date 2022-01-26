@@ -56,6 +56,13 @@ namespace encryption {
     return true;
   }
 
+  unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
+    return dist6(rng);
+  }
+
   unsigned int encdec::decide_scramble() {
     for (int i=encdec::constants::scramble_info::starting_divisor; i < encdec::constants::scramble_info::ending_divisor+1; i++) {
       if ((KEY::key%i) == 0) {
@@ -63,13 +70,6 @@ namespace encryption {
       };
     };
     return 1;
-  }
-
-  unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
-    return dist6(rng);
   }
 
   unsigned int encdec::generate_key() {
@@ -351,24 +351,11 @@ namespace encryption {
     };
   };
 
-  string AES::hex_to_string(AESbyte inp[mtx_size]) {
-    string output;
-    for (int i=0; i < mtx_size; i++) {
-      output += static_cast<char>(inp[i].to_ulong());
-    };
-    return output;
-  }
-
-  void AES::generate_key() {
-    
-  };
-
   //Basically converting char to hex
   AESbyte AES::char_to_byte_(char inp) {
     return static_cast<AESbyte>(inp);
-  }
+  };
 
-//Now working
   char AES::binary_to_char(AESbyte input) {
     mutex mtxx;
     unsigned int num = 0;
@@ -385,193 +372,47 @@ namespace encryption {
     return char(num);
   };
 
-  string AES::binary_to_hex_str(AESbyte inp) {
-    string output;
-    stringstream ss;
-    ss << hex << inp.to_ulong();
-    ss >> output;
-    return output;
+  unsigned int AES::getRandomNum(unsigned int min, unsigned int max) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
+    return dist6(rng);
+  }
+
+  void AES::generate_key() {
+    for (int x = 0; x < mtx_size; x++) {
+      AESbyte bin = 0b00000000;
+      for (int i = 0; i < bitsInByte; i++) {
+        bin[i] = getRandomNum(0, 1);
+      };
+      AESKEY::key[x] = bin;
+    };
   };
 
-  AESbyte AES::bit_assign(int a, int b, int c, int d, int e, int f, int g, int h) {
+  AESword AES::global_word[word_size];
+
+  void AES::aes_init(OPTIONS genkey, string dummykey = "") {
+    if (genkey == OPTIONS::doGenerateKey || dummykey.length() < mtx_size*bitsInByte) {
+      generate_key();
+      }
+    else {
+      for (int y = 0, n=0; y < mtx_size; y++, n+=bitsInByte) {
+        AESKEY::key[y]= binStr_to_byte(dummykey.substr(n, n+bitsInByte));
+      };
+    };
+    KeyExpansion(AES::global_word);
+  };
+
+  AESbyte AES::binStr_to_byte(string input) {
     AESbyte result;
-    result[0] = a;
-    result[1] = b;
-    result[2] = c;
-    result[3] = d;
-    result[4] = e;
-    result[5] = f;
-    result[6] = g;
-    result[7] = h;
+    for (int i = 0, y = bitsInByte-1; i < bitsInByte; i++, y--) {
+      if (input[y] == '1') {
+        result[i] = 1;
+      }
+    };
     return result;
   }
-
-  AESbyte AES::hex2byte_helper(char inp, AESbyte bInp, short pos) {
-    //Use pos to know if youre on the 1st or 2nd character
-    //Lookup table increases performance but uses more memory
-    //pos = 1 is first letter and array positions 4-7
-    //pos = 2 is second letter and array position 0-3
-    switch (inp) {
-      case 'a':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 0, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 1, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case 'b':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 0, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 1, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case 'c':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 1, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 0, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-      
-      case 'd':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 1, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 0, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case 'e':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 1, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 1, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case 'f':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 1, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 1, 1, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-      
-      case '1':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 0, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 0, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '2':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 0, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 1, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '3':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 0, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 1, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '4':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 1, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 0, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '5':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 1, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 0, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '6':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 1, 1, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 1, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-      
-      case '7':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 1, 1, 0);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 1, 1, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '8':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 0, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(0, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      case '9':
-        if (pos == 1) {
-          bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 1, 0, 0, 1);
-        }
-        else if (pos == 2) {
-          bInp = bit_assign(1, 0, 0, 1, bInp[4], bInp[5], bInp[6], bInp[7]);
-        }
-        break;
-
-      default:
-        if (pos == 1) {
-            bInp = bit_assign(bInp[0], bInp[1], bInp[2], bInp[3], 0, 0, 0, 0);
-          }
-          else if (pos == 2) {
-            bInp = bit_assign(0, 0, 0, 0, bInp[4], bInp[5], bInp[6], bInp[7]);
-          }
-        break;
-    }
-    return bInp;
-  }
-
-  AESbyte AES::hex_str_to_byte(char inp1, char inp2) {
-    AESbyte result;
-    //individual bits can be changed by using it like an array
-    //say you have byte = 0b10000000
-    //the 1 is on byte[7] so it is indexed "in reverse"
-    //so take the index and set it equal to either 0 or 1 to change it
-    //byte[0] = 1
-    //now that bit is 1 and not zero
-
-    result = hex2byte_helper(inp1, result, 1);
-    result = hex2byte_helper(inp2, result, 2);
-    return result;
-  }
+  
   //////////////////////////////////////////////////////
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
@@ -627,22 +468,6 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  AESword AES::global_word[word_size];
-
-  void AES::aes_init() {
-    KeyExpansion(AES::global_word);
-  }
-
-  AESbyte AES::binStr_to_byte(string input) {
-    AESbyte result;
-    for (int i = 0, y = bitsInByte-1; i < bitsInByte; i++, y--) {
-      if (input[y] == '1') {
-        result[i] = 1;
-      }
-    };
-    return result;
-  }
-
 
   ///////////////////////////////////////////////////////
   /////////Pass through encrypt & decrypt functions//////
@@ -653,7 +478,8 @@ namespace encryption {
   ///Encrypt///
   /////////////
 
-  string AES::encrypt(string input, int length) {
+  string AES::encrypt(string input) {
+    unsigned int length = input.length();
     string output;
     AESword w[word_size];
     for (int i = 0; i < word_size; i++) {
@@ -694,7 +520,8 @@ namespace encryption {
   ///Decrypt///
   /////////////
 
-  string AES::decrypt(string input, int length) {
+  string AES::decrypt(string input) {
+    unsigned int length = input.length();
     string output;
     constexpr unsigned short arrSize = mtx_size;
     AESword w[word_size];
@@ -729,12 +556,12 @@ namespace encryption {
   int AES::start_example() {
     string actual_string;
 
-    aes_init(); //Call before use 
+    aes_init(OPTIONS::doGenerateKey); //Call before use 
 
     //Output key
     cout << "The key is:";
     for(int i=0; i<mtx_size; ++i) {
-      cout << hex << AESKEY::key[i].to_ulong() << " ";
+      cout << AESKEY::key[i] << " ";
     };
     cout << endl;
 
@@ -746,11 +573,11 @@ namespace encryption {
     cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
 
     //Encryption, output ciphertext  
-    actual_string = encrypt(actual_string, actual_string.length());  
+    actual_string = encrypt(actual_string);  
     cout << "Encrypted ciphertext:" << endl << actual_string << endl;
 
     //Decrypt, output plaintext 
-    actual_string = decrypt(actual_string, actual_string.length());
+    actual_string = decrypt(actual_string);
     cout << "Decrypted plaintext:" << endl << actual_string << endl;
     cout << "Press any key to continue" << endl;
     cin.ignore();
