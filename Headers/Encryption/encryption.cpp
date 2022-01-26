@@ -357,18 +357,15 @@ namespace encryption {
   };
 
   char AES::binary_to_char(AESbyte input) {
-    mutex mtxx;
     unsigned int num = 0;
     string byte_str = input.to_string();
     int base = 1;
-    mtxx.lock();
     for (short i = 7; i > -1; i--) {
       if (byte_str[i] == '1') {
         num += base;
       };
       base *= 2;
     };
-    mtxx.unlock();
     return char(num);
   };
 
@@ -485,8 +482,6 @@ namespace encryption {
     for (int i = 0; i < word_size; i++) {
       w[i] = global_word[i];
     };
-    mutex mtxx;
-    mtxx.lock();
     static unsigned int loop = 0;
     for (loop = 0; loop < length; loop+=mtx_size) {
       
@@ -509,7 +504,6 @@ namespace encryption {
       };
       
     };
-    mtxx.unlock();
     for (int i = 0; i < word_size; i++) {
       global_word[i] = w[i];
     };
@@ -553,16 +547,40 @@ namespace encryption {
   ///File Stuff///
   ////////////////
 
-  string AES::encryptFF(string path) {
-   string output; 
-
-   return output;
+  void AES::encryptFF(string path) {
+    string output;
+    //Check if path is good
+    fstream infile(path);
+    if (infile.good() == false) {return;};
+    //Get text from file
+    string text;
+    string line;
+    while (getline(infile, line)) {
+      infile << encrypt(line)+'\n';
+    }
+    //cout << "Text: " << endl << text << endl;
+    //text = encrypt(text);
+    infile.close();
+    //ofstream outfile(path, std::ofstream::out | std::ofstream::trunc);
+    //outfile << text;
   };
 
-  string AES::decryptFF(string path) {
+  void AES::decryptFF(string path) {
     string output;
-
-    return output;
+    //Check if path is good
+    ifstream infile(path);
+    if (infile.good() == false) {return;};
+    //Get text from file
+    string text;
+    string line;
+    while (getline(infile, line)) {
+      text += line + '\n';
+    }
+    cout << "Text: " << endl << text << endl;
+    text = decrypt(text);
+    infile.close();
+    ofstream outfile(path, std::ofstream::out | std::ofstream::trunc);
+    outfile << text;
   };
 
   /////////////
@@ -571,6 +589,8 @@ namespace encryption {
 
   int AES::start_example() {
     string actual_string;
+
+    string example_path = "Headers/Encryption/Test.txt";
 
     aes_init(OPTIONS::doGenerateKey); //Call before use 
 
@@ -581,6 +601,8 @@ namespace encryption {
     };
     cout << endl;
 
+    encryptFF(example_path);
+    decryptFF(example_path);
     cout << "Input what you would like encrypted:" << endl;
     cin.ignore();
     getline(cin >> noskipws, actual_string);

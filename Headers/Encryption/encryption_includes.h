@@ -3,12 +3,7 @@
 #include <string>
 #include <random>
 #include <bitset>
-
-#include <stdio.h>
-#include <mutex>
-#include <atomic>
-#include <typeinfo>
-#include <sstream>
+#include <fstream>
 using namespace std;
 
 typedef bitset<8> AESbyte;  
