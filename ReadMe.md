@@ -1,5 +1,7 @@
 ## Thank you for using my header.
 
+v0.1.0-alpha
+
 ###### Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
 
 ### Basic Encryption
