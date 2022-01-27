@@ -10,6 +10,11 @@ is correct. Please do correct and critique me, i like to learn
 constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 
 namespace encryption {
+
+  namespace VERSION {
+    static string ver = "1.0.0 PRE-RELEASE";
+  }
+
   namespace KEY {
     //The default key value
     static constexpr unsigned short DEFAULT_KEY_NUM = 0;

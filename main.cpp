@@ -1,7 +1,7 @@
 #include "Headers/includes.h"
 
 int main() {
-  cout << "Thank you for using my Encryption/Decryption header. \n Please visit my Github at ArthurF23" << endl;
+  cout << "Thank you for using my Encryption/Decryption header. \n Please visit my Github at ArthurF23" << endl << "Version: " << VERSION::ver;
   cout << "Which example would you like to use?" << endl << "1: simple example" << endl << "2: AES example" << endl << "1 or 2" << endl;
   char input;
   cin >> input;
