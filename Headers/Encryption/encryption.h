@@ -238,7 +238,6 @@ namespace encryption {
       static void cypher_decrypt(AESbyte in[mtx_size], AESword w[word_size]);
 
       static AESword global_word[word_size]; //Needs to be initilized
-      
       static void generate_key();
 
       public:
