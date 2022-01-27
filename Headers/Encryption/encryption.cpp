@@ -475,8 +475,7 @@ namespace encryption {
     for (int i = 0; i < expanded_key_size; i++) {
       w[i] = global_expanded_key[i];
     };
-    static unsigned int loop = 0;
-    for (loop = 0; loop < length; loop+=mtx_size) {
+    for (unsigned int loop = 0; loop < length; loop+=mtx_size) {
       
       AESbyte hex_val[mtx_size] = {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};
 
@@ -488,7 +487,6 @@ namespace encryption {
           hex_val[x] = SPACE_BYTE;
         };
       };
-      cout << endl;
 
       cypher_encrypt(hex_val, w);
       //Make the binary turn to hex then make that a string
@@ -516,14 +514,11 @@ namespace encryption {
       w[i] = global_expanded_key[i];
     };
 
-    static unsigned int loop = 0;
-
-    for (loop = 0; loop < length; loop+=arrSize*bitsInByte) {
-
+    for (unsigned int loop = 0; loop < length; loop+=arrSize*bitsInByte) {
       static AESbyte hex_val[arrSize];
       for (int x = loop, p = 0; p < arrSize; x+=bitsInByte, p++) {
         hex_val[p] = CONVERSIONS::binStr_to_byte(input.substr(x, x+bitsInByte));
-      }
+      };
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
@@ -545,7 +540,6 @@ namespace encryption {
     //Check if path is good
     ifstream infile(path);
     if (infile.good() == false) {return false;};
-
     //Get text from file
     string text;
     string line;
@@ -553,9 +547,7 @@ namespace encryption {
       text += line + '\n';
     };
     infile.close();
-
     text = encrypt(text);
-
     ofstream outfile(path, ios::out | ios::trunc);
     outfile << text;
     outfile.close();
@@ -571,10 +563,7 @@ namespace encryption {
     string text;
     getline(infile, text); 
     infile.close();
-
-    cout << "Text length " << text.length() << endl; 
     text = decrypt(text);
-
     ofstream outfile(path, ios::out | ios::trunc);
     outfile << text;
     outfile.close();
@@ -590,7 +579,7 @@ namespace encryption {
     aes_init(OPTIONS::doGenerateKey); //Call before use 
 
     //Output key
-    cout << "The key is:";
+    cout << "Key: ";
     for(int i=0; i<mtx_size; ++i) {
       cout << AESKEY::key[i] << " ";
     };
