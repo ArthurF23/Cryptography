@@ -175,7 +175,7 @@ namespace encryption {
   ///////// AES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////
 
-  AESword AES::Word(AESbyte& k1, AESbyte& k2, AESbyte& k3, AESbyte& k4) {
+  AESword AES::_4Bytes2Word(AESbyte& k1, AESbyte& k2, AESbyte& k3, AESbyte& k4) {
     AESword result(0x00000000);  
     AESword temp;  
     temp = k1.to_ulong();  // K1  
@@ -192,40 +192,40 @@ namespace encryption {
     return result;  
   };
 
-  AESword AES::RotWord(AESword& rw) {
+  AESword AES::PosTrans(AESword& rw) {
     AESword high = rw << 8;  
     AESword low = rw >> 24;  
-    return high | low;  
+    return high | low;
   };
 
-  AESword AES::SubWord(AESword& sw)  {  
+  AESword AES::SBoxTrans(AESword& sw)  {  
     AESword temp;  
-    for(int i=0; i<32; i+=8)  {  
-        int row = sw[i+7]*8 + sw[i+6]*4 + sw[i+5]*2 + sw[i+4];  
-        int col = sw[i+3]*8 + sw[i+2]*4 + sw[i+1]*2 + sw[i];  
+    for(int i=0; i<32; i+=bitsInByte)  {  
+        int row = sw[i+7]*bitsInByte + sw[i+6]*4 + sw[i+5]*2 + sw[i+4];  
+        int col = sw[i+3]*bitsInByte + sw[i+2]*4 + sw[i+1]*2 + sw[i];  
         AESbyte val = AES::S_Box[row][col];  
-        for(int j=0; j<8; ++j)  
+        for(int j=0; j<bitsInByte; ++j)  
             temp[i+j] = val[j];  
     };  
     return temp;  
   };
 
-  void AES::KeyExpansion(AESword w[word_size]) {  
+  void AES::KeyExpansion(AESword w[expanded_key_size]) {  
     AESword temp;
     int i = 0;  
     //The first four of w [] are input keys  
     while(i < Nk) {  
-        w[i] = Word(AESKEY::key[4*i], AESKEY::key[4*i+1], AESKEY::key[4*i+2], AESKEY::key[4*i+3]);  
+        w[i] = _4Bytes2Word(AESKEY::key[4*i], AESKEY::key[4*i+1], AESKEY::key[4*i+2], AESKEY::key[4*i+3]);  
         ++i;  
     };
   
     i = Nk;  
   
-    while(i < word_size) {  
+    while(i < expanded_key_size) {  
       temp = w[i-1]; //Record the previous word  
       if(i % Nk == 0) {
-        AESword rwt = RotWord(temp);
-        w[i] = w[i-Nk] ^ SubWord(rwt) ^ Rcon[i/Nk-1];  
+        AESword rwt = PosTrans(temp);
+        w[i] = w[i-Nk] ^ SBoxTrans(rwt) ^ WheelConst[i/Nk-1];  
       }
       else {
         w[i] = w[i-Nk] ^ temp;  
@@ -265,8 +265,8 @@ namespace encryption {
     mtx[12] = temp;
   };  
   
-  //Multiplication over Finite Fields GF(2^8) 
-    
+  
+  //Multiplication over Finite Fields GF(2^8)     
   AESbyte AES::GFMul(AESbyte a, AESbyte b) {   
       AESbyte p = 0;  
       AESbyte hi_bit_set;  
@@ -352,11 +352,11 @@ namespace encryption {
   };
 
   //Basically converting char to hex
-  AESbyte AES::char_to_byte_(char inp) {
+  AESbyte AES::CONVERSIONS::char_to_byte_(char inp) {
     return static_cast<AESbyte>(inp);
   };
 
-  char AES::binary_to_char(AESbyte input) {
+  char AES::CONVERSIONS::binary_to_char(AESbyte input) {
     unsigned int num = 0;
     string byte_str = input.to_string();
     int base = 1;
@@ -386,7 +386,7 @@ namespace encryption {
     };
   };
 
-  AESword AES::global_word[word_size];
+  AESword AES::global_expanded_key[expanded_key_size];
 
   void AES::aes_init(OPTIONS genkey, string dummykey = "") {
     if (genkey == OPTIONS::doGenerateKey || dummykey.length() < mtx_size*bitsInByte) {
@@ -394,13 +394,13 @@ namespace encryption {
       }
     else {
       for (int y = 0, n=0; y < mtx_size; y++, n+=bitsInByte) {
-        AESKEY::key[y]= binStr_to_byte(dummykey.substr(n, n+bitsInByte));
+        AESKEY::key[y] = CONVERSIONS::binStr_to_byte(dummykey.substr(n, n+bitsInByte));
       };
     };
-    KeyExpansion(AES::global_word);
+    KeyExpansion(AES::global_expanded_key);
   };
 
-  AESbyte AES::binStr_to_byte(string input) {
+  AESbyte AES::CONVERSIONS::binStr_to_byte(string input) {
     AESbyte result;
     for (int i = 0, y = bitsInByte-1; i < bitsInByte; i++, y--) {
       if (input[y] == '1') {
@@ -414,7 +414,7 @@ namespace encryption {
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
 
-  void AES::cypher_encrypt(AESbyte in[mtx_size], AESword w[word_size]) {  
+  void AES::cypher_encrypt(AESbyte in[mtx_size], AESword w[expanded_key_size]) {  
     AESword key[4];  
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -441,7 +441,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   };  
 
-  void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[word_size])  {  
+  void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[expanded_key_size])  {  
     AESword key[4];
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -478,9 +478,9 @@ namespace encryption {
   string AES::encrypt(string input) {
     unsigned int length = input.length();
     string output;
-    AESword w[word_size];
-    for (int i = 0; i < word_size; i++) {
-      w[i] = global_word[i];
+    AESword w[expanded_key_size];
+    for (int i = 0; i < expanded_key_size; i++) {
+      w[i] = global_expanded_key[i];
     };
     static unsigned int loop = 0;
     for (loop = 0; loop < length; loop+=mtx_size) {
@@ -489,7 +489,7 @@ namespace encryption {
 
       for (int x = 0; x < mtx_size; x++) {
         if ((loop+x) < length) {
-          hex_val[x] = char_to_byte_(input[loop+x]);
+          hex_val[x] = CONVERSIONS::char_to_byte_(input[loop+x]);
         }
         else {
           hex_val[x] = SPACE_BYTE;
@@ -504,8 +504,8 @@ namespace encryption {
       };
       
     };
-    for (int i = 0; i < word_size; i++) {
-      global_word[i] = w[i];
+    for (int i = 0; i < expanded_key_size; i++) {
+      global_expanded_key[i] = w[i];
     };
     return output;
   };
@@ -518,9 +518,9 @@ namespace encryption {
     unsigned int length = input.length();
     string output;
     constexpr unsigned short arrSize = mtx_size;
-    AESword w[word_size];
-    for (int i = 0; i < word_size; i++) {
-      w[i] = global_word[i];
+    AESword w[expanded_key_size];
+    for (int i = 0; i < expanded_key_size; i++) {
+      w[i] = global_expanded_key[i];
     };
 
     static unsigned int loop = 0;
@@ -529,16 +529,16 @@ namespace encryption {
 
       static AESbyte hex_val[arrSize];
       for (int x = loop, p = 0; p < arrSize; x+=bitsInByte, p++) {
-        hex_val[p] = binStr_to_byte(input.substr(x, x+bitsInByte));
+        hex_val[p] = CONVERSIONS::binStr_to_byte(input.substr(x, x+bitsInByte));
       }
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += binary_to_char(hex_val[n]);
+        output += CONVERSIONS::binary_to_char(hex_val[n]);
       };
     };
-    for (int i = 0; i < word_size; i++) {
-      global_word[i] = w[i];
+    for (int i = 0; i < expanded_key_size; i++) {
+      global_expanded_key[i] = w[i];
     };
     return output;
   };
