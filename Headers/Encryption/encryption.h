@@ -243,9 +243,9 @@ namespace encryption {
       };
       static int start_example();
       static string encrypt(string input);
-      static void encryptFF(string path);
+      static bool encryptFF(string path);
       static string decrypt(string input);
-      static void decryptFF(string path);
+      static bool decryptFF(string path);
       //Call before use
       static void aes_init(OPTIONS genkey, string dummykey);
 

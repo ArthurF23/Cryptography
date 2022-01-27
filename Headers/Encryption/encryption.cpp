@@ -547,40 +547,45 @@ namespace encryption {
   ///File Stuff///
   ////////////////
 
-  void AES::encryptFF(string path) {
-    string output;
-    //Check if path is good
-    fstream infile(path);
-    if (infile.good() == false) {return;};
-    //Get text from file
-    string text;
-    string line;
-    while (getline(infile, line)) {
-      infile << encrypt(line)+'\n';
-    }
-    //cout << "Text: " << endl << text << endl;
-    //text = encrypt(text);
-    infile.close();
-    //ofstream outfile(path, std::ofstream::out | std::ofstream::trunc);
-    //outfile << text;
-  };
-
-  void AES::decryptFF(string path) {
+  bool AES::encryptFF(string path) {
     string output;
     //Check if path is good
     ifstream infile(path);
-    if (infile.good() == false) {return;};
+    if (infile.good() == false) {return false;};
+
     //Get text from file
     string text;
     string line;
     while (getline(infile, line)) {
       text += line + '\n';
-    }
-    cout << "Text: " << endl << text << endl;
-    text = decrypt(text);
+    };
     infile.close();
-    ofstream outfile(path, std::ofstream::out | std::ofstream::trunc);
+
+    text = encrypt(text);
+
+    ofstream outfile(path, ios::out | ios::trunc);
     outfile << text;
+    outfile.close();
+    return true;
+  };
+
+  bool AES::decryptFF(string path) {
+    string output;
+    //Check if path is good
+    ifstream infile(path);
+    if (infile.good() == false) {return false;};
+    //Get text from file
+    string text;
+    getline(infile, text); 
+    infile.close();
+
+    cout << "Text length " << text.length() << endl; 
+    text = decrypt(text);
+
+    ofstream outfile(path, ios::out | ios::trunc);
+    outfile << text;
+    outfile.close();
+    return true;
   };
 
   /////////////
@@ -589,9 +594,6 @@ namespace encryption {
 
   int AES::start_example() {
     string actual_string;
-
-    string example_path = "Headers/Encryption/Test.txt";
-
     aes_init(OPTIONS::doGenerateKey); //Call before use 
 
     //Output key
@@ -599,10 +601,8 @@ namespace encryption {
     for(int i=0; i<mtx_size; ++i) {
       cout << AESKEY::key[i] << " ";
     };
+    
     cout << endl;
-
-    encryptFF(example_path);
-    decryptFF(example_path);
     cout << "Input what you would like encrypted:" << endl;
     cin.ignore();
     getline(cin >> noskipws, actual_string);
@@ -613,7 +613,6 @@ namespace encryption {
     //Encryption, output ciphertext  
     actual_string = encrypt(actual_string);  
     cout << "Encrypted ciphertext:" << endl << actual_string << endl;
-
     //Decrypt, output plaintext 
     actual_string = decrypt(actual_string);
     cout << "Decrypted plaintext:" << endl << actual_string << endl;

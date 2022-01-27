@@ -4,6 +4,8 @@
 #include <random>
 #include <bitset>
 #include <fstream>
+
+#include <typeinfo>
 using namespace std;
 
 typedef bitset<8> AESbyte;  
