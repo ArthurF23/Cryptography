@@ -234,7 +234,7 @@ namespace encryption {
     };
   };
 
-  void AES::SubBytes(AESbyte mtx[mtx_size]) {  
+  void AES::SBoxTransSubBytes(AESbyte mtx[mtx_size]) {  
     for(int i=0; i<mtx_size; ++i)  {  
         int row = mtx[i][7]*8 + mtx[i][6]*4 + mtx[i][5]*2 + mtx[i][4];  
         int col = mtx[i][3]*8 + mtx[i][2]*4 + mtx[i][1]*2 + mtx[i][0];  
@@ -267,7 +267,7 @@ namespace encryption {
   
   
   //Multiplication over Finite Fields GF(2^8)     
-  AESbyte AES::GFMul(AESbyte a, AESbyte b) {   
+  AESbyte AES::GaloisFieldsMul(AESbyte a, AESbyte b) {   
       AESbyte p = 0;  
       AESbyte hi_bit_set;  
       for (int counter = 0; counter < 8; counter++) {  
@@ -290,10 +290,10 @@ namespace encryption {
         for(int j=0; j<4; ++j) {
           arr[j] = mtx[i+j*4];  
         };  
-        mtx[i] = GFMul(0x02, arr[0]) ^ GFMul(0x03, arr[1]) ^ arr[2] ^ arr[3];  
-        mtx[i+4] = arr[0] ^ GFMul(0x02, arr[1]) ^ GFMul(0x03, arr[2]) ^ arr[3];  
-        mtx[i+8] = arr[0] ^ arr[1] ^ GFMul(0x02, arr[2]) ^ GFMul(0x03, arr[3]);  
-        mtx[i+12] = GFMul(0x03, arr[0]) ^ arr[1] ^ arr[2] ^ GFMul(0x02, arr[3]);  
+        mtx[i] = GaloisFieldsMul(0x02, arr[0]) ^ GaloisFieldsMul(0x03, arr[1]) ^ arr[2] ^ arr[3];  
+        mtx[i+4] = arr[0] ^ GaloisFieldsMul(0x02, arr[1]) ^ GaloisFieldsMul(0x03, arr[2]) ^ arr[3];  
+        mtx[i+8] = arr[0] ^ arr[1] ^ GaloisFieldsMul(0x02, arr[2]) ^ GaloisFieldsMul(0x03, arr[3]);  
+        mtx[i+12] = GaloisFieldsMul(0x03, arr[0]) ^ arr[1] ^ arr[2] ^ GaloisFieldsMul(0x02, arr[3]);  
     }; 
   };
 
@@ -311,7 +311,7 @@ namespace encryption {
     };  
   };
 
-  void AES::InvSubBytes(AESbyte mtx[mtx_size]) {  
+  void AES::InvSBoxTransSubBytes(AESbyte mtx[mtx_size]) {  
     for(int i=0; i<mtx_size; ++i) {  
       int row = mtx[i][7]*8 + mtx[i][6]*4 + mtx[i][5]*2 + mtx[i][4];  
       int col = mtx[i][3]*8 + mtx[i][2]*4 + mtx[i][1]*2 + mtx[i][0];  
@@ -344,10 +344,10 @@ namespace encryption {
         for(int j=0; j<4; ++j) {
           arr[j] = mtx[i+j*4];  
         };  
-        mtx[i] = GFMul(0x0e, arr[0]) ^ GFMul(0x0b, arr[1]) ^ GFMul(0x0d, arr[2]) ^ GFMul(0x09, arr[3]);  
-        mtx[i+4] = GFMul(0x09, arr[0]) ^ GFMul(0x0e, arr[1]) ^ GFMul(0x0b, arr[2]) ^ GFMul(0x0d, arr[3]);  
-        mtx[i+8] = GFMul(0x0d, arr[0]) ^ GFMul(0x09, arr[1]) ^ GFMul(0x0e, arr[2]) ^ GFMul(0x0b, arr[3]);  
-        mtx[i+12] = GFMul(0x0b, arr[0]) ^ GFMul(0x0d, arr[1]) ^ GFMul(0x09, arr[2]) ^ GFMul(0x0e, arr[3]);  
+        mtx[i] = GaloisFieldsMul(0x0e, arr[0]) ^ GaloisFieldsMul(0x0b, arr[1]) ^ GaloisFieldsMul(0x0d, arr[2]) ^ GaloisFieldsMul(0x09, arr[3]);  
+        mtx[i+4] = GaloisFieldsMul(0x09, arr[0]) ^ GaloisFieldsMul(0x0e, arr[1]) ^ GaloisFieldsMul(0x0b, arr[2]) ^ GaloisFieldsMul(0x0d, arr[3]);  
+        mtx[i+8] = GaloisFieldsMul(0x0d, arr[0]) ^ GaloisFieldsMul(0x09, arr[1]) ^ GaloisFieldsMul(0x0e, arr[2]) ^ GaloisFieldsMul(0x0b, arr[3]);  
+        mtx[i+12] = GaloisFieldsMul(0x0b, arr[0]) ^ GaloisFieldsMul(0x0d, arr[1]) ^ GaloisFieldsMul(0x09, arr[2]) ^ GaloisFieldsMul(0x0e, arr[3]);  
     };
   };
 
@@ -374,7 +374,7 @@ namespace encryption {
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
     return dist6(rng);
-  }
+  };
 
   void AES::generate_key() {
     for (int x = 0; x < mtx_size; x++) {
@@ -424,7 +424,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);  
   
     for(int round=1; round<Nr; ++round) {  
-      clone.SubBytes(in);  
+      clone.SBoxTransSubBytes(in);  
       clone.ShiftRows(in);  
       clone.MixColumns(in);  
       for(int j=0; j<4; ++j) {
@@ -433,7 +433,7 @@ namespace encryption {
       clone.AddRoundKey(in, key);  
     };  
   
-    clone.SubBytes(in);  
+    clone.SBoxTransSubBytes(in);  
     clone.ShiftRows(in);
     for(int k=0; k<4; ++k){
       key[k] = w[4*Nr+k];  
@@ -451,15 +451,15 @@ namespace encryption {
 
     for(int round=Nr-1; round>0; --round) {
       clone.InvShiftRows(in);  
-      clone.InvSubBytes(in);  
+      clone.InvSBoxTransSubBytes(in);  
       for(int i=0; i<4; ++i)  
-          key[i] = w[4*round+i];  
+          key[i] = w[4*round+i];
       clone.AddRoundKey(in, key);  
       clone.InvMixColumns(in);  
     }  
 
     clone.InvShiftRows(in);  
-    clone.InvSubBytes(in);  
+    clone.InvSBoxTransSubBytes(in);  
     for(int i=0; i<4; ++i)  
         key[i] = w[i];  
     clone.AddRoundKey(in, key);  

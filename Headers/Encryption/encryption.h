@@ -166,8 +166,7 @@ namespace encryption {
 
   class AES {
     private:
-      static constexpr AESbyte SPACE_BYTE = 0b00000000;//0b01111110;//~
-      //Space = 0b00100000
+      static constexpr AESbyte SPACE_BYTE = 0b00000000;
       static constexpr short bitsInByte = 8;
       static constexpr short mtx_size = GLOBAL_MTX_SIZE;
       static constexpr short Nr = 10;  //AES-128 requires 10 rounds of encryption  
@@ -219,12 +218,15 @@ namespace encryption {
       static AESword PosTrans(AESword& rw);
       //S-Box Transformation
       static AESword SBoxTrans(AESword& sw);
-      static void SubBytes(AESbyte mtx[mtx_size]);
+      //Helper for SBoxTrans, accepts 4x4 byte matrix
+      static void SBoxTransSubBytes(AESbyte mtx[mtx_size]);
+      //Line Transformation. Shifts Rows Left
       static void ShiftRows(AESbyte mtx[mtx_size]);
-      static AESbyte GFMul(AESbyte a, AESbyte b);
+      //Shifts columns
       static void MixColumns(AESbyte mtx[mtx_size]);
       static void AddRoundKey(AESbyte mtx[mtx_size], AESword k[4]);
-      static void InvSubBytes(AESbyte mtx[mtx_size]);
+      static AESbyte GaloisFieldsMul(AESbyte a, AESbyte b); 
+      static void InvSBoxTransSubBytes(AESbyte mtx[mtx_size]);
       static void InvShiftRows(AESbyte mtx[mtx_size]);
       static void InvMixColumns(AESbyte mtx[mtx_size]);
 
@@ -238,13 +240,15 @@ namespace encryption {
       
       //Random number generation function
       static unsigned int getRandomNum(unsigned int min, unsigned int max);
-
+      //Expand Key
       static void KeyExpansion(AESword w[expanded_key_size]);
-
+      //Actual Encrypt function
       static void cypher_encrypt(AESbyte in[mtx_size], AESword w[expanded_key_size]);
+      //Actual Decrypt function
       static void cypher_decrypt(AESbyte in[mtx_size], AESword w[expanded_key_size]);
 
       static AESword global_expanded_key[expanded_key_size]; //Needs to be initilized
+      //Generate key
       static void generate_key();
 
       public:
