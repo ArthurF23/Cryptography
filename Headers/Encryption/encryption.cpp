@@ -257,7 +257,6 @@ namespace encryption {
         mtx[i+8] = mtx[i+10];  
         mtx[i+10] = temp;  
     };
-
     //The fourth line moves three left circles  
     temp = mtx[15];  
     for(int i=3; i>0; --i)  
@@ -298,12 +297,11 @@ namespace encryption {
   };
 
   void AES::AddRoundKey(AESbyte mtx[mtx_size], AESword k[4]) {  
-    for(int i=0; i<4; ++i) {  
-      AESword k1 = k[i] >> 24;  
-      AESword k2 = (k[i] << 8) >> 24;  
-      AESword k3 = (k[i] << 16) >> 24;  
-      AESword k4 = (k[i] << 24) >> 24;  
-        
+    for(int i=0; i<4; ++i) {
+      AESword k1 = k[i] >> 24;
+      AESword k2 = (k[i] << 8) >> 24;
+      AESword k3 = (k[i] << 16) >> 24;
+      AESword k4 = (k[i] << 24) >> 24;
       mtx[i] = mtx[i] ^ AESbyte(k1.to_ulong());  
       mtx[i+4] = mtx[i+4] ^ AESbyte(k2.to_ulong());  
       mtx[i+8] = mtx[i+8] ^ AESbyte(k3.to_ulong());  
@@ -420,9 +418,7 @@ namespace encryption {
     for(int i=0; i<4; ++i) {
       key[i] = w[i];
     };
-
     clone.AddRoundKey(in, key);  
-  
     for(int round=1; round<Nr; ++round) {  
       clone.SBoxTransSubBytes(in);  
       clone.ShiftRows(in);  
@@ -431,8 +427,7 @@ namespace encryption {
         key[j] = w[4*round+j];  
       };
       clone.AddRoundKey(in, key);  
-    };  
-  
+    };
     clone.SBoxTransSubBytes(in);  
     clone.ShiftRows(in);
     for(int k=0; k<4; ++k){
@@ -448,7 +443,6 @@ namespace encryption {
       key[i] = w[4*Nr+i];  
     };
     clone.AddRoundKey(in, key);  
-
     for(int round=Nr-1; round>0; --round) {
       clone.InvShiftRows(in);  
       clone.InvSBoxTransSubBytes(in);  
@@ -457,7 +451,6 @@ namespace encryption {
       clone.AddRoundKey(in, key);  
       clone.InvMixColumns(in);  
     }  
-
     clone.InvShiftRows(in);  
     clone.InvSBoxTransSubBytes(in);  
     for(int i=0; i<4; ++i)  
