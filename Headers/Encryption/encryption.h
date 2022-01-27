@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "1.0.0 PRE-RELEASE";
+    static string ver = "v0.1.0-alpha";
   }
 
   namespace KEY {
