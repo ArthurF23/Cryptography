@@ -182,4 +182,27 @@ string example_str = "0010101000110110"; //Not an actual encrypted string
 string decrypted_str = "aa";
 ```
 
-I plan to add more features and a lot more to this header in the future, thank you again for downloading.
+
+### Files 
+
+#### `encryptFF()`
+
+This has one parameter and thats the **path** to the file, make sure that is correct otherwise it will return false, if it correct it will return true. Example:
+
+```
+string path = "C://Users/me/text.txt";
+encryptFF(path);
+```
+
+#### `decryptFF()`
+
+This works the exact same way as `encryptFF()`, if the path is wrong it returns false otherwise it returns true. Example:
+
+```
+string path = "C://Users/me/text.txt";\
+decryptFF(path);
+```
+
+If you were wondering the FF means from file. Also, this only works with .txt file so please only use those.
+
+###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
