@@ -205,4 +205,6 @@ decryptFF(path);
 
 If you were wondering the FF means from file. Also, this only works with .txt file so please only use those.
 
+Please check my projects to see what im currently working on! Any feedback or support will be appreciated.
+
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
