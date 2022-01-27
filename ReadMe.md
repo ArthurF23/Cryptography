@@ -329,9 +329,8 @@ Flag to enable random pattern
 
 ## AES
 
-As I learn how AES works I will change the code to an even more customized and polished version. I must give credit to https://programmer.group/c-implementation-of-aes-encryption-algorithms.html as I used lots of their code to get the encryption working and it isnt mine. As I figure out how the code works, I will use my own, but as of now, I am using theirs and that is their property. Please support them.
+This is the example section for AES, I used [this tutorial](https://programmer.group/c-implementation-of-aes-encryption-algorithms.html) to make this and you should check it out if you're interested.
 
-As of 1/26/22 AES is officially working, now I plan to clean up the code and make it work and look better.
 
 ### How to use
 
