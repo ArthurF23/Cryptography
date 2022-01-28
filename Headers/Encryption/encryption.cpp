@@ -576,7 +576,7 @@ namespace encryption {
 
   int AES::start_example() {
     string actual_string;
-    aes_init(OPTIONS::doGenerateKey); //Call before use 
+    aes_init(OPTIONS::doGenerateKey); //Call before use
 
     //Output key
     cout << "Key: ";
@@ -601,5 +601,113 @@ namespace encryption {
     cout << "Press any key to continue" << endl;
     cin.ignore();
     return 0;
+  };
+
+
+
+
+  ///////////////////////////////////
+  ///Making my own encrypted files///
+  ///////////////////////////////////
+
+  //Design: file type will be in front of all the data.
+  //It will be seperated with a ~ in the decrypted code.
+
+  //so it will be like this
+  //.{extension}~{data}
+  
+  //Extension: .aesenc
+  const string AES::FILE_EXTENSION = ".aesenc";
+  bool AES::encryptFile(string path) {
+    //checks if path is valid
+    ifstream infile(path, std::ifstream::binary);
+    if (infile.good() == false) {
+      infile.close();
+      return false;
+    };
+
+    //Add the extension + seperator to the data string
+    string data = /*entenstion*/path.substr(path.find_last_of('.'), path.length()) + EXTENSION_SEPERATOR;
+    
+
+    //get length of file:
+    infile.seekg (0, infile.end);
+    int length = infile.tellg();
+    infile.seekg (0, infile.beg);
+
+    //buffer for data
+    char * buffer = new char [length];
+
+    // read data as a block:
+    infile.read (buffer,length);
+    infile.close();
+    
+    data += buffer;
+    //Don't need this anymore sooo...
+    delete[] buffer;
+
+    //Encrypt it
+    data = encrypt(data);
+
+    //Make new file & path using old path by removing the extension from the string
+    path.erase(path.rfind('.'), path.length());
+    path+=FILE_EXTENSION;
+
+    //Create new file
+    ofstream {path};
+
+    ofstream outfile(path);
+    outfile << data;
+    outfile.close();
+    return true;
+  };
+
+  bool AES::decryptFile(string path) {
+     //checks if path is valid
+    ifstream infile(path, std::ifstream::binary);
+    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILE_EXTENSION) {
+      infile.close();
+      return false;
+    };
+
+    string data;
+
+    //Just like in encryptFile
+
+    //get length of file:
+    infile.seekg (0, infile.end);
+    int length = infile.tellg();
+    infile.seekg (0, infile.beg);
+
+    //buffer for data
+    char * buffer = new char [length];
+
+    // read data as a block:
+    infile.read (buffer,length);
+    infile.close();
+    
+    data += buffer;
+    //Don't need this anymore sooo...
+    delete[] buffer;
+
+    //Decrypt
+    data = decrypt(data);
+
+    //Make new path
+    path.erase(path.find_last_of('.'), path.length());
+    path += data.substr(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR));
+
+    //Erase that part of the decrypted data
+    data.erase(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR)+1);
+    data.erase(data.length(), data.length());
+    cout << data << endl << data[data.length()] << endl;
+    //Original File
+    ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
+    ofstream outfile(path, ios::out | ios::trunc);
+    //Write to file
+    outfile << data;
+    //Close the file
+    outfile.close();
+    return true;
   };
 };

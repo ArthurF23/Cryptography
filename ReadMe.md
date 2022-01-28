@@ -1,10 +1,11 @@
 ## Thank you for using my header!
 
-v1.0.0
+### v1.1.0
 
-###### Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
+### What's new?
+Encryption of whole files, very easy to use and generates files with the extension `.aesenc`.
 
-### Basic Encryption
+## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
 
 It is possible to change how much bloat is in the encryption by going to encryption.h and finding the bloat struct and changing the non default values.
@@ -199,12 +200,20 @@ encryptFF(path);
 This works the exact same way as `encryptFF()`, if the path is wrong it returns false otherwise it returns true. Example:
 
 ```
-string path = "C://Users/me/text.txt";\
+string path = "C://Users/me/text.txt";
 decryptFF(path);
 ```
 
 If you were wondering the FF means from file. Also, this only works with .txt file so please only use those.
 
-Please check my projects to see what im currently working on! Any feedback or support will be appreciated.
+#### `encryptFile()`
+Works just like `encryptFF()` with parameters except this genrates a new file with extension `.aesenc`
+
+Usage is the exact same as well, just input the path to the file you want encrypted.
+
+#### `decryptFile()`
+Same as `decryptFF` except you will need to input the path to the `.aesenc` file that you want decrypted. The decrypted file will be under the same name except with the extenstion `.txt`.
 
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
+
+###### Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
