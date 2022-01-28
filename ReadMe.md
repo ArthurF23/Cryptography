@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.1.0
+### v1.1.1
 
 ### What's new?
 Encryption of whole files, very easy to use and generates files with the extension `.aesenc`.
