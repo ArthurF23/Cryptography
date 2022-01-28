@@ -583,8 +583,8 @@ namespace encryption {
     for(int i=0; i<mtx_size; ++i) {
       cout << AESKEY::key[i] << " ";
     };
-    
     cout << endl;
+    
     cout << "Input what you would like encrypted:" << endl;
     cin.ignore();
     getline(cin >> noskipws, actual_string);
@@ -700,7 +700,6 @@ namespace encryption {
     //Erase that part of the decrypted data
     data.erase(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
-    cout << data << endl << data[data.length()] << endl;
     //Original File
     ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
     ofstream outfile(path, ios::out | ios::trunc);
