@@ -214,6 +214,30 @@ Usage is the exact same as well, just input the path to the file you want encryp
 #### `decryptFile()`
 Same as `decryptFF` except you will need to input the path to the `.aesenc` file that you want decrypted. The decrypted file will be under the same name except with the extenstion `.txt`.
 
+## DUO
+
+#### `init()`
+This is the initalizer, these are the parameters
+
+
+1st Param: encdec key (string)
+
+
+2nd Param: AES generate key flag (Default = doGenerateKey)
+
+
+3rd Param: AES Key (string) (default = "") Input key here if you set key generation to false.
+
+
+Example:
+```
+init("82468224", encryption::AES::OPTIONS::doGenerateKey, aeskey);
+```
+
+#### encrypt() & decrypt()
+Both work the same, just input the appropriate string and it'll work, make sure to call `DUO::init()` first.
+
+
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
 
 ###### Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
