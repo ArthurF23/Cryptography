@@ -241,7 +241,9 @@ init("82468224", encryption::AES::OPTIONS::doGenerateKey, aeskey);
 #### encrypt() & decrypt()
 Both work the same, just input the appropriate string and it'll work, make sure to call `DUO::init()` first.
 
-
+### Notes
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
 
 ###### Apparently replit keeps adding a main file, that isn't the main.cpp file and im not to sure of it's purpose to please disreguard it.
+
+###### This isn't my first project but this is the first project im going to commit to, I plan to update this repository frequently and add a lot of features. If you like it, please consider watching or starring. Please forgive any versioning mistakes, pull-request mistakes and issue mistakes. I'm still learning as I go. Thank you for your time.
