@@ -602,8 +602,6 @@ namespace encryption {
   };
 
 
-
-
   ///////////////////////////////////
   ///Making my own encrypted files///
   ///////////////////////////////////
@@ -616,6 +614,7 @@ namespace encryption {
   
   //Extension: .aesenc
   const string AES::FILE_EXTENSION = ".aesenc";
+
   bool AES::encryptFile(string path) {
     //checks if path is valid
     ifstream infile(path, std::ifstream::binary);
