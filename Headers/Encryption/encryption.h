@@ -285,6 +285,6 @@ namespace encryption {
       public:
       static string encrypt(string input, encryption::encdec::FLAGS bloat = encryption::encdec::FLAGS::do_bloat, encryption::encdec::FLAGS pattern = encryption::encdec::FLAGS::do_rand_pattern);
       static string decrypt(string input);
-      static void init();
+      static void init(string encdecKey, encryption::AES::OPTIONS genKey = encryption::AES::OPTIONS::noGenerateKey, string aesKey = "");
     };
 };

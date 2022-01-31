@@ -722,4 +722,25 @@ namespace encryption {
     return input;
   };
 
+  string DUO::decrypt(string input) {
+    input = encryption::encdec::decrypt(input);
+    input = encryption::AES::decrypt(input);
+    return input;
+  };
+
+
+  //Initilize both functions to be ready.
+  //1st param this is the key for encdec, you need to input this
+  //2nd param this is the option to generate a key, select false then fill the third param. this defaults to generate key so if you dont, then input the proper OPTION to select false then fill out the 3rd param
+  //3rd param this is the string of 16 bytes that is the AES key youll need to input this if you dont want to generate a key
+  void DUO::init(string encdecKey, encryption::AES::OPTIONS genKey, string aesKey) {
+    //encdec init key
+    if (encryption::encdec::validate_key(encdecKey)) {
+      encryption::KEY::key = stoi(encdecKey);
+    };
+
+    //AES init
+    encryption::AES::aes_init(genKey, aesKey);
+  };
+
 };
