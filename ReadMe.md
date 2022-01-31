@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.2.1
+### v1.2.0
 
 ### What's new?
 New "DUO" encryptin that utilizes both the `encdec::encrypt` and `AES::encrypt` (and their decryption varients) to make something that will be particularly hard to crack.

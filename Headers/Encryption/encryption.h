@@ -12,8 +12,9 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.2.1";
+    static string ver = "v1.2.0";
     //Major, Minor, Patch
+    //for major or minor, change patch to 0
   }
 
   namespace KEY {
@@ -274,8 +275,6 @@ namespace encryption {
       //Call before use
       static void aes_init(OPTIONS genkey, string dummykey);
 
-
-      //In Progress
       static bool encryptFile(string path);
       static bool decryptFile(string path);
 
@@ -285,6 +284,7 @@ namespace encryption {
       public:
       static string encrypt(string input, encryption::encdec::FLAGS bloat = encryption::encdec::FLAGS::do_bloat, encryption::encdec::FLAGS pattern = encryption::encdec::FLAGS::do_rand_pattern);
       static string decrypt(string input);
-      static void init(string encdecKey, encryption::AES::OPTIONS genKey = encryption::AES::OPTIONS::noGenerateKey, string aesKey = "");
+      static void init(string encdecKey, encryption::AES::OPTIONS genKey = encryption::AES::OPTIONS::doGenerateKey, string aesKey = "");
+      static int example();
     };
 };

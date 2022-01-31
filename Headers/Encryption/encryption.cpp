@@ -103,7 +103,6 @@ namespace encryption {
   }
 
   string encdec::encrypt(string input, FLAGS bloat, FLAGS pattern) {
-    cout << "# " << input << " #" << endl;
     string output;
     int scramble = encdec::decide_scramble();
     //Hide the scramble number in a whole ton of bloat
@@ -145,7 +144,6 @@ namespace encryption {
     
     const unsigned short scramble = filtered[0]-'0';
     filtered = filtered.substr(1, filtered.length());
-
     for (int i = 0; i < filtered.length() - 1; i+=encdec::constants::key_info::key_length) {
       string chunk;
       //substr wouldnt work so heres a loop that grabs 8 characters
@@ -717,8 +715,8 @@ namespace encryption {
   
   //last 2 params are overloaded
   string DUO::encrypt(string input, encryption::encdec::FLAGS bloat, encryption::encdec::FLAGS pattern) {
-    input = encryption::encdec::encrypt(input, bloat, pattern);
     input = encryption::AES::encrypt(input);
+    input = encryption::encdec::encrypt(input, bloat, pattern);
     return input;
   };
 
@@ -741,6 +739,24 @@ namespace encryption {
 
     //AES init
     encryption::AES::aes_init(genKey, aesKey);
+  };
+
+  int DUO::example() {
+    string input;
+    cout << "Please input a string" << endl;
+    cin.ignore();
+    cin >> input;
+
+    init("82468224");
+
+    input = encrypt(input/*, encryption::encdec::FLAGS::no_bloat, encryption::encdec::FLAGS::no_rand_pattern*/);
+
+    cout << "Encrypted Result: " << endl << input << endl << "Decrypted Result: " << endl;
+
+    input = decrypt(input);
+
+    cout << input << endl;
+    return 0;
   };
 
 };
