@@ -709,4 +709,17 @@ namespace encryption {
     outfile.close();
     return true;
   };
+
+
+  /////////////////////////////////
+  ///DUO encryption & decryption///
+  /////////////////////////////////
+  
+  //last 2 params are overloaded
+  string DUO::encrypt(string input, encryption::encdec::FLAGS bloat, encryption::encdec::FLAGS pattern) {
+    input = encryption::encdec::encrypt(input, bloat, pattern);
+    input = encryption::AES::encrypt(input);
+    return input;
+  };
+
 };

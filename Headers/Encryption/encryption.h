@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.1.1";
+    static string ver = "v1.2.1";
     //Major, Minor, Patch
   }
 
@@ -279,5 +279,12 @@ namespace encryption {
       static bool encryptFile(string path);
       static bool decryptFile(string path);
 
+    };
+
+    class DUO {
+      public:
+      static string encrypt(string input, encryption::encdec::FLAGS bloat = encryption::encdec::FLAGS::do_bloat, encryption::encdec::FLAGS pattern = encryption::encdec::FLAGS::do_rand_pattern);
+      static string decrypt(string input);
+      static void init();
     };
 };
