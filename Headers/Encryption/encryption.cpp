@@ -212,21 +212,21 @@ namespace encryption {
     AESword temp;
     int i = 0;  
     //The first four of w [] are input keys  
-    while(i < Nk) {  
+    while(i < AESwords_in_key) {  
         w[i] = _4Bytes2Word(AESKEY::key[4*i], AESKEY::key[4*i+1], AESKEY::key[4*i+2], AESKEY::key[4*i+3]);  
         ++i;  
     };
   
-    i = Nk;  
+    i = AESwords_in_key;  
   
     while(i < expanded_key_size) {  
       temp = w[i-1]; //Record the previous word  
-      if(i % Nk == 0) {
+      if(i % AESwords_in_key == 0) {
         AESword rwt = PosTrans(temp);
-        w[i] = w[i-Nk] ^ SBoxTrans(rwt) ^ WheelConst[i/Nk-1];  
+        w[i] = w[i-AESwords_in_key] ^ SBoxTrans(rwt) ^ WheelConst[i/AESwords_in_key-1];  
       }
       else {
-        w[i] = w[i-Nk] ^ temp;  
+        w[i] = w[i-AESwords_in_key] ^ temp;  
       };
       ++i;  
     };
@@ -417,7 +417,7 @@ namespace encryption {
       key[i] = w[i];
     };
     clone.AddRoundKey(in, key);  
-    for(int round=1; round<Nr; ++round) {  
+    for(int round=1; round<rounds_of_encryption; ++round) {  
       clone.SBoxTransSubBytes(in);  
       clone.ShiftRows(in);  
       clone.MixColumns(in);  
@@ -429,7 +429,7 @@ namespace encryption {
     clone.SBoxTransSubBytes(in);  
     clone.ShiftRows(in);
     for(int k=0; k<4; ++k){
-      key[k] = w[4*Nr+k];  
+      key[k] = w[4*rounds_of_encryption+k];  
     };
     clone.AddRoundKey(in, key);  
   };  
@@ -438,10 +438,10 @@ namespace encryption {
     AESword key[4];
     AES clone;
     for(int i=0; i<4; ++i) {
-      key[i] = w[4*Nr+i];  
+      key[i] = w[4*rounds_of_encryption+i];  
     };
     clone.AddRoundKey(in, key);  
-    for(int round=Nr-1; round>0; --round) {
+    for(int round=rounds_of_encryption-1; round>0; --round) {
       clone.InvShiftRows(in);  
       clone.InvSBoxTransSubBytes(in);  
       for(int i=0; i<4; ++i)  

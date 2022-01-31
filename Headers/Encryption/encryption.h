@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.2.0";
+    static string ver = "v1.2.1";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -171,9 +171,9 @@ namespace encryption {
       static constexpr AESbyte SPACE_BYTE = 0b00000000;
       static constexpr short bitsInByte = 8;
       static constexpr short mtx_size = GLOBAL_MTX_SIZE;
-      static constexpr short Nr = 10;  //AES-128 requires 10 rounds of encryption  
-      static constexpr short Nk = 4;   //Nk Represents the number of words that are input keys
-      static constexpr unsigned short expanded_key_size = (4*(Nr+1));
+      static constexpr short rounds_of_encryption = 10;  //AES-128 requires 10 rounds of encryption  
+      static constexpr short AESwords_in_key = 4;   //Nk Represents the number of AESwords that are input keys
+      static constexpr unsigned short expanded_key_size = (4*(rounds_of_encryption+1));
 
       static const string FILE_EXTENSION;
       static constexpr char EXTENSION_SEPERATOR = '~';

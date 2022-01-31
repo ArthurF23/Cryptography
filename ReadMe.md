@@ -1,9 +1,13 @@
 ## Thank you for using my header!
 
-### v1.2.0
+### v1.2.1
 
 ### What's new?
-New "DUO" encryptin that utilizes both the `encdec::encrypt` and `AES::encrypt` (and their decryption varients) to make something that will be particularly hard to crack.
+New "DUO" encrypting that utilizes both the `encdec::encrypt` and `AES::encrypt` (and their decryption varients) to make something that will be particularly hard to crack.
+
+#### Bug Fixes
+
+###### Not really a bug although what was changed is the definition of Nr and Nk, they are more descriptive of what the actually are.
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
