@@ -103,7 +103,6 @@ namespace encryption {
   }
 
   string encdec::encrypt(string input, FLAGS bloat, FLAGS pattern) {
-    cout << "# " << input << " #" << endl;
     string output;
     int scramble = encdec::decide_scramble();
     //Hide the scramble number in a whole ton of bloat
@@ -145,7 +144,6 @@ namespace encryption {
     
     const unsigned short scramble = filtered[0]-'0';
     filtered = filtered.substr(1, filtered.length());
-
     for (int i = 0; i < filtered.length() - 1; i+=encdec::constants::key_info::key_length) {
       string chunk;
       //substr wouldnt work so heres a loop that grabs 8 characters
@@ -709,4 +707,56 @@ namespace encryption {
     outfile.close();
     return true;
   };
+
+
+  /////////////////////////////////
+  ///DUO encryption & decryption///
+  /////////////////////////////////
+  
+  //last 2 params are overloaded
+  string DUO::encrypt(string input, encryption::encdec::FLAGS bloat, encryption::encdec::FLAGS pattern) {
+    input = encryption::AES::encrypt(input);
+    input = encryption::encdec::encrypt(input, bloat, pattern);
+    return input;
+  };
+
+  string DUO::decrypt(string input) {
+    input = encryption::encdec::decrypt(input);
+    input = encryption::AES::decrypt(input);
+    return input;
+  };
+
+
+  //Initilize both functions to be ready.
+  //1st param this is the key for encdec, you need to input this
+  //2nd param this is the option to generate a key, select false then fill the third param. this defaults to generate key so if you dont, then input the proper OPTION to select false then fill out the 3rd param
+  //3rd param this is the string of 16 bytes that is the AES key youll need to input this if you dont want to generate a key
+  void DUO::init(string encdecKey, encryption::AES::OPTIONS genKey, string aesKey) {
+    //encdec init key
+    if (encryption::encdec::validate_key(encdecKey)) {
+      encryption::KEY::key = stoi(encdecKey);
+    };
+
+    //AES init
+    encryption::AES::aes_init(genKey, aesKey);
+  };
+
+  int DUO::example() {
+    string input;
+    cout << "Please input a string" << endl;
+    cin.ignore();
+    cin >> input;
+
+    init("82468224");
+
+    input = encrypt(input/*, encryption::encdec::FLAGS::no_bloat, encryption::encdec::FLAGS::no_rand_pattern*/);
+
+    cout << "Encrypted Result: " << endl << input << endl << "Decrypted Result: " << endl;
+
+    input = decrypt(input);
+
+    cout << input << endl;
+    return 0;
+  };
+
 };

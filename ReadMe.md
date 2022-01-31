@@ -1,9 +1,9 @@
 ## Thank you for using my header!
 
-### v1.1.1
+### v1.2.0
 
 ### What's new?
-Encryption of whole files, very easy to use and generates files with the extension `.aesenc`.
+New "DUO" encryptin that utilizes both the `encdec::encrypt` and `AES::encrypt` (and their decryption varients) to make something that will be particularly hard to crack.
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
@@ -213,6 +213,30 @@ Usage is the exact same as well, just input the path to the file you want encryp
 
 #### `decryptFile()`
 Same as `decryptFF` except you will need to input the path to the `.aesenc` file that you want decrypted. The decrypted file will be under the same name except with the extenstion `.txt`.
+
+## DUO
+
+#### `init()`
+This is the initalizer, these are the parameters
+
+
+1st Param: encdec key (string)
+
+
+2nd Param: AES generate key flag (Default = doGenerateKey)
+
+
+3rd Param: AES Key (string) (default = "") Input key here if you set key generation to false.
+
+
+Example:
+```
+init("82468224", encryption::AES::OPTIONS::doGenerateKey, aeskey);
+```
+
+#### encrypt() & decrypt()
+Both work the same, just input the appropriate string and it'll work, make sure to call `DUO::init()` first.
+
 
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
 
