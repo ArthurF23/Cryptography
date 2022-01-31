@@ -25,30 +25,7 @@ namespace encryption {
           ">_>>",
           "_.>>"
         };
-    int encdec::start_example() {
-    cout << "Are you Encrypting or Decrypting?" << endl << "e/d" << endl;
-    char user_choice; cin >> user_choice; cout << "Please input the text" << endl << "Input here:" << endl; string user_inputted_string;
-    cin.ignore();
-    getline(cin >> noskipws, user_inputted_string);
-    
-    if (user_choice == 'e') {
-      KEY::key = encdec::generate_key();
-      output_str = encdec::encrypt(user_inputted_string);
-    }
-    else if (user_choice == 'd') {
-      encdec::get_key();
-      output_str = encdec::decrypt(user_inputted_string);
-      cin.ignore();
-    }
-    else {
-      cout << "ERR please try again" << endl;
-      return encdec::start_example();
-    };
-    cout << "Key: " << KEY::key << endl << "Result: " << endl << output_str << endl;
-    cout << "Press any key to continue " << endl;
-    cin.ignore();
-    return 0;
-  }
+        
   bool encdec::isNumberString(string input) {
     for (char &c : input) {
       if (!isdigit(c)) {return false;};
@@ -80,9 +57,10 @@ namespace encryption {
     return (char)encdec::get_random_num(encdec::constants::char_info::valid_char_min, encdec::constants::char_info::valid_char_max);
   }
 
-  bool encdec::validate_key(string inp) {
+  bool encdec::assign_key(string inp) {
     if (encdec::isNumberString(inp)) {
       if (inp.length() == encdec::constants::key_info::key_length && stoi(inp) >= encdec::constants::key_info::key_min_value) {
+        KEY::key = stoi(inp);
         return true;
       };
     }
@@ -153,20 +131,6 @@ namespace encryption {
       output += char(stoi(chunk) - (KEY::key/scramble));
     };
     return output;
-  }
-
-  bool encdec::get_key() {
-    cout << "Please input " << encdec::constants::key_info::key_length << " digit numeric key: " << endl;
-    string user_input; cin >> user_input; cout << endl << "# " << user_input << " #" << endl;
-    if (encdec::validate_key(user_input)) {
-      KEY::key = stoi(user_input);
-      return true;
-    }
-    else {
-      cout << "Invalid key, please make sure your key is " << encdec::constants::key_info::key_length << " digits long and does not contain anything besides numbers." << endl;
-      return false;
-    }
-    return false;
   };
   
   /////////////////////////////////////////////////////////
@@ -732,8 +696,8 @@ namespace encryption {
   //3rd param this is the string of 16 bytes that is the AES key youll need to input this if you dont want to generate a key
   void DUO::init(string encdecKey, encryption::AES::OPTIONS genKey, string aesKey) {
     //encdec init key
-    if (encryption::encdec::validate_key(encdecKey)) {
-      encryption::KEY::key = stoi(encdecKey);
+    if (!encryption::encdec::assign_key(encdecKey)) {
+      return;
     };
 
     //AES init

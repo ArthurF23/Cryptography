@@ -2,7 +2,31 @@
 
 //1
 void encdecExample() {
-
+  cout << "Are you Encrypting or Decrypting?" << endl << "e/d" << endl;
+    char user_choice; cin >> user_choice; cout << "Please input the text" << endl << "Input here:" << endl; string user_inputted_string;
+    cin.ignore();
+    getline(cin >> noskipws, user_inputted_string);
+    
+    if (user_choice == 'e') {
+      KEY::key = encdec::generate_key();
+      output_str = encdec::encrypt(user_inputted_string);
+    }
+    else if (user_choice == 'd') {
+      cout << "Please enter the numeric key" << endl;
+      string _key;
+      cin >> _key;
+      encdec::assign_key(_key);
+      output_str = encdec::decrypt(user_inputted_string);
+      cin.ignore();
+    }
+    else {
+      cout << "ERR please try again" << endl;
+      return;
+    };
+    
+    cout << "Key: " << KEY::key << endl << "Result: " << endl << output_str << endl;
+    cout << "Press any key to continue " << endl;
+    cin.ignore();
 };
 
 //2
@@ -39,7 +63,7 @@ int main() {
   cin >> input;
   switch (input) {
     case '1':
-      encdec::start_example();
+      encdecExample();
       break;
     case '2':
       AES::start_example();
