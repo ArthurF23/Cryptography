@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.2.1";
+    static string ver = "v1.3.0";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -153,17 +153,13 @@ namespace encryption {
       do_rand_pattern = 0b11
     };
     //Checks to see if the key is valid
-    static bool validate_key(string inp);
+    static bool assign_key(string inp);
     //Key generator
     static unsigned int generate_key();
-    //Example Function
-    static int start_example();
     //Encrypt input string
     static string encrypt(string input, FLAGS bloat = FLAGS::do_bloat, FLAGS pattern = FLAGS::do_rand_pattern);
     //Decrypt input string
     static string decrypt(string input);
-    //Part of example, prompts user for key
-    static bool get_key(); //True = key valid | False = key invalid
   }; 
 
   class AES {
@@ -273,7 +269,7 @@ namespace encryption {
       static bool decryptFF(string path);
 
       //Call before use
-      static void aes_init(OPTIONS genkey, string dummykey);
+      static void aes_init(OPTIONS genkey, string dummykey = "");
 
       static bool encryptFile(string path);
       static bool decryptFile(string path);
