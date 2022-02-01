@@ -348,7 +348,7 @@ namespace encryption {
 
   AESword AES::global_expanded_key[expanded_key_size];
 
-  void AES::aes_init(OPTIONS genkey, string dummykey = "") {
+  void AES::aes_init(OPTIONS genkey, string dummykey) {
     if (genkey == OPTIONS::doGenerateKey || dummykey.length() < mtx_size*bitsInByte) {
       generate_key();
       }
@@ -532,40 +532,6 @@ namespace encryption {
     return true;
   };
 
-  /////////////
-  ///Example///
-  /////////////
-
-  int AES::start_example() {
-    string actual_string;
-    aes_init(OPTIONS::doGenerateKey); //Call before use
-
-    //Output key
-    cout << "Key: ";
-    for(int i=0; i<mtx_size; ++i) {
-      cout << AESKEY::key[i] << " ";
-    };
-    cout << endl;
-    
-    cout << "Input what you would like encrypted:" << endl;
-    cin.ignore();
-    getline(cin >> noskipws, actual_string);
-    
-
-    cout << endl << "Plaintext to be encrypted:"<< endl << actual_string << endl;
-
-    //Encryption, output ciphertext  
-    actual_string = encrypt(actual_string);  
-    cout << "Encrypted ciphertext:" << endl << actual_string << endl;
-    //Decrypt, output plaintext 
-    actual_string = decrypt(actual_string);
-    cout << "Decrypted plaintext:" << endl << actual_string << endl;
-    cout << "Press any key to continue" << endl;
-    cin.ignore();
-    return 0;
-  };
-
-
   ///////////////////////////////////
   ///Making my own encrypted files///
   ///////////////////////////////////
@@ -703,23 +669,4 @@ namespace encryption {
     //AES init
     encryption::AES::aes_init(genKey, aesKey);
   };
-
-  int DUO::example() {
-    string input;
-    cout << "Please input a string" << endl;
-    cin.ignore();
-    cin >> input;
-
-    init("82468224");
-
-    input = encrypt(input/*, encryption::encdec::FLAGS::no_bloat, encryption::encdec::FLAGS::no_rand_pattern*/);
-
-    cout << "Encrypted Result: " << endl << input << endl << "Decrypted Result: " << endl;
-
-    input = decrypt(input);
-
-    cout << input << endl;
-    return 0;
-  };
-
 };

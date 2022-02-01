@@ -269,7 +269,7 @@ namespace encryption {
       static bool decryptFF(string path);
 
       //Call before use
-      static void aes_init(OPTIONS genkey, string dummykey);
+      static void aes_init(OPTIONS genkey, string dummykey = "");
 
       static bool encryptFile(string path);
       static bool decryptFile(string path);
