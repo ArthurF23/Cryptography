@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.3.0
+### v1.4.0
 
 ### What's new?
 Changed all examples to make the header smaller, I moved all the examples to the main.cpp file so that code won't be in the header files.

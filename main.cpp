@@ -134,11 +134,28 @@ void wholeFileEncryptionExample() {
 //6
 void vigenereExample() {
   string inp;
-  cout << "Input text here:" << endl; cin.ignore(); cin >> inp;
+  cout << "Are you" << endl << "encrypting = e" << endl << "decrypting = d" << endl; cin.ignore(); cin >> inp;
 
+  string text;
+  cout << "Input text here:" << endl; cin.ignore(); cin >> text;
+
+
+  if (inp[0] == 'e') {
+    text = "Encrypted: \n" + vigenere::encrypt(text);
+  }
+  else if (inp[0] == 'd') {
+    string _key;
+    cout << "Please input the key (no spaces please)" << endl; cin.ignore(); cin >> _key;
+    text = "Decrypted: \n" + vigenere::decrypt(text, _key);
+  }
+  else {
+    cout << "Err | Incorrect input" << endl;
+    return vigenereExample();
+  };
+  cout << "Key:" << endl << VIGENERE_KEY::key << endl << text << endl; 
 }
 
-string text[7] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Please input the cooresponding number to your desired example"};
+string text[8] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Vigenere cypher = 6", "Please input the cooresponding number to your desired example"};
 
 int main() {
   cout << text[0] << endl;
@@ -148,6 +165,7 @@ int main() {
   cout << text[4] << endl;
   cout << text[5] << endl;
   cout << text[6] << endl;
+  cout << text[7] << endl;
   char input;
   cin >> input;
   switch (input) {
@@ -165,6 +183,9 @@ int main() {
       break;
     case '5':
       wholeFileEncryptionExample();
+      break;
+    case '6':
+      vigenereExample();
       break;
       
     default:
