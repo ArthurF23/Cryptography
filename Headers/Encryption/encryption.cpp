@@ -674,7 +674,7 @@ namespace encryption {
   ///Vigenere Cypher///
   /////////////////////
 
-  char translate(char message) {
+  char vigenere::translate(char message) {
     switch (message) {
     case 'A':
       return 0;
@@ -785,7 +785,8 @@ namespace encryption {
     default:
       return -1; //exclude char
     }
-  }
+    return -1;
+  };
 
   char vigenere::translate(char message, char key) {
     int key_row;
@@ -857,11 +858,45 @@ namespace encryption {
       return'Y';
     case 25:
       return 'Z';
-    }
-  }
+    default:
+      break;
+    };
+    return -1;
+  };
 
   string vigenere::remove_spaces(string inp) {
-    inp.erase(remove(inp.begin(), inp.end(), ' '), inp.end());
-    return inp;
+    string output;
+    for (int i=0; i<inp.length(); i++) {
+      if (inp[i] != ' ') {
+        output += inp[i];
+      };
+    };
+    return output;
+  };
+
+  string vigenere::generate_key(int message_length) {
+    string output;
+    
+    return output;
+  };
+
+  void vigenere::init(string message) {
+    VIGENERE_KEY::key = generate_key(message.length());
+  };
+
+  /////////////////////////////
+  ///Encryption & Decryption///
+  /////////////////////////////
+  
+  string vigenere::encrypt(string input) {
+    string output;
+
+    return output;
+  };
+
+  string vigenere::decrypt(string input) {
+    string output;
+
+    return output;
   };
 };

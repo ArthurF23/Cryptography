@@ -131,6 +131,13 @@ void wholeFileEncryptionExample() {
   readfile.close();
 };
 
+//6
+void vigenereExample() {
+  string inp;
+  cout << "Input text here:" << endl; cin.ignore(); cin >> inp;
+
+}
+
 string text[7] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Please input the cooresponding number to your desired example"};
 
 int main() {
