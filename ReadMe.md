@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.3.0
+### v1.4.0
 
 ### What's new?
 Changed all examples to make the header smaller, I moved all the examples to the main.cpp file so that code won't be in the header files.
@@ -237,8 +237,21 @@ Example:
 init("82468224", encryption::AES::OPTIONS::doGenerateKey, aeskey);
 ```
 
-#### encrypt() & decrypt()
+#### `encrypt() & decrypt()`
 Both work the same, just input the appropriate string and it'll work, make sure to call `DUO::init()` first.
+
+### Vigenere Cypher
+
+#### `encrypt()`
+This is the encryption function. All you need to pass to this function is the string you want encrypted, there is no `init()` function for either `encrypt()` or `decrypt()`.
+
+
+#### `decrypt()`
+Same as encrypt except you need to pass the key to it, which is also a string. So it'll look like this: `decrypt(message, key)`.
+
+
+#### `VIGENERE_KEY::key` 
+This is where the key is stored, if you ever need to access it, this is where it is. 
 
 ### Notes
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.
