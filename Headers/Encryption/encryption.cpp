@@ -899,7 +899,7 @@ namespace encryption {
   /////////////////////////////
   ///Encryption & Decryption///
   /////////////////////////////
-  
+  string VIGENERE_KEY::key = "NULL";
   string vigenere::encrypt(string input) {
     init(input.length());
     string output;
@@ -908,8 +908,8 @@ namespace encryption {
 			int y = translate(VIGENERE_KEY::key[i]); // key
 			if (x != -1 && y != -1) {
         output += table[y][x];
-			}
-		}
+			};
+		};
     return output;
   };
 
@@ -920,7 +920,6 @@ namespace encryption {
 		for (int i = 0; i < input.length(); i++) {
 			output += translate(input[i], VIGENERE_KEY::key[i]);
 		}
-		return result;
     return output;
   };
 };

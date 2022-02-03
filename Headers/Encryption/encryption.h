@@ -29,9 +29,10 @@ namespace encryption {
     0xab, 0xf7, 0x15, 0x88,   
     0x09, 0xcf, 0x4f, 0x3c};
   }
-  namespace VIGENERE_KEY {
+  class VIGENERE_KEY {
+    public:
     static string key;
-  }
+  };
   static string output_str;
   class encdec {
     private:
