@@ -807,57 +807,57 @@ namespace encryption {
 
     switch (letter_num) {
     case 0:
-      return 'A';
+      return table[0][0];
     case 1:
-      return 'B';
+      return table[0][1];
     case 2:
-      return 'C';
+      return table[0][2];
     case 3:
-      return 'D';
+      return table[0][3];
     case 4:
-      return 'E';
+      return table[0][4];
     case 5:
-      return 'F';
+      return table[0][5];
     case 6:
-      return 'G';
+      return table[0][6];
     case 7:
-      return 'H';
+      return table[0][7];
     case 8:
-      return 'I';
+      return table[0][8];
     case 9:
-      return 'J';
+      return table[0][9];
     case 10:
-      return 'K';
+      return table[0][10];
     case 11:
-      return 'L';
+      return table[0][11];
     case 12:
-      return 'M';
+      return table[0][12];
     case 13:
-      return 'N';
+      return table[0][13];
     case 14:
-      return 'O';
+      return table[0][14];
     case 15:
-      return 'P';
+      return table[0][15];
     case 16:
-      return 'Q';
+      return table[0][16];
     case 17:
-      return 'R';
+      return table[0][17];
     case 18:
-      return 'S';
+      return table[0][18];
     case 19:
-      return 'T';
+      return table[0][19];
     case 20:
-      return 'U';
+      return table[0][20];
     case 21:
-      return 'V';
+      return table[0][21];
     case 22:
-      return 'W';
+      return table[0][22];
     case 23:
-      return 'X';
+      return table[0][23];
     case 24:
-      return'Y';
+      return table[0][24];
     case 25:
-      return 'Z';
+      return table[0][25];
     default:
       break;
     };
@@ -907,19 +907,18 @@ namespace encryption {
 			int x = translate(input[i]); // message
 			int y = translate(VIGENERE_KEY::key[i]); // key
 			if (x != -1 && y != -1) {
-        output += table[y][x];
+        input[i] = table[y][x];
 			};
 		};
-    return output;
+    
+    return input;
   };
 
   string vigenere::decrypt(string input, string _key) {
     init(_key);
-    string output;
-    string result = "";
 		for (int i = 0; i < input.length(); i++) {
-			output += translate(input[i], VIGENERE_KEY::key[i]);
-		}
-    return output;
+			input[i] = translate(input[i], VIGENERE_KEY::key[i]);
+		};
+    return input;
   };
 };
