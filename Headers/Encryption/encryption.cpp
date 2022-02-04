@@ -583,7 +583,8 @@ namespace encryption {
         data+=line;
       };
       line.clear();
-    } else {return false;};
+    } 
+    else {return false;};
 
     infile.close(); //Close file
     ext.clear(); //Delete because it's useless

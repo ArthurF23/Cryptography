@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.4.1
+### v1.4.2
 
 ### What's new?
 Added a Vigenere Cypher.
