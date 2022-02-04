@@ -547,34 +547,46 @@ namespace encryption {
 
   bool AES::encryptFile(string path) {
     //checks if path is valid
-    ifstream infile(path, std::ifstream::binary);
+    ifstream infile(path, ios::binary);
     if (infile.good() == false) {
       infile.close();
       return false;
     };
 
+    string ext = path.substr(path.find_last_of('.'), path.length());
+
     //Add the extension + seperator to the data string
-    string data = /*entenstion*/path.substr(path.find_last_of('.'), path.length()) + EXTENSION_SEPERATOR;
+    string data = ext + EXTENSION_SEPERATOR;
 
-    //Only can do .txt
-    if (path.substr(path.find_last_of('.'), path.length()) != ".txt") {return false;};
+    //Only can do .txt | dOeS iT lOOk lIkE i KnoW wHaT a jPg iS
+    if (ext == ".txt") {
+      //get length of file:
+      infile.seekg (0, infile.end);
+      int length = infile.tellg();
+      infile.seekg (0, infile.beg);
+
+      //buffer for data
+      char * buffer = new char [length];
+
+      // read data as a block:
+      infile.read(buffer,length);
+       data += buffer;
+      //Don't need this anymore sooo...
+      delete[] buffer;
+    } 
     
+    //Yeesh thats a lot of memory and cpu usage
+    else if (ext == ".jpg") {
+      string line;
+      while ( getline (infile,line) )
+      {
+        data+=line;
+      };
+      line.clear();
+    } else {return false;};
 
-    //get length of file:
-    infile.seekg (0, infile.end);
-    int length = infile.tellg();
-    infile.seekg (0, infile.beg);
-
-    //buffer for data
-    char * buffer = new char [length];
-
-    // read data as a block:
-    infile.read (buffer,length);
-    infile.close();
-    
-    data += buffer;
-    //Don't need this anymore sooo...
-    delete[] buffer;
+    infile.close(); //Close file
+    ext.clear(); //Delete because it's useless
 
     //Encrypt it
     data = encrypt(data);
@@ -589,6 +601,7 @@ namespace encryption {
     ofstream outfile(path);
     outfile << data;
     outfile.close();
+    data.clear();
     return true;
   };
 
