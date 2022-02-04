@@ -555,6 +555,9 @@ namespace encryption {
 
     //Add the extension + seperator to the data string
     string data = /*entenstion*/path.substr(path.find_last_of('.'), path.length()) + EXTENSION_SEPERATOR;
+
+    //Only can do .txt
+    if (path.substr(path.find_last_of('.'), path.length()) != ".txt") {return false;};
     
 
     //get length of file:
