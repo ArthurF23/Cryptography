@@ -260,12 +260,12 @@ namespace encryption {
         class TXT {
           public:
           static const string identifier;
-          static string get(string path);
+          static void get(string path, string& data);
         };
         class JPG {
           public:
           static const string identifier;
-          static string get(string path);
+          static void get(string path, string& data);
         };
       };
 

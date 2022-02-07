@@ -1,3 +1,4 @@
+
 #include "encryption_includes.h"
 
 #include "encryption.h"
@@ -484,7 +485,9 @@ namespace encryption {
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += CONVERSIONS::binary_to_char(hex_val[n]);
+        if (hex_val[n] != SPACE_BYTE) {
+          output += CONVERSIONS::binary_to_char(hex_val[n]);
+        }
       };
     };
     for (int i = 0; i < expanded_key_size; i++) {
@@ -536,8 +539,7 @@ namespace encryption {
   ///Making my own encrypted files///
   ///////////////////////////////////
 
-  string AES::FILES::TXT::get(string path) {
-    string data;
+  void AES::FILES::TXT::get(string path, string& data) {
     ifstream infile(path, ios::binary);
     //get length of file:
     infile.seekg (0, infile.end);
@@ -552,11 +554,9 @@ namespace encryption {
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
-    return data;
-  }
+  };
 
-  string AES::FILES::JPG::get(string path) {
-    string data;
+  void AES::FILES::JPG::get(string path, string& data) {
     ifstream infile(path, ios::binary);
     string line;
     while ( getline (infile,line) )
@@ -564,8 +564,7 @@ namespace encryption {
       data+=line;
     };
     line.clear();
-    return data;
-  }
+  };
 
   //Design: file type will be in front of all the data.
   //It will be seperated with a ~ in the decrypted code.
@@ -595,12 +594,12 @@ namespace encryption {
 
     //Only can do .txt | dOeS iT lOOk lIkE i KnoW wHaT a jPg iS
     if (ext == FILES::TXT::identifier) {
-      data += FILES::TXT::get(path);
+      FILES::TXT::get(path, data);
     }    
     //Yeesh thats a lot of memory and cpu usage
     else if (ext == FILES::JPG::identifier) {
-      data += FILES::JPG::get(path);
-    } 
+      FILES::JPG::get(path, data);
+    }
     else {return false;};
 
     ext.clear(); //Delete because it's useless
