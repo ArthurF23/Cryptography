@@ -536,6 +536,37 @@ namespace encryption {
   ///Making my own encrypted files///
   ///////////////////////////////////
 
+  string AES::FILES::TXT::get(string path) {
+    string data;
+    ifstream infile(path, ios::binary);
+    //get length of file:
+    infile.seekg (0, infile.end);
+    int length = infile.tellg();
+    infile.seekg (0, infile.beg);
+
+    //buffer for data
+    char * buffer = new char [length];
+
+    // read data as a block:
+    infile.read(buffer,length);
+    data += buffer;
+    //Don't need this anymore sooo...
+    delete[] buffer;
+    return data;
+  }
+
+  string AES::FILES::JPG::get(string path) {
+    string data;
+    ifstream infile(path, ios::binary);
+    string line;
+    while ( getline (infile,line) )
+    {
+      data+=line;
+    };
+    line.clear();
+    return data;
+  }
+
   //Design: file type will be in front of all the data.
   //It will be seperated with a ~ in the decrypted code.
 
@@ -543,7 +574,10 @@ namespace encryption {
   //.{extension}~{data}
   
   //Extension: .aesenc
-  const string AES::FILE_EXTENSION = ".aesenc";
+  const string AES::FILES::FILE_EXTENSION = ".aesenc";
+  const string AES::FILES::TXT::identifier = ".txt";
+  const string AES::FILES::JPG::identifier = ".jpg";
+  
 
   bool AES::encryptFile(string path) {
     //checks if path is valid
@@ -552,49 +586,30 @@ namespace encryption {
       infile.close();
       return false;
     };
+    infile.close();
 
     string ext = path.substr(path.find_last_of('.'), path.length());
 
     //Add the extension + seperator to the data string
-    string data = ext + EXTENSION_SEPERATOR;
+    string data = ext + FILES::EXTENSION_SEPERATOR;
 
     //Only can do .txt | dOeS iT lOOk lIkE i KnoW wHaT a jPg iS
-    if (ext == ".txt") {
-      //get length of file:
-      infile.seekg (0, infile.end);
-      int length = infile.tellg();
-      infile.seekg (0, infile.beg);
-
-      //buffer for data
-      char * buffer = new char [length];
-
-      // read data as a block:
-      infile.read(buffer,length);
-       data += buffer;
-      //Don't need this anymore sooo...
-      delete[] buffer;
-    } 
-    
+    if (ext == FILES::TXT::identifier) {
+      data += FILES::TXT::get(path);
+    }    
     //Yeesh thats a lot of memory and cpu usage
-    else if (ext == ".jpg") {
-      string line;
-      while ( getline (infile,line) )
-      {
-        data+=line;
-      };
-      line.clear();
+    else if (ext == FILES::JPG::identifier) {
+      data += FILES::JPG::get(path);
     } 
     else {return false;};
 
-    infile.close(); //Close file
     ext.clear(); //Delete because it's useless
-
     //Encrypt it
     data = encrypt(data);
-
+    
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
-    path+=FILE_EXTENSION;
+    path+=FILES::FILE_EXTENSION;
 
     //Create new file
     ofstream {path};
@@ -609,7 +624,7 @@ namespace encryption {
   bool AES::decryptFile(string path) {
      //checks if path is valid
     ifstream infile(path, std::ifstream::binary);
-    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILE_EXTENSION) {
+    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {
       infile.close();
       return false;
     };
@@ -639,10 +654,10 @@ namespace encryption {
 
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
-    path += data.substr(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR));
+    path += data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
 
     //Erase that part of the decrypted data
-    data.erase(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR)+1);
+    data.erase(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
     //Original File
     ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways

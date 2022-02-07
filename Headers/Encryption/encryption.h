@@ -175,9 +175,6 @@ namespace encryption {
       static constexpr short AESwords_in_key = 4;   //Nk Represents the number of AESwords that are input keys
       static constexpr unsigned short expanded_key_size = (4*(rounds_of_encryption+1));
 
-      static const string FILE_EXTENSION;
-      static constexpr char EXTENSION_SEPERATOR = '~';
-
       static constexpr AESbyte S_Box[mtx_size][mtx_size] = {  
         {0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76},  
         {0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0},  
@@ -255,6 +252,22 @@ namespace encryption {
       static AESword global_expanded_key[expanded_key_size]; //Needs to be initilized
       //Generate key
       static void generate_key();
+
+      class FILES {
+        public:
+        static const string FILE_EXTENSION;
+        static constexpr char EXTENSION_SEPERATOR = '~';
+        class TXT {
+          public:
+          static const string identifier;
+          static string get(string path);
+        };
+        class JPG {
+          public:
+          static const string identifier;
+          static string get(string path);
+        };
+      };
 
       public:
       enum OPTIONS {
