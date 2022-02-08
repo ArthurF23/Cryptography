@@ -556,16 +556,6 @@ namespace encryption {
     delete[] buffer;
   };
 
-  void AES::FILES::JPG::get(string path, string& data) {
-    ifstream infile(path, ios::binary);
-    string line;
-    while ( getline (infile,line) )
-    {
-      data+=line;
-    };
-    line.clear();
-  };
-
   //Design: file type will be in front of all the data.
   //It will be seperated with a ~ in the decrypted code.
 
@@ -575,7 +565,6 @@ namespace encryption {
   //Extension: .aesenc
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
   const string AES::FILES::TXT::identifier = ".txt";
-  const string AES::FILES::JPG::identifier = ".jpg";
   
 
   bool AES::encryptFile(string path) {
@@ -596,11 +585,6 @@ namespace encryption {
     if (ext == FILES::TXT::identifier) {
       FILES::TXT::get(path, data);
     }    
-    //Yeesh thats a lot of memory and cpu usage
-    else if (ext == FILES::JPG::identifier) {
-      FILES::JPG::get(path, data);
-    }
-    else {return false;};
 
     ext.clear(); //Delete because it's useless
     //Encrypt it

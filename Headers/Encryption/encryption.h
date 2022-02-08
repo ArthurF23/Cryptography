@@ -262,11 +262,6 @@ namespace encryption {
           static const string identifier;
           static void get(string path, string& data);
         };
-        class JPG {
-          public:
-          static const string identifier;
-          static void get(string path, string& data);
-        };
       };
 
       public:
