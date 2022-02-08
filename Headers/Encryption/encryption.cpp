@@ -1,3 +1,4 @@
+
 #include "encryption_includes.h"
 
 #include "encryption.h"
@@ -484,7 +485,9 @@ namespace encryption {
       
       cypher_decrypt(hex_val, w);
       for (int n = 0; n < arrSize; n++) {
-        output += CONVERSIONS::binary_to_char(hex_val[n]);
+        if (hex_val[n] != SPACE_BYTE) {
+          output += CONVERSIONS::binary_to_char(hex_val[n]);
+        }
       };
     };
     for (int i = 0; i < expanded_key_size; i++) {
@@ -536,30 +539,8 @@ namespace encryption {
   ///Making my own encrypted files///
   ///////////////////////////////////
 
-  //Design: file type will be in front of all the data.
-  //It will be seperated with a ~ in the decrypted code.
-
-  //so it will be like this
-  //.{extension}~{data}
-  
-  //Extension: .aesenc
-  const string AES::FILE_EXTENSION = ".aesenc";
-
-  bool AES::encryptFile(string path) {
-    //checks if path is valid
-    ifstream infile(path, std::ifstream::binary);
-    if (infile.good() == false) {
-      infile.close();
-      return false;
-    };
-
-    //Add the extension + seperator to the data string
-    string data = /*entenstion*/path.substr(path.find_last_of('.'), path.length()) + EXTENSION_SEPERATOR;
-
-    //Only can do .txt
-    if (path.substr(path.find_last_of('.'), path.length()) != ".txt") {return false;};
-    
-
+  void AES::FILES::TXT::get(string path, string& data) {
+    ifstream infile(path, ios::binary);
     //get length of file:
     infile.seekg (0, infile.end);
     int length = infile.tellg();
@@ -569,19 +550,62 @@ namespace encryption {
     char * buffer = new char [length];
 
     // read data as a block:
-    infile.read (buffer,length);
-    infile.close();
-    
+    infile.read(buffer,length);
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
+  };
 
+  //Design: file type will be in front of all the data.
+  //It will be seperated with a ~ in the decrypted code.
+
+  //so it will be like this
+  //.{extension}~{data}
+  
+  //Extension: .aesenc
+  const string AES::FILES::FILE_EXTENSION = ".aesenc";
+  const string AES::FILES::TXT::identifier[2] = {".txt", ".md"};
+  
+
+  bool AES::encryptFile(string path) {
+    //checks if path is valid
+    ifstream infile(path, ios::binary);
+    if (infile.good() == false) {
+      infile.close();
+      return false;
+    };
+    infile.close();
+
+    string ext = path.substr(path.find_last_of('.'), path.length());
+
+    //Add the extension + seperator to the data string
+    string data = ext + FILES::EXTENSION_SEPERATOR;
+
+    //Only can do .txt and .md
+    if (ext == FILES::TXT::identifier[0] || ext == FILES::TXT::identifier[1]) {
+      FILES::TXT::get(path, data);
+    } else {return false;};
+
+    ext.clear(); //Delete because it's useless
     //Encrypt it
     data = encrypt(data);
-
+    
+    //Add some random bs to it to make it not look binary anymore
+    int *rep = new int(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+    
+    for (int i = 0; i < *rep;) {
+      char* c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+      if (*c != AES::FILES::FILE_GEN_PARAMS::invalid[0] && *c != AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+        data.insert(AES::getRandomNum(0, data.length()), c);
+        i++;
+      };
+      delete c;
+    };
+    delete rep;
+    
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
-    path+=FILE_EXTENSION;
+    path+=FILES::FILE_EXTENSION;
 
     //Create new file
     ofstream {path};
@@ -589,13 +613,14 @@ namespace encryption {
     ofstream outfile(path);
     outfile << data;
     outfile.close();
+    data.clear();
     return true;
   };
 
   bool AES::decryptFile(string path) {
      //checks if path is valid
     ifstream infile(path, std::ifstream::binary);
-    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILE_EXTENSION) {
+    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {
       infile.close();
       return false;
     };
@@ -620,15 +645,27 @@ namespace encryption {
     //Don't need this anymore sooo...
     delete[] buffer;
 
+    //remove bloat
+    string filtered;
+    int *dataL = new int(data.length());
+    for (int i = 0; i < *dataL; i++) {
+      if ((int)data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[0] || data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+        filtered += data[i];
+      };
+    }
+    delete dataL;
+    data = filtered;
+    filtered.clear();
+
     //Decrypt
     data = decrypt(data);
 
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
-    path += data.substr(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR));
+    path += data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
 
     //Erase that part of the decrypted data
-    data.erase(data.find_first_of('.'), data.find_first_of(EXTENSION_SEPERATOR)+1);
+    data.erase(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
     //Original File
     ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
