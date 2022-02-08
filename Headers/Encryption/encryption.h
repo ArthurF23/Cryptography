@@ -241,7 +241,7 @@ namespace encryption {
       };
       
       //Random number generation function
-      static unsigned int getRandomNum(unsigned int min, unsigned int max);
+      static inline unsigned int getRandomNum(unsigned int min, unsigned int max);
       //Expand Key
       static void KeyExpansion(AESword w[expanded_key_size]);
       //Actual Encrypt function
@@ -257,9 +257,16 @@ namespace encryption {
         public:
         static const string FILE_EXTENSION;
         static constexpr char EXTENSION_SEPERATOR = '~';
+        
+        class FILE_GEN_PARAMS {
+        public:
+          static constexpr short minChar = 32;
+          static constexpr short maxChar = 126;
+          static constexpr short invalid[2] = {48, 49};
+        };
         class TXT {
           public:
-          static const string identifier;
+          static const string identifier[2];
           static void get(string path, string& data);
         };
       };

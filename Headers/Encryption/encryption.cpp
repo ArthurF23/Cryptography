@@ -564,7 +564,7 @@ namespace encryption {
   
   //Extension: .aesenc
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
-  const string AES::FILES::TXT::identifier = ".txt";
+  const string AES::FILES::TXT::identifier[2] = {".txt", ".md"};
   
 
   bool AES::encryptFile(string path) {
@@ -581,14 +581,27 @@ namespace encryption {
     //Add the extension + seperator to the data string
     string data = ext + FILES::EXTENSION_SEPERATOR;
 
-    //Only can do .txt | dOeS iT lOOk lIkE i KnoW wHaT a jPg iS
-    if (ext == FILES::TXT::identifier) {
+    //Only can do .txt and .md
+    if (ext == FILES::TXT::identifier[0] || ext == FILES::TXT::identifier[1]) {
       FILES::TXT::get(path, data);
     } else {return false;};
 
     ext.clear(); //Delete because it's useless
     //Encrypt it
     data = encrypt(data);
+    
+    //Add some random bs to it to make it not look binary anymore
+    int *rep = new int(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+    
+    for (int i = 0; i < *rep;) {
+      char* c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+      if (*c != AES::FILES::FILE_GEN_PARAMS::invalid[0] && *c != AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+        data.insert(AES::getRandomNum(0, data.length()), c);
+        i++;
+      };
+      delete c;
+    };
+    delete rep;
     
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
@@ -631,6 +644,18 @@ namespace encryption {
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
+
+    //remove bloat
+    string filtered;
+    int *dataL = new int(data.length());
+    for (int i = 0; i < *dataL; i++) {
+      if ((int)data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[0] || data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+        filtered += data[i];
+      };
+    }
+    delete dataL;
+    data = filtered;
+    filtered.clear();
 
     //Decrypt
     data = decrypt(data);
