@@ -564,7 +564,7 @@ namespace encryption {
   
   //Extension: .aesenc
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
-  const string AES::FILES::TXT::identifier[2] = {".txt", ".md"};
+  const string AES::FILES::TXT::identifier[6] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   
 
   bool AES::encryptFile(string path) {

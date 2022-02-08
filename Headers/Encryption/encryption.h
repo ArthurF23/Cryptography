@@ -266,7 +266,7 @@ namespace encryption {
         };
         class TXT {
           public:
-          static const string identifier[2];
+          static const string identifier[6];
           static void get(string path, string& data);
         };
       };
