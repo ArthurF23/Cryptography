@@ -584,7 +584,7 @@ namespace encryption {
     //Only can do .txt | dOeS iT lOOk lIkE i KnoW wHaT a jPg iS
     if (ext == FILES::TXT::identifier) {
       FILES::TXT::get(path, data);
-    }    
+    }
 
     ext.clear(); //Delete because it's useless
     //Encrypt it
