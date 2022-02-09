@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.4.2";
+    static string ver = "v1.4.3";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -276,8 +276,6 @@ namespace encryption {
         doGenerateKey = 0b00000000, 
         noGenerateKey = 0b00000001
       };
-      //Example
-      static int start_example();
       //Encrypt
       static string encrypt(string input);
       //Encrypt From File
@@ -290,6 +288,7 @@ namespace encryption {
       //Call before use
       static void aes_init(OPTIONS genkey, string dummykey = "");
 
+      //Encrypt File 
       static bool encryptFile(string path);
       static bool decryptFile(string path);
 

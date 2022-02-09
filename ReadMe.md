@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.4.2
+### v1.4.3
 
 ### What's new?
 Fixed bug with `encryptFile()` and `decryptFile()` that would add weird values trailing at the end of the decrypted files. Added bloat to data in the `.aesenc` files.

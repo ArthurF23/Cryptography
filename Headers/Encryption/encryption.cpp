@@ -396,7 +396,7 @@ namespace encryption {
     for(int k=0; k<4; ++k){
       key[k] = w[4*rounds_of_encryption+k];  
     };
-    clone.AddRoundKey(in, key);  
+    clone.AddRoundKey(in, key);
   };  
 
   void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[expanded_key_size])  {  
@@ -569,7 +569,7 @@ namespace encryption {
 
   bool AES::encryptFile(string path) {
     //checks if path is valid
-    ifstream infile(path, ios::binary);
+    ifstream infile(path);
     if (infile.good() == false) {
       infile.close();
       return false;
@@ -581,7 +581,7 @@ namespace encryption {
     //Add the extension + seperator to the data string
     string data = ext + FILES::EXTENSION_SEPERATOR;
 
-    //Only can do .txt and .md
+    //Only can do text based
     if (ext == FILES::TXT::identifier[0] || ext == FILES::TXT::identifier[1]) {
       FILES::TXT::get(path, data);
     } else {return false;};
