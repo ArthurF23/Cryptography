@@ -12,7 +12,6 @@ namespace COMPRESSION {
   string compression::compress(string input) {    
     map<char, int> table;
     for (int i = 0; i < input.length(); i++) {
-      cout << i << " | " << input.length() << endl;
       char ch = input[i];
       table[input[i]] = std::count_if(input.begin(), input.end(), [&ch](char c) {
         return c == ch;
@@ -24,8 +23,7 @@ namespace COMPRESSION {
     str += to_string(input.length()) + separator1;
 
     for(auto const& letter : table){
-      // first == char, second == frequency 
-      cout << letter.first << " | " << letter.second << endl;
+      // first == char, second == frequency
       str+=to_string(char(letter.first)) + startPosSeparator + findOccOf(letter.first, input) + stopPosSeparator + separator1;
     };
     return str;
