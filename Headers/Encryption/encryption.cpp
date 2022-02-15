@@ -588,19 +588,27 @@ namespace encryption {
 
     ext.clear(); //Delete because it's useless
     //Encrypt it
+
+    data = compression::compress(data);
     data = encrypt(data);
     
     //Add some random bs to it to make it not look binary anymore
-    int *rep = new int(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+    unsigned long long *rep = new unsigned long long(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minGenMul, AES::FILES::FILE_GEN_PARAMS::maxGenMul));
+
+    //Make sure the bloat doesnt max out the string length
+    if (*rep >= data.max_size()) {
+      *rep-= (*rep - data.max_size())-2;
+    };
     
-    for (int i = 0; i < *rep;) {
-      char* c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+    char* c;
+    for (unsigned long long i = 0; i < *rep;) {
+      c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
       if (*c != AES::FILES::FILE_GEN_PARAMS::invalid[0] && *c != AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
         data.insert(AES::getRandomNum(0, data.length()), c);
         i++;
       };
-      delete c;
     };
+    delete c;
     delete rep;
     
     //Make new file & path using old path by removing the extension from the string
@@ -644,7 +652,7 @@ namespace encryption {
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
-
+    
     //remove bloat
     string filtered;
     int *dataL = new int(data.length());
@@ -659,6 +667,7 @@ namespace encryption {
 
     //Decrypt
     data = decrypt(data);
+    data = compression::decompress(data);
 
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
