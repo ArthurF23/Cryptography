@@ -567,7 +567,7 @@ namespace encryption {
   const string AES::FILES::TXT::identifier[6] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   
 
-  bool AES::encryptFile(string path) {
+  bool AES::encryptFile(string path, OPTIONS doBloat /*default=true*/) {
     //checks if path is valid
     ifstream infile(path);
     if (infile.good() == false) {
@@ -591,30 +591,33 @@ namespace encryption {
 
     data = encrypt(data);
     data = binary_compression::compress(data);
-    
-    //Add some random bs to it to make it not look binary anymore
-    unsigned long long *rep = new unsigned long long(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minGenMul, AES::FILES::FILE_GEN_PARAMS::maxGenMul));
 
-    //Make sure the bloat doesnt max out the string length
-    if (*rep >= data.max_size()) {
-      *rep-= (*rep - data.max_size())-2;
-    };
-    
-    char* c;
-    for (unsigned long long i = 0; i < *rep;) {
-      c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
-      bool isInvalid = false;
-      for (int h = 0; h < AES::FILES::FILE_GEN_PARAMS::invalidLength; h++) {
-        if (AES::FILES::FILE_GEN_PARAMS::invalid[h] == *c) {isInvalid = true; break;}; 
+
+    if (doBloat == OPTIONS::doFileBloat) {
+      //Add some random bs to it to make it not look binary anymore
+      unsigned long long *rep = new unsigned long long(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minGenMul, AES::FILES::FILE_GEN_PARAMS::maxGenMul));
+  
+      //Make sure the bloat doesnt max out the string length
+      if (*rep >= data.max_size()) {
+        *rep-= (*rep - data.max_size())-2;
       };
-      if (isInvalid == false) {
-        data.insert(AES::getRandomNum(0, data.length()), c);
-        i++;
+  
+      char* c;
+      for (unsigned long long i = 0; i < *rep;) {
+        c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
+        bool isInvalid = false;
+        for (int h = 0; h < AES::FILES::FILE_GEN_PARAMS::invalidLength; h++) {
+          if (AES::FILES::FILE_GEN_PARAMS::invalid[h] == *c) {isInvalid = true; break;}; 
+        };
+        if (isInvalid == false) {
+          data.insert(AES::getRandomNum(0, data.length()), c);
+          i++;
+        };
       };
-    };
-    delete c;
-    delete rep;
-    
+      delete c;
+      delete rep;
+      };
+      
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
     path+=FILES::FILE_EXTENSION;

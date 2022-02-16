@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.5.0";
+    static string ver = "v1.5.1";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -278,6 +278,8 @@ namespace encryption {
       enum OPTIONS {
         doGenerateKey = 0b00000000, 
         noGenerateKey = 0b00000001
+        doFileBloat = 0b00000010;
+        noFIleBloat = 0b00000011;
       };
       //Encrypt
       static string encrypt(string input);
@@ -292,7 +294,7 @@ namespace encryption {
       static void aes_init(OPTIONS genkey, string dummykey = "");
 
       //Encrypt File 
-      static bool encryptFile(string path);
+      static bool encryptFile(string path, OPTIONS doBloat = OPTIONS::doFileBloat);
       static bool decryptFile(string path);
 
     };
