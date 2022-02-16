@@ -84,7 +84,7 @@ namespace COMPRESSION {
         };
       };
     };
-    cout << output << endl;
+    
     input=output;
     output.clear();
 
