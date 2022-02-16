@@ -264,7 +264,8 @@ namespace encryption {
           static constexpr short maxChar = 126;
           static constexpr short minGenMul = 30;
           static constexpr short maxGenMul = 60;
-          static constexpr short invalid[2] = {48, 49};
+          static constexpr short invalidLength = 11;
+          static constexpr short invalid[invalidLength] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59};
         };
         class TXT {
           public:

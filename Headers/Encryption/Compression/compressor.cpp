@@ -2,89 +2,40 @@
 
 #include "compressor.h"
 namespace COMPRESSION {
-
-  /*
-        | This is a chunk  |
-  length:charNum{positions}:etc...
-  */
-
-
-  string compression::compress(string input) {    
-    map<char, int> table;
-    for (int i = 0; i < input.length(); i++) {
-      char ch = input[i];
-      table[input[i]] = std::count_if(input.begin(), input.end(), [&ch](char c) {
-        return c == ch;
-      });
-    }
-    
+  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. Th original binary length was 437376 and was compressed to 328840 characters long.
+  string binary_compression::compress(string input) {    
     string str;
 
-    str += to_string(input.length()) + separator1;
-
-    for(auto const& letter : table){
-      // first == char, second == frequency
-      str+=to_string(char(letter.first)) + startPosSeparator + findOccOf(letter.first, input) + stopPosSeparator + separator1;
-    };
-    return str;
-  };
-
-  string compression::findOccOf(char search, string str) {
-    string output;
-    for (unsigned int i = 0; i < str.length(); i++) {
-      if (str[i] == search) {
-        if (output.length() == 0) {
-          output+=to_string(i);
-        } else {
-          output+=occSeparator+to_string(i);
-        };
+    for (int i = 0, increment = 0; i < input.length(); i++) {
+      for (increment = 1;; increment++) {
+        if (input[i] != input[i+increment] || increment == 9) {break;};
       };
-    };
-    return output + occSeparator;
+      if (increment > 1) {
+      str+=input[i] + to_string(increment); i += increment-1;
+      }
+      else {
+        str += input[i];
+      };
+      increment = 1;      
+    }
+    return str + breakChar;
   };
 
-  string compression::decompress(string input) {
+  string binary_compression::decompress(string input) {
     string output;
     
-    //Find length
-    unsigned int length = stoi(input.substr(0, input.find_first_of(separator1)));
-    //Erase length from string
-    input.erase(0, input.find_first_of(separator1)+1);
-
-    //add spaces to output that equals the length of the original string
-    for (int i = 0; i < length; i++) {
-      output+=" ";
-    };
-    int lastPos = 0;
-    for (unsigned int i = 0; i < input.length(); i++) {
-      if (input[i] == separator1) {
-        //Get chunk
-        string chunk = input.substr(lastPos, i-lastPos);
-        lastPos = i+1;
-        //Break down data
-        //Get startPosSeparator position... find_first_of stopped working for some reason....
-        int startPos = 0;
-        for (int l = 0; l < chunk.length(); l++) {
-          if (chunk[l] == startPosSeparator) {
-            startPos = l;
-            break;
-          };
+    cout << input << endl;
+    for (int i = 0; i < input.length(); i++) {
+      if (input[i] == breakChar) {break;};
+      if (input[i+1] != '0' && input[i+1] != '1' && input[i+1] != breakChar) {
+        for (int x = 0; x < input[i+1]-'0'; x++) {
+          output += input[i];
         };
-        string positions = chunk.substr(startPos+1, chunk.length());
-        positions.erase(positions.length()-1, positions.length());
-        chunk.erase(startPos, chunk.length());
-        char letter = stoi(chunk);
-        chunk.erase();
-
-        unsigned int p = 0;
-        while (positions.length() != 0) {
-          p = positions.find_first_of(occSeparator);
-          int POS = stoi(positions.substr(0, p));
-          output[POS] = letter;
-          positions.erase(0, p+1);
-        };
-      };
+        i++;
+      } else {output+=input[i];};
     };
+    cout << input << endl;
+    cout << output << endl;
     return output;
   };
 };

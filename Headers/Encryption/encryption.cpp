@@ -589,8 +589,8 @@ namespace encryption {
     ext.clear(); //Delete because it's useless
     //Encrypt it
 
-    data = compression::compress(data);
     data = encrypt(data);
+    data = binary_compression::compress(data);
     
     //Add some random bs to it to make it not look binary anymore
     unsigned long long *rep = new unsigned long long(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minGenMul, AES::FILES::FILE_GEN_PARAMS::maxGenMul));
@@ -603,7 +603,11 @@ namespace encryption {
     char* c;
     for (unsigned long long i = 0; i < *rep;) {
       c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
-      if (*c != AES::FILES::FILE_GEN_PARAMS::invalid[0] && *c != AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+      bool isInvalid = false;
+      for (int h = 0; h < AES::FILES::FILE_GEN_PARAMS::invalidLength; h++) {
+        if (AES::FILES::FILE_GEN_PARAMS::invalid[h] == *c) {isInvalid = true; break;}; 
+      };
+      if (isInvalid == false) {
         data.insert(AES::getRandomNum(0, data.length()), c);
         i++;
       };
@@ -657,17 +661,20 @@ namespace encryption {
     string filtered;
     int *dataL = new int(data.length());
     for (int i = 0; i < *dataL; i++) {
-      if ((int)data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[0] || data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[1]) {
+      bool isBad = false;
+      for (int y = 0; y < AES::FILES::FILE_GEN_PARAMS::invalidLength; y++) {
+        if (data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[y]) {isBad=true; break;};
+      };
+      if (isBad==true) {
         filtered += data[i];
       };
-    }
+    };
     delete dataL;
     data = filtered;
     filtered.clear();
-
+    data = binary_compression::decompress(data);
     //Decrypt
     data = decrypt(data);
-    data = compression::decompress(data);
 
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
