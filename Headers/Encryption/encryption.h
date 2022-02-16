@@ -277,8 +277,8 @@ namespace encryption {
       public:
       enum OPTIONS {
         doGenerateKey = 0b00000000, 
-        noGenerateKey = 0b00000001
-        doFileBloat = 0b00000010;
+        noGenerateKey = 0b00000001,
+        doFileBloat = 0b00000010,
         noFIleBloat = 0b00000011;
       };
       //Encrypt
