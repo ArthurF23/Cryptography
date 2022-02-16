@@ -106,7 +106,7 @@ void wholeFileEncryptionExample() {
   cout << "Please input the path to the file: " << endl;
   cin.ignore();
   cin >> input;
-  if (!AES::encryptFile(input, AES::OPTIONS::noFileBloat)) {return;}; //returns false if path is bad
+  if (!AES::encryptFile(input)) {return;}; //returns false if path is bad
 
   string line;
   cout << "Please input new path to .aesenc file" << endl;

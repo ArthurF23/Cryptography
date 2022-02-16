@@ -279,7 +279,7 @@ namespace encryption {
         doGenerateKey = 0b00000000, 
         noGenerateKey = 0b00000001,
         doFileBloat = 0b00000010,
-        noFIleBloat = 0b00000011;
+        noFileBloat = 0b00000011
       };
       //Encrypt
       static string encrypt(string input);
