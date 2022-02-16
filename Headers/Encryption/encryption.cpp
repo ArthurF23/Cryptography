@@ -567,7 +567,7 @@ namespace encryption {
   const string AES::FILES::TXT::identifier[6] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   
 
-  bool AES::encryptFile(string path, OPTIONS doBloat /*default=true*/) {
+  bool AES::encryptFile(string path) {
     //checks if path is valid
     ifstream infile(path);
     if (infile.good() == false) {
@@ -591,32 +591,6 @@ namespace encryption {
 
     data = encrypt(data);
     data = binary_compression::compress(data);
-
-
-    if (doBloat == OPTIONS::doFileBloat) {
-      //Add some random bs to it to make it not look binary anymore
-      unsigned long long *rep = new unsigned long long(data.length() * AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minGenMul, AES::FILES::FILE_GEN_PARAMS::maxGenMul));
-  
-      //Make sure the bloat doesnt max out the string length
-      if (*rep >= data.max_size()) {
-        *rep-= (*rep - data.max_size())-2;
-      };
-  
-      char* c;
-      for (unsigned long long i = 0; i < *rep;) {
-        c = new char(AES::getRandomNum(AES::FILES::FILE_GEN_PARAMS::minChar, AES::FILES::FILE_GEN_PARAMS::maxChar));
-        bool isInvalid = false;
-        for (int h = 0; h < AES::FILES::FILE_GEN_PARAMS::invalidLength; h++) {
-          if (AES::FILES::FILE_GEN_PARAMS::invalid[h] == *c) {isInvalid = true; break;}; 
-        };
-        if (isInvalid == false) {
-          data.insert(AES::getRandomNum(0, data.length()), c);
-          i++;
-        };
-      };
-      delete c;
-      delete rep;
-      };
       
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
@@ -659,22 +633,7 @@ namespace encryption {
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
-    
-    //remove bloat
-    string filtered;
-    int *dataL = new int(data.length());
-    for (int i = 0; i < *dataL; i++) {
-      bool isBad = false;
-      for (int y = 0; y < AES::FILES::FILE_GEN_PARAMS::invalidLength; y++) {
-        if (data[i] == AES::FILES::FILE_GEN_PARAMS::invalid[y]) {isBad=true; break;};
-      };
-      if (isBad==true) {
-        filtered += data[i];
-      };
-    };
-    delete dataL;
-    data = filtered;
-    filtered.clear();
+
     data = binary_compression::decompress(data);
     //Decrypt
     data = decrypt(data);

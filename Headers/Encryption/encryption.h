@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.5.2";
+    static string ver = "v1.6.0";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -258,15 +258,6 @@ namespace encryption {
         static const string FILE_EXTENSION;
         static constexpr char EXTENSION_SEPERATOR = '~';
         
-        class FILE_GEN_PARAMS {
-        public:
-          static constexpr short minChar = 32;
-          static constexpr short maxChar = 126;
-          static constexpr short minGenMul = 30;
-          static constexpr short maxGenMul = 60;
-          static constexpr short invalidLength = 31;
-          static constexpr short invalid[invalidLength] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84};
-        };
         class TXT {
           public:
           static const string identifier[6];
@@ -278,8 +269,6 @@ namespace encryption {
       enum OPTIONS {
         doGenerateKey = 0b00000000, 
         noGenerateKey = 0b00000001,
-        doFileBloat = 0b00000010,
-        noFileBloat = 0b00000011
       };
       //Encrypt
       static string encrypt(string input);
@@ -294,7 +283,7 @@ namespace encryption {
       static void aes_init(OPTIONS genkey, string dummykey = "");
 
       //Encrypt File 
-      static bool encryptFile(string path, OPTIONS doBloat = OPTIONS::doFileBloat);
+      static bool encryptFile(string path);
       static bool decryptFile(string path);
 
     };
