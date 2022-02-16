@@ -23,9 +23,8 @@ namespace COMPRESSION {
 
   string binary_compression::decompress(string input) {
     string output;
-    
-    cout << input << endl;
-    for (int i = 0; i < input.length(); i++) {
+
+    for (int i = 0; i < input.length()+1; i++) {
       if (input[i] == breakChar) {break;};
       if (input[i+1] != '0' && input[i+1] != '1' && input[i+1] != breakChar) {
         for (int x = 0; x < input[i+1]-'0'; x++) {
@@ -34,8 +33,6 @@ namespace COMPRESSION {
         i++;
       } else {output+=input[i];};
     };
-    cout << input << endl;
-    cout << output << endl;
     return output;
   };
 };
