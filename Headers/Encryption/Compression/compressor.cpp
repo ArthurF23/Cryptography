@@ -2,10 +2,34 @@
 
 #include "compressor.h"
 namespace COMPRESSION {
-  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. Th original binary length was 437376 and was compressed to 328840 characters long.
+  const string binary_compression::replacementChars[rCharLength[0]][rCharLength[1]] = {
+    {"01", "A"},
+    {"02", "B"},
+    {"03", "C"},
+    {"04", "D"},
+    {"05", "E"},
+    {"06", "F"},
+    {"07", "G"},
+    {"08", "H"},
+    {"09", "I"},
+
+    {"10", "J"},
+    {"11", "K"},
+    {"12", "L"},
+    {"13", "M"},
+    {"14", "N"},
+    {"15", "O"},
+    {"16", "P"},
+    {"17", "Q"},
+    {"18", "R"},
+    {"19", "S"},
+    {"20", "T"}
+    };
+  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 328840 characters long.
   string binary_compression::compress(string input) {    
     string str;
 
+    //First compression
     for (int i = 0, increment = 0; i < input.length(); i++) {
       for (increment = 1;; increment++) {
         if (input[i] != input[i+increment] || increment == 9) {break;};
@@ -17,6 +41,30 @@ namespace COMPRESSION {
         str += input[i];
       };
       increment = 1;      
+    };
+
+    //Second compression of the compressed stuff already
+    input = str;
+    str.clear();
+    for (int i = 0; i<input.length(); i++) {
+      string twoBytes;
+
+      if (i+1 == input.length()) {str+=input[i]; break;};
+      
+      for (int x = 0; x < 2; x++) {
+        twoBytes+=input[i+x];
+      };
+      
+      for (int r = 0; r < rCharLength[0]; r++) {
+        if (replacementChars[r][0] == twoBytes) {
+          str+=replacementChars[r][1];
+          i++;
+          break;
+        }
+        else if (r+1 == rCharLength[0]) {
+          str+=input[i];
+        }
+      }
     }
     return str + breakChar;
   };
@@ -24,6 +72,23 @@ namespace COMPRESSION {
   string binary_compression::decompress(string input) {
     string output;
 
+    //Letter decompression
+    for (int i = 0; i < input.length(); i++) {
+      for (int x = 0; x < rCharLength[0]; x++) {
+        if (replacementChars[x][1][0] == input[i]) {
+          output+=replacementChars[x][0];
+          break;
+        }
+        else if (x+1 == rCharLength[0]) {
+          output+=input[i];
+        };
+      };
+    };
+    cout << output << endl;
+    input=output;
+    output.clear();
+
+    //Binary decompression
     for (int i = 0; i < input.length(); i++) {
       if (input[i] == breakChar) {break;};
       if (input[i+1] != '0' && input[i+1] != '1' && input[i+1] != breakChar) {

@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.5.1";
+    static string ver = "v1.5.2";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -264,8 +264,8 @@ namespace encryption {
           static constexpr short maxChar = 126;
           static constexpr short minGenMul = 30;
           static constexpr short maxGenMul = 60;
-          static constexpr short invalidLength = 11;
-          static constexpr short invalid[invalidLength] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59};
+          static constexpr short invalidLength = 31;
+          static constexpr short invalid[invalidLength] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84};
         };
         class TXT {
           public:
