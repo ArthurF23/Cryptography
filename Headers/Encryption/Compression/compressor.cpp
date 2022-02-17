@@ -25,13 +25,36 @@ namespace COMPRESSION {
     {"19", "S"},
 
     {"20", "T"},
+    {"21", "a"},
+    {"22", "b"},
+    {"23", "c"},
+    {"24", "d"},
+    {"25", "e"},
+    {"26", "f"},
+    {"27", "g"},
+    {"28", "h"},
+    {"29", "i"},
     {"30", "U"},
+    {"31", "j"},
+    {"32", "k"},
     {"40", "V"},
+    {"41", "l"},
+    {"42", "m"},
     {"50", "W"},
+    {"51", "n"},
+    {"52", "o"},
     {"60", "X"},
+    {"61", "p"},
+    {"62", "q"},
     {"70", "Y"},
+    {"71", "r"},
+    {"72", "s"},
     {"80", "Z"},
-    {"90", "@"}
+    {"81", "t"},
+    {"82", "u"},
+    {"90", "@"},
+    {"91", "v"},
+    {"92", "w"}
     };
 
   const string binary_compression::thirdLayerMulRChars[thirdLayerMultiplier[0]][thirdLayerMultiplier[1]] = {
@@ -46,7 +69,9 @@ namespace COMPRESSION {
     {"8", "&"},
     {"9", "$"}
     };
-  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 328840 characters long. Further compressed to 178051 characters long, thats 40% the size of the original. THe third layer of compression got the size down to 176128. Thats only .1% more compressed.
+
+  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 328840 characters long. Further compressed to 178051 characters long, thats 40% the size of the original. The third layer of compression got the size down to 176128. Thats only .1% more compressed. Second layer optimization ot the count down to 163840, thats a 2% improvement. Now the size is 37.45% of the original size
+
   string binary_compression::compress(string input) {    
     string str;
 
@@ -87,7 +112,7 @@ namespace COMPRESSION {
         }
       }
     };
-    
+
     input = str;
     str.clear();
     
@@ -128,12 +153,15 @@ namespace COMPRESSION {
       else {
         output+=input[i];
       };
+      pos=0;
     };
     input = output;
     output.clear();
 
     //Second layer decompression
     for (int i = 0; i < input.length(); i++) {
+      if (input[i] == breakChar) {output+=breakChar; break;};
+      
       for (int x = 0; x < rCharLength[0]; x++) {
         if (replacementChars[x][1][0] == input[i]) {
           output+=replacementChars[x][0];
