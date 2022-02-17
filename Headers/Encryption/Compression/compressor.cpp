@@ -75,10 +75,25 @@ namespace COMPRESSION {
     {"BL", "z"},
     {"BJ", ","},
     {"AT", "."},
-    {"CJ", ":"}
+    {"CJ", ":"},
+    {"LA", "("},
+    {"AU", ")"},
+    {"TJ", "|"},
+    {"AV", "'"},
+    {"jT", "/"},
+    {"Ua", "\\"},
+    {"Uj", "+"},
+    {"UA", "-"},
+    {"MA", "_"},
+    {"BM", "~"},
+    {"UJ", "`"},
+    {"Ja", "<"},
+    {"Dj", ">"},
+    {"DJ", "#"},
+    {"CL", "="}
     };
 
-  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 136183. Now the size is 31.13% of the original size.
+  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 116227. Now the size is 26.57% of the original size.
 
   string binary_compression::compress(string input) {    
     string str;
