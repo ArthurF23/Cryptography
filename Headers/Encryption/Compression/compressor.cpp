@@ -70,12 +70,15 @@ namespace COMPRESSION {
     {"9", "$"}
     };
   const string binary_compression::fourthLayerMulRChars[fourthLayerMultiplier[0]][fourthLayerMultiplier[1]] = {
-  {"A}", "x"},
-  {"Ta", "y"},
-  {"BL", "z"}
-  };
+    {"A}", "x"},
+    {"Ta", "y"},
+    {"BL", "z"},
+    {"BJ", ","},
+    {"AT", "."},
+    {"CJ", ":"}
+    };
 
-  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 150173. Now the size is 34.33% of the original size.
+  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 136183. Now the size is 31.13% of the original size.
 
   string binary_compression::compress(string input) {    
     string str;
