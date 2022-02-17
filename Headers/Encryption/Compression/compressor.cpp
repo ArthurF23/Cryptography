@@ -69,8 +69,13 @@ namespace COMPRESSION {
     {"8", "&"},
     {"9", "$"}
     };
+  const string binary_compression::fourthLayerMulRChars[fourthLayerMultiplier[0]][fourthLayerMultiplier[1]] = {
+  {"A}", "x"},
+  {"Ta", "y"},
+  {"BL", "z"}
+  };
 
-  //Roughly ~20% compression ratio on the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 328840 characters long. Further compressed to 178051 characters long, thats 40% the size of the original. The third layer of compression got the size down to 176128. Thats only .1% more compressed. Second layer optimization ot the count down to 163840, thats a 2% improvement. Now the size is 37.45% of the original size
+  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 150173. Now the size is 34.33% of the original size.
 
   string binary_compression::compress(string input) {    
     string str;
@@ -132,11 +137,53 @@ namespace COMPRESSION {
       increment = 1;      
     };
 
+
+    input = str;
+    str.clear();
+    //Fourth Layer
+    for (int i = 0; i<input.length(); i++) {
+      string twoBytes;
+
+      if (i+1 == input.length()) {str+=input[i]; break;};
+      
+      for (int x = 0; x < 2; x++) {
+        twoBytes+=input[i+x];
+      };
+      
+      for (int r = 0; r < fourthLayerMultiplier[0]; r++) {
+        if (fourthLayerMulRChars[r][0] == twoBytes) {
+          str+=fourthLayerMulRChars[r][1];
+          i++;
+          break;
+        }
+        else if (r+1 == fourthLayerMultiplier[0]) {
+          str+=input[i];
+        }
+      }
+    };
+
     return str + breakChar;
   };
 
   string binary_compression::decompress(string input) {
     string output;
+    //Fourth layer decompression
+    for (int i = 0; i < input.length(); i++) {
+      if (input[i] == breakChar) {output+=breakChar; break;};
+      
+      for (int x = 0; x < fourthLayerMultiplier[0]; x++) {
+        if (fourthLayerMulRChars[x][1][0] == input[i]) {
+          output+=fourthLayerMulRChars[x][0];
+          break;
+        }
+        else if (x+1 == fourthLayerMultiplier[0]) {
+          output+=input[i];
+        };
+      };
+    };
+    
+    input=output;
+    output.clear();
 
     //Third Layer Decompression
     for (int i = 0, pos = 0; i < input.length(); i++) {
