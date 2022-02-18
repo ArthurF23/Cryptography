@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.6.0
+### v1.6.1
 
 ### What's new?
 Added binary compression to `encryptFile()`. So when `encrypt()` outputs a binary string, it gets encrypted using lossless compression. It has a ratio of about 20% on the bee movie script which is what I use to test large files.

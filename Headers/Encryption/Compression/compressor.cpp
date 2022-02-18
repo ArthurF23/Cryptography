@@ -69,6 +69,7 @@ namespace COMPRESSION {
     {"8", "&"},
     {"9", "$"}
     };
+  //These are what ive found to be the most common 2 characters
   const string binary_compression::fourthLayerMulRChars[fourthLayerMultiplier[0]][fourthLayerMultiplier[1]] = {
     {"A}", "x"},
     {"Ta", "y"},
@@ -90,10 +91,26 @@ namespace COMPRESSION {
     {"Ja", "<"},
     {"Dj", ">"},
     {"DJ", "#"},
-    {"CL", "="}
+    {"CL", "="},
+    {"TL", "!"},
+    {"NA", "^"},
+    {"aA", "\""},
+    {"aT", "€"},
+    {"JL", " "},
+    {"Ul", "\2"}
     };
 
-  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 116227. Now the size is 26.57% of the original size.
+
+  const string binary_compression::fifthLayerMulRChars[fifthLayerMultiplier[0]][fifthLayerMultiplier[1]] = {
+    {"0", ""},
+    {"1", ""},
+    {"2", ""},
+    {"3", "\3"},
+    {"4", "\4"},
+    {"5", "\5"}
+    };
+
+  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 112091. Now the size is 25.28% of the original size.
 
   string binary_compression::compress(string input) {    
     string str;
@@ -180,11 +197,49 @@ namespace COMPRESSION {
       }
     };
 
+    input = str;
+    str.clear();
+    
+    //FIfth layer of compression
+    for (int i = 0, increment = 1; i < input.length(); i++) {
+      for (increment = 1;; increment++) {
+        if (input[i] != input[i+increment] || increment == 5) {break;};
+      };
+      
+      if (increment > 2) {
+        str+=input[i] + fifthLayerMulRChars[increment][1];
+        i += increment-1;
+      }
+      else {
+        str += input[i];
+      };
+      increment = 1;      
+    };
+
     return str + breakChar;
   };
 
   string binary_compression::decompress(string input) {
     string output;
+    //Fifth Layer Decompression
+    for (int i = 0, pos = 0; i < input.length(); i++) {
+      if (input[i] == breakChar) {output+=breakChar; break;}
+      for (int x = 0; x < fifthLayerMultiplier[0]; x++) {
+        if (input[i] == (fifthLayerMulRChars[x][1][0])) {pos = x; break;};
+      };
+      if (pos > 2) {
+        int rep = fifthLayerMulRChars[pos][0][0]-'0';
+        for (int x = 0; x < rep-1; x++) {
+          output+=input[i-1];
+        };
+      }
+      else {
+        output+=input[i];
+      };
+      pos=0;
+    };
+    input = output;
+    output.clear();
     //Fourth layer decompression
     for (int i = 0; i < input.length(); i++) {
       if (input[i] == breakChar) {output+=breakChar; break;};

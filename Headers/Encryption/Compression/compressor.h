@@ -12,8 +12,11 @@ namespace COMPRESSION {
     static constexpr int thirdLayerMultiplier[2] = {10, 2};
     static const string thirdLayerMulRChars[thirdLayerMultiplier[0]][thirdLayerMultiplier[1]];
 
-    static constexpr int fourthLayerMultiplier[2] = {21, 2};
+    static constexpr int fourthLayerMultiplier[2] = {27, 2};
     static const string fourthLayerMulRChars[fourthLayerMultiplier[0]][fourthLayerMultiplier[1]];
+
+    static constexpr int fifthLayerMultiplier[2] = {6, 2};
+    static const string fifthLayerMulRChars[fifthLayerMultiplier[0]][fifthLayerMultiplier[1]];
     static constexpr char breakChar = ';';
   };
 };
