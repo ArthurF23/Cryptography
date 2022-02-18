@@ -97,7 +97,8 @@ namespace COMPRESSION {
     {"aA", "\""},
     {"aT", "€"},
     {"JL", " "},
-    {"Ul", "\2"}
+    {"Ul", "\2"},
+    {"Vj", "\1"}
     };
 
 
@@ -110,7 +111,7 @@ namespace COMPRESSION {
     {"5", "\5"}
     };
 
-  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 112091. Now the size is 25.28% of the original size.
+  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 110627. Now the size is 25.28% of the original size.
 
   string binary_compression::compress(string input) {    
     string str;
@@ -129,9 +130,10 @@ namespace COMPRESSION {
       increment = 1;      
     };
 
-    //Second compression of the compressed stuff already
     input = str;
     str.clear();
+
+    //Second compression of the compressed stuff already
     for (int i = 0; i<input.length(); i++) {
       string twoBytes;
 
@@ -175,6 +177,7 @@ namespace COMPRESSION {
 
     input = str;
     str.clear();
+
     //Fourth Layer
     for (int i = 0; i<input.length(); i++) {
       string twoBytes;
@@ -200,7 +203,7 @@ namespace COMPRESSION {
     input = str;
     str.clear();
     
-    //FIfth layer of compression
+    //Fifth layer of compression
     for (int i = 0, increment = 1; i < input.length(); i++) {
       for (increment = 1;; increment++) {
         if (input[i] != input[i+increment] || increment == 5) {break;};
