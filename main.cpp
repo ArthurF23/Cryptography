@@ -102,10 +102,20 @@ void textFromFileExample() {
 
 //5
 void wholeFileEncryptionExample() {
+  AES::aes_init(AES::OPTIONS::doGenerateKey);
+  
+  cout << "Generated key: ";
+  for(int i=0; i<sizeof(AESKEY::key)/sizeof(AESKEY::key[0]); ++i) {
+    cout << AESKEY::key[i] << " ";
+  };
+  cout << endl << endl << endl;
+  
   string input;
   cout << "Please input the path to the file: " << endl;
   cin.ignore();
   cin >> input;
+  
+  
   if (!AES::encryptFile(input)) {return;}; //returns false if path is bad
 
   string line;

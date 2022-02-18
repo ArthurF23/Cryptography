@@ -98,7 +98,11 @@ namespace COMPRESSION {
     {"aT", "€"},
     {"JL", " "},
     {"Ul", "\2"},
-    {"Vj", "\1"}
+    {"Vj", "\1"},
+    {"UL", "\7"},
+    {"TM", "\13"},
+    {"EJ", "\16"},
+    {"Xj", "\17"}
     };
 
 
@@ -111,9 +115,9 @@ namespace COMPRESSION {
     {"5", "\5"}
     };
 
-  //Using the bee movie script, my accurate representation of a lot of data. The original binary length was 437376 and was compressed to 110627. Now the size is 25.28% of the original size.
+  //So far the compressed size is 24.575% of the original size.
 
-  string binary_compression::compress(string input) {    
+  void binary_compression::compress(string& input) {    
     string str;
 
     //First compression
@@ -219,10 +223,11 @@ namespace COMPRESSION {
       increment = 1;      
     };
 
-    return str + breakChar;
+    str+=breakChar;
+    input = str; str.clear();
   };
 
-  string binary_compression::decompress(string input) {
+  void binary_compression::decompress(string& input) {
     string output;
     //Fifth Layer Decompression
     for (int i = 0, pos = 0; i < input.length(); i++) {
@@ -309,6 +314,6 @@ namespace COMPRESSION {
         i++;
       } else {output+=input[i];};
     };
-    return output;
+    input = output; output.clear();
   };
 };

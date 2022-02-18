@@ -461,6 +461,7 @@ namespace encryption {
     for (int i = 0; i < expanded_key_size; i++) {
       global_expanded_key[i] = w[i];
     };
+    binary_compression::compress(output);
     return output;
   };
 
@@ -469,6 +470,7 @@ namespace encryption {
   /////////////
 
   string AES::decrypt(string input) {
+    binary_compression::decompress(input);
     unsigned int length = input.length();
     string output;
     constexpr unsigned short arrSize = mtx_size;
@@ -590,7 +592,6 @@ namespace encryption {
     //Encrypt it
 
     data = encrypt(data);
-    data = binary_compression::compress(data);
       
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
@@ -634,7 +635,6 @@ namespace encryption {
     //Don't need this anymore sooo...
     delete[] buffer;
 
-    data = binary_compression::decompress(data);
     //Decrypt
     data = decrypt(data);
 
