@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.6.4";
+    static string ver = "v1.7.1";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -250,7 +250,11 @@ namespace encryption {
       class FILES {
         public:
         static const string FILE_EXTENSION;
+        static const string KEYFILE_NAME;
+        static const string KEYFILE_EXT;
         static constexpr char EXTENSION_SEPERATOR = '~';
+        static bool gen_key_file(string path);
+        static bool in_key_file(string path);
         
         class TXT {
           public:
@@ -282,7 +286,7 @@ namespace encryption {
 
       //Encrypt File 
       static bool encryptFile(string path);
-      static bool decryptFile(string path);
+      static bool decryptFile(string path, string keyFilePath = "");
 
     };
 

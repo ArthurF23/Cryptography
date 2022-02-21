@@ -5,6 +5,9 @@
 ### What's new?
 Patched the AES key as the generated key was not being set to the key. Location has changed to `AES::KEY::key`. If you were using the previous version, `AESKEY::key` simply add `::` between `AES` and `KEY`.
 
+###### v1.7.1
+Added a key file for `encryptFile()` & `decryptFile()`
+
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
 
@@ -132,9 +135,9 @@ Flag to enable random pattern
 
 Unless you're modifying the header you won't have much use for these but the AESbyte is the typedef for the key amongst other varibles. 
 
-#### `AESKEY::Key`
+#### `AES::KEY::Key`
 
-`AESKEY::key` is the key for AES and is an array which has a length of 16 and the type is `AESbyte`. If you are assigning a key manually you can do this:
+`AES::KEY::key` is the key for AES and is an array which has a length of 16 and the type is `AESbyte`. If you are assigning a key manually you can do this:
 
 ```
   AESKEY::key[0] = 0b00100010;
@@ -211,9 +214,16 @@ Works just like `encryptFF()` with parameters except this genrates a new file wi
 
 Usage is the exact same as well, just input the path to the file you want encrypted.
 
+This also generates a key File in the same directory, it does not encrypt the key, although it does compress the key. It is store in a file like so... `{original file name} + {_KEYFILE}.aeskey`
+
 #### `decryptFile()`
 Same as `decryptFF` except you will need to input the path to the `.aesenc` file that you want decrypted. The decrypted file will be under the same name except with the extenstion `.txt`.
 
+The only difference is that there is a second overloaded parameter...
+
+`decryptFile(path, keyFilePath)`
+
+If the key file is not in the same directory as the first path/the file being decrypted, specify it in the second param. 
 ## DUO
 
 #### `init()`

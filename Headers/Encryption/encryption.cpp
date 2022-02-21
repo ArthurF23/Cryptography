@@ -567,8 +567,41 @@ namespace encryption {
   
   //Extension: .aesenc
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
+  const string AES::FILES::KEYFILE_NAME = "_KEYFILE";
+  const string AES::FILES::KEYFILE_EXT = ".aeskey";
   const string AES::FILES::TXT::identifier[6] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
-  
+
+  //Key File
+  bool AES::FILES::gen_key_file(string path) {
+    path.erase(path.rfind('.'), path.length()); //Erase extension
+    path+=KEYFILE_NAME;//edit name
+    path+=KEYFILE_EXT;//add extension
+    ofstream outFile(path);
+    if (outFile.good() == false) {outFile.close(); return false;};
+    
+    string data;
+    for (int i = 0; i < AES::mtx_size; i++) {
+      data+=AES::KEY::key[i].to_string();
+    };
+    binary_compression::compress(data);
+    outFile << data;
+    outFile.close();
+    return true;
+  };
+
+  bool AES::FILES::in_key_file(string path) {
+    path.erase(path.rfind('.'), path.length()); //Erase extension
+    path+=KEYFILE_NAME;//edit name
+    path+=KEYFILE_EXT;//add extension
+    ifstream inFile(path);
+    if (inFile.good() == false) {inFile.close(); return false;};
+    inFile.close();
+    string data;
+    AES::FILES::TXT::get(path, data);    
+    binary_compression::decompress(data);
+    aes_init(AES::OPTIONS::noGenerateKey, data);
+    return true;
+  }
 
   bool AES::encryptFile(string path) {
     //checks if path is valid
@@ -578,6 +611,8 @@ namespace encryption {
       return false;
     };
     infile.close();
+    
+    AES::FILES::gen_key_file(path);
 
     string ext = path.substr(path.find_last_of('.'), path.length());
 
@@ -608,7 +643,7 @@ namespace encryption {
     return true;
   };
 
-  bool AES::decryptFile(string path) {
+  bool AES::decryptFile(string path, string keyFilePath) {
      //checks if path is valid
     ifstream infile(path, std::ifstream::binary);
     if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {
@@ -620,21 +655,11 @@ namespace encryption {
 
     //Just like in encryptFile
 
-    //get length of file:
-    infile.seekg (0, infile.end);
-    int length = infile.tellg();
-    infile.seekg (0, infile.beg);
+    AES::FILES::TXT::get(path, data);
 
-    //buffer for data
-    char * buffer = new char [length];
-
-    // read data as a block:
-    infile.read (buffer,length);
-    infile.close();
+    if (keyFilePath != "") {AES::FILES::in_key_file(keyFilePath);}
+    else {AES::FILES::in_key_file(path);};
     
-    data += buffer;
-    //Don't need this anymore sooo...
-    delete[] buffer;
 
     //Decrypt
     data = decrypt(data);

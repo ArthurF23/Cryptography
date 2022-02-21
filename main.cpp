@@ -131,7 +131,7 @@ void wholeFileEncryptionExample() {
   };
   readfile.close();
 
-  
+  cout << "Reading key File..." << endl;
   if (!AES::decryptFile(newInput)) {return;};
   readfile.open(input);
   cout << "Decrypted: " << endl;
