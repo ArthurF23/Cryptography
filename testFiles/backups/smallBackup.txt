@@ -1,1 +1,1 @@
-This is a small file test for file encryption
+My school does not have a C++ computer science class :(
