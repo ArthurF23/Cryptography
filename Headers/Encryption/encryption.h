@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.6.3";
+    static string ver = "v1.6.4";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -22,12 +22,6 @@ namespace encryption {
     static constexpr unsigned short DEFAULT_KEY_NUM = 0;
     //This is THE key, made like this so you can just pre set the key and it's used throught the header seamlessly orbyou can prompt the user for a key and generate a key easily or anything with KEY::key
     static unsigned int key = DEFAULT_KEY_NUM;
-  }
-  namespace AESKEY {
-    static AESbyte key[GLOBAL_MTX_SIZE] =  {0x2b, 0x7e, 0x15, 0x16,   
-    0x28, 0xae, 0xd2, 0xa6,   
-    0xab, 0xf7, 0x15, 0x88,   
-    0x09, 0xcf, 0x4f, 0x3c};
   }
   class VIGENERE_KEY {
     public:
@@ -266,6 +260,10 @@ namespace encryption {
       };
 
       public:
+      class KEY {
+        public:
+        static AESbyte key[GLOBAL_MTX_SIZE];
+      };
       enum OPTIONS {
         doGenerateKey = 0b00000000, 
         noGenerateKey = 0b00000001,

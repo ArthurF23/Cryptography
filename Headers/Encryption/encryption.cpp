@@ -178,7 +178,7 @@ namespace encryption {
     int i = 0;  
     //The first four of w [] are input keys  
     while(i < AESwords_in_key) {  
-        w[i] = _4Bytes2Word(AESKEY::key[4*i], AESKEY::key[4*i+1], AESKEY::key[4*i+2], AESKEY::key[4*i+3]);  
+        w[i] = _4Bytes2Word(AES::KEY::key[4*i], AES::KEY::key[4*i+1], AES::KEY::key[4*i+2], AES::KEY::key[4*i+3]);  
         ++i;  
     };
   
@@ -343,7 +343,7 @@ namespace encryption {
       for (int i = 0; i < bitsInByte; i++) {
         bin[i] = getRandomNum(0, 1);
       };
-      AESKEY::key[x] = bin;
+      AES::KEY::key[x] = bin;
     };
   };
 
@@ -355,7 +355,7 @@ namespace encryption {
       }
     else {
       for (int y = 0, n=0; y < mtx_size; y++, n+=bitsInByte) {
-        AESKEY::key[y] = CONVERSIONS::binStr_to_byte(dummykey.substr(n, n+bitsInByte));
+        AES::KEY::key[y] = CONVERSIONS::binStr_to_byte(dummykey.substr(n, n+bitsInByte));
       };
     };
     KeyExpansion(AES::global_expanded_key);
@@ -426,6 +426,7 @@ namespace encryption {
   /////////Pass through encrypt & decrypt functions//////
   /////////that input and output strings/////////////////
   ///////////////////////////////////////////////////////
+  AESbyte AES::KEY::key[mtx_size];
 
   /////////////
   ///Encrypt///

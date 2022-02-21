@@ -36,8 +36,8 @@ void aesExample() {
 
   //Output key
   cout << "Key: ";
-  for(int i=0; i<sizeof(AESKEY::key)/sizeof(AESKEY::key[0]); ++i) {
-    cout << AESKEY::key[i] << " ";
+  for(int i=0; i<sizeof(AES::KEY::key)/sizeof(AES::KEY::key[0]); ++i) {
+    cout << AES::KEY::key[i] << " ";
   };
   cout << endl;
   
@@ -105,8 +105,8 @@ void wholeFileEncryptionExample() {
   AES::aes_init(AES::OPTIONS::doGenerateKey);
   
   cout << "Generated key: ";
-  for(int i=0; i<sizeof(AESKEY::key)/sizeof(AESKEY::key[0]); ++i) {
-    cout << AESKEY::key[i] << " ";
+  for(int i=0; i<sizeof(AES::KEY::key)/sizeof(AES::KEY::key[0]); ++i) {
+    cout << AES::KEY::key[i] << " ";
   };
   cout << endl << endl << endl;
   

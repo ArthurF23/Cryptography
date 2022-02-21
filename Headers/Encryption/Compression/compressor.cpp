@@ -121,6 +121,9 @@ namespace COMPRESSION {
     string str;
 
     //First compression
+    //Say you have 2 bytes 0100001100111100
+    //That would be reduced to 010412021402
+    //01 is the same, then 04 means repeat 0 four times in decompression, 12 = 11 etc....
     for (int i = 0, increment = 0; i < input.length(); i++) {
       for (increment = 1;; increment++) {
         if (input[i] != input[i+increment] || increment == 9) {break;};

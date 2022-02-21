@@ -1,15 +1,9 @@
 ## Thank you for using my header!
 
-### v1.6.3
+### v1.7.0
 
 ### What's new?
-###### v1.6.0
-Added binary compression to `encryptFile()`. So when `encrypt()` outputs a binary string, it gets encrypted using lossless compression. It has a ratio of about 3:1 on the bee movie script which is what I use to test large files.
-
-###### v1.6.3
-Compression is now on all AES outputs 
-
-Removed bloat.
+Patched the AES key as the generated key was not being set to the key. Location has changed to `AES::KEY::key`. If you were using the previous version, `AESKEY::key` simply add `::` between `AES` and `KEY`.
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
