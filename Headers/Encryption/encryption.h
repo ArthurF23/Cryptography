@@ -260,6 +260,7 @@ namespace encryption {
         static constexpr char EXTENSION_SEPERATOR = '~';
         static bool gen_key_file(string path);
         static bool in_key_file(string path);
+        static void classify(string ext, CLASSIFIER &clasif);
         
         class TXT {
           public:

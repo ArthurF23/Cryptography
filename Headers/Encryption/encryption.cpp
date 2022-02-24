@@ -627,6 +627,14 @@ namespace encryption {
   const string AES::FILES::TXT::identifier[id_len] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   const string AES::FILES::BMP_::identifier = ".bmp";
 
+  void AES::FILES::classify(string ext, AES::FILES::CLASSIFIER &type) {
+    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
+      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
+    };
+    
+    if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+  }
+
   //Key File
   bool AES::FILES::gen_key_file(string path) {
     path.erase(path.rfind('.'), path.length()); //Erase extension
@@ -676,14 +684,11 @@ namespace encryption {
     string data = ext + FILES::EXTENSION_SEPERATOR;
 
     FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
-    
-    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
-      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
-    };
-    
-    if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+    FILES::classify(ext, type);
     
     switch (type) {
+      case FILES::CLASSIFIER::_RETURN:
+        return false;
       case FILES::CLASSIFIER::_TEXT:
         FILES::TXT::get(path, data);
         break;
@@ -725,7 +730,6 @@ namespace encryption {
     string data;
 
     //Just like in encryptFile
-
     AES::FILES::TXT::get(path, data);
 
     if (keyFilePath != "") {AES::FILES::in_key_file(keyFilePath);}
@@ -748,12 +752,7 @@ namespace encryption {
     
 
     FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
-    
-    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
-      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
-    };
-    
-    if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+    FILES::classify(ext, type);
     
     switch (type) {
       case FILES::CLASSIFIER::_RETURN:
