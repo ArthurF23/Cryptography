@@ -233,7 +233,7 @@ namespace encryption {
         static char binary_to_char(AESbyte input);
         static AESbyte binStr_to_byte(string input);
       };
-      
+
       //Random number generation function
       static inline unsigned int getRandomNum(unsigned int min, unsigned int max);
       //Expand Key
@@ -258,8 +258,17 @@ namespace encryption {
         
         class TXT {
           public:
-          static const string identifier[6];
+          static constexpr short id_len = 6;
+          static const string identifier[id_len];
           static void get(string path, string& data);
+        };
+        class BMP_ {
+          public:
+          static const string identifier;
+          static constexpr char DATA_SEPARATOR = ':';
+          static constexpr char NUM_SEPARATOR = ',';
+          static void get(string path, string& data);
+          static void out(string path, string data);
         };
       };
 

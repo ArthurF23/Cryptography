@@ -426,7 +426,7 @@ namespace encryption {
   /////////Pass through encrypt & decrypt functions//////
   /////////that input and output strings/////////////////
   ///////////////////////////////////////////////////////
-  AESbyte AES::KEY::key[mtx_size];
+  AESbyte AES::KEY::key[mtx_size]; //Key definition
 
   /////////////
   ///Encrypt///
@@ -557,6 +557,52 @@ namespace encryption {
     data += buffer;
     //Don't need this anymore sooo...
     delete[] buffer;
+    infile.close();    
+  };
+
+  void AES::FILES::BMP_::get(string path, string& data) {
+    BMPbyte *pixels;
+    int32 width;
+    int32 height;
+    int32 bytesPerPixel;
+    //Get size of pixel arr with width*height*bytesPerPixel
+    BMP::ReadImage("img.bmp", &pixels, &width, &height, &bytesPerPixel);
+    data+=to_string(width)+FILES::BMP_::DATA_SEPARATOR;
+    data+=to_string(height)+FILES::BMP_::DATA_SEPARATOR;
+    data+=to_string(bytesPerPixel)+FILES::BMP_::DATA_SEPARATOR;
+    for (unsigned int i=0; i<(width*height*bytesPerPixel)-1; i++) {
+      data+=to_string(pixels[i]) + NUM_SEPARATOR;
+    };
+  };
+
+  void AES::FILES::BMP_::out(string path, string data) {
+    data.erase(0, data.find_first_of(AES::FILES::EXTENSION_SEPERATOR)+1);
+    int32 width;
+    int32 height;
+    int32 bytesPerPixel;
+    string str;
+    str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
+    width = stoi(str);
+    data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+    str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
+    height = stoi(str);
+    data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+    str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
+    bytesPerPixel = stoi(str);
+    data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+    unsigned int length = width*height*bytesPerPixel;
+    BMPbyte* pixels;
+    //BMP::getPix(&pixels, &width, &height, &bytesPerPixel);
+    for (int i=0; i<(width*height*bytesPerPixel); i++) {
+      string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
+      cout << sm << endl;
+      int num = stoi(sm);
+      if ((width*height*bytesPerPixel)-1 >= i) {
+        data.erase(0, data.find_first_of(NUM_SEPARATOR));
+        };
+      }
+    
+    //cout << "Bruh " << to_string(pixels[0]) << endl; //127
   };
 
   //Design: file type will be in front of all the data.
@@ -569,7 +615,8 @@ namespace encryption {
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
   const string AES::FILES::KEYFILE_NAME = "_KEYFILE";
   const string AES::FILES::KEYFILE_EXT = ".aeskey";
-  const string AES::FILES::TXT::identifier[6] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
+  const string AES::FILES::TXT::identifier[id_len] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
+  const string AES::FILES::BMP_::identifier = ".bmp";
 
   //Key File
   bool AES::FILES::gen_key_file(string path) {
@@ -620,9 +667,29 @@ namespace encryption {
     string data = ext + FILES::EXTENSION_SEPERATOR;
 
     //Only can do text based
-    if (ext == FILES::TXT::identifier[0] || ext == FILES::TXT::identifier[1]) {
-      FILES::TXT::get(path, data);
-    } else {return false;};
+    int isValid = 0; //0 - return //1 - text //1 - bmp
+    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
+      if (ext == FILES::TXT::identifier[i]) {isValid=1;break;};
+    };
+    if (ext == FILES::BMP_::identifier) {isValid=2;};
+    switch (isValid) {
+      case 0:
+        return false;
+      case 1:
+        FILES::TXT::get(path, data);
+        break;
+      case 2:
+        cout << "GET" << endl;
+        FILES::BMP_::get(path,data);
+        cout << "OUT" << endl;
+        FILES::BMP_::out(path, data);
+        return false;
+        break;
+      
+      default:
+        return false;
+    };
+   
 
     ext.clear(); //Delete because it's useless
     //Encrypt it
@@ -666,18 +733,42 @@ namespace encryption {
 
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
-    path += data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
+    string ext = data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
+    path += ext; //add extension to path
+
 
     //Erase that part of the decrypted data
     data.erase(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
-    //Original File
+
+     //Original File
     ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
     ofstream outfile(path, ios::out | ios::trunc);
-    //Write to file
-    outfile << data;
-    //Close the file
-    outfile.close();
+
+    //Only can do text based
+    int isValid = 0; //0 - return //1 - text //1 - bmp
+    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
+      if (ext == FILES::TXT::identifier[i]) {isValid=1;break;};
+    };
+    if (ext == FILES::BMP_::identifier) {isValid=2;};
+
+    switch (isValid) {
+      case 0:
+        return false;
+      case 1:
+        //Write to file
+        outfile << data;
+        //Close the file
+        outfile.close();
+        break;
+      case 2:
+        FILES::BMP_::out(path, data);
+        break;
+      
+      default:
+        break;
+    };
+
     return true;
   };
 
