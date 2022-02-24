@@ -570,7 +570,7 @@ namespace encryption {
     data+=to_string(width)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(height)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(bytesPerPixel)+FILES::BMP_::DATA_SEPARATOR;
-    for (unsigned int i=0; i<(width*height*bytesPerPixel)-1; i++) {
+    for (unsigned int i=0; i<(width*height*bytesPerPixel); i++) {
       data+=to_string(pixels[i]) + NUM_SEPARATOR;
     };
   };
@@ -581,6 +581,7 @@ namespace encryption {
     int32 height;
     int32 bytesPerPixel;
     string str;
+    cout << "DATA ASSIGNING" << endl;
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     width = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
@@ -590,19 +591,22 @@ namespace encryption {
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+    cout << "ASSIGNED" << endl;
     unsigned int length = width*height*bytesPerPixel;
-    BMPbyte* pixels;
+    BMPbyte pixels[length];
     //BMP::getPix(&pixels, &width, &height, &bytesPerPixel);
-    for (int i=0; i<(width*height*bytesPerPixel); i++) {
+    for (int i=0; i<length; i++) {
       string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
-      cout << sm << endl;
-      int num = stoi(sm);
-      if ((width*height*bytesPerPixel)-1 >= i) {
-        data.erase(0, data.find_first_of(NUM_SEPARATOR));
+      unsigned int num = stoi(sm);
+      if (i <= 10) {
+        cout << sm << " " << num << endl;
         };
-      }
-    
-    //cout << "Bruh " << to_string(pixels[0]) << endl; //127
+      pixels[i] = (num);
+      if (data.find(NUM_SEPARATOR) != string::npos) {
+        data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
+        };
+      };
+    BMP::WriteImage("img2.bmp", pixels, width, height, bytesPerPixel);
   };
 
   //Design: file type will be in front of all the data.
