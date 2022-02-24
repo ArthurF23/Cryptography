@@ -4,6 +4,7 @@
 #include <random>
 #include <bitset>
 #include <fstream>
+#include <cstdlib>
 using namespace std;
 
 #include "Compression/compressor.h"

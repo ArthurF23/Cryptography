@@ -698,11 +698,10 @@ namespace encryption {
       default:
         return false;
     };
-   
-
+    
     ext.clear(); //Delete because it's useless
+    
     //Encrypt it
-
     data = encrypt(data);
       
     //Make new file & path using old path by removing the extension from the string
