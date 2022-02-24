@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.7.1";
+    static string ver = "v1.8.0";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -233,7 +233,7 @@ namespace encryption {
         static char binary_to_char(AESbyte input);
         static AESbyte binStr_to_byte(string input);
       };
-      
+
       //Random number generation function
       static inline unsigned int getRandomNum(unsigned int min, unsigned int max);
       //Expand Key
@@ -249,17 +249,33 @@ namespace encryption {
 
       class FILES {
         public:
+        enum CLASSIFIER {
+          _RETURN = 0b00000000,
+          _TEXT = 0b00000001,
+          _BITMAP = 0b00000010
+        };
         static const string FILE_EXTENSION;
         static const string KEYFILE_NAME;
         static const string KEYFILE_EXT;
         static constexpr char EXTENSION_SEPERATOR = '~';
         static bool gen_key_file(string path);
         static bool in_key_file(string path);
+        static void classify(string ext, CLASSIFIER &clasif);
         
         class TXT {
           public:
-          static const string identifier[6];
+          static constexpr short id_len = 6;
+          static const string identifier[id_len];
           static void get(string path, string& data);
+          static void out(string path, string data);
+        };
+        class BMP_ {
+          public:
+          static const string identifier;
+          static constexpr char DATA_SEPARATOR = ':';
+          static constexpr char NUM_SEPARATOR = ',';
+          static void get(string path, string& data);
+          static void out(string path, string data);
         };
       };
 

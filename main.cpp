@@ -199,7 +199,7 @@ int main() {
       break;
       
     default:
-      cout << "Err please input 1, 2, or 3" << endl;
+      cout << "Err please input 1, 2, 3, 4, 5, or 6" << endl;
       return main();
   };
   return main();
