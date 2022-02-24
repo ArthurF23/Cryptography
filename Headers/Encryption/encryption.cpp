@@ -576,12 +576,15 @@ namespace encryption {
   };
 
   void AES::FILES::BMP_::out(string path, string data) {
+    char filename[path.length()];
+    for (int x = 0; x<path.length(); x++) {
+      filename[x] = path[x];
+    }
     data.erase(0, data.find_first_of(AES::FILES::EXTENSION_SEPERATOR)+1);
     int32 width;
     int32 height;
     int32 bytesPerPixel;
     string str;
-    cout << "DATA ASSIGNING" << endl;
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     width = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
@@ -591,7 +594,6 @@ namespace encryption {
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
-    cout << "ASSIGNED" << endl;
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];
     //BMP::getPix(&pixels, &width, &height, &bytesPerPixel);
@@ -606,7 +608,7 @@ namespace encryption {
         data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
         };
       };
-    BMP::WriteImage("img2.bmp", pixels, width, height, bytesPerPixel);
+    BMP::WriteImage(filename, pixels, width, height, bytesPerPixel);
   };
 
   //Design: file type will be in front of all the data.
@@ -683,11 +685,7 @@ namespace encryption {
         FILES::TXT::get(path, data);
         break;
       case 2:
-        cout << "GET" << endl;
         FILES::BMP_::get(path,data);
-        cout << "OUT" << endl;
-        FILES::BMP_::out(path, data);
-        return false;
         break;
       
       default:

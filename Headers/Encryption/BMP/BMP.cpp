@@ -2,12 +2,6 @@
 
 #include "BMP.h"
 namespace BITMAP {
-  void BMP::getPix(BMPbyte** pixels, int32 *width, int32 *height, int32 *bytesPerPixel) {
-    int unpaddedRowSize = (*width)*(*bytesPerPixel);
-    int totalSize = unpaddedRowSize*(*height);
-    *pixels = (BMPbyte*)malloc(totalSize);
-  };
-
   void BMP::ReadImage(const char *fileName,BMPbyte **pixels, int32 *width, int32 *height, int32 *bytesPerPixel) {
     FILE *imageFile = fopen(fileName, "rb");
     int32 dataOffset;
