@@ -1,4 +1,3 @@
-
 #include "encryption_includes.h"
 
 #include "encryption.h"
@@ -571,9 +570,7 @@ namespace encryption {
   void AES::FILES::BMP_::get(string path, string& data) {
     char* filename = const_cast<char*>(path.c_str());
     BMPbyte *pixels;
-    int32 width;
-    int32 height;
-    int32 bytesPerPixel;
+    int32 width, height, bytesPerPixel;
     //Get size of pixel arr with width*height*bytesPerPixel
     BMP::ReadImage(filename, &pixels, &width, &height, &bytesPerPixel);
     data+=to_string(width)+FILES::BMP_::DATA_SEPARATOR;
@@ -585,32 +582,40 @@ namespace encryption {
   };
 
   void AES::FILES::BMP_::out(string path, string data) {
+    //Convert path str to char*
     char* filename = const_cast<char*>(path.c_str());
     data.erase(0, data.find_first_of(AES::FILES::EXTENSION_SEPERATOR)+1);
-    int32 width;
-    int32 height;
-    int32 bytesPerPixel;
+    int32 width, height, bytesPerPixel;
     string str;
+    //get width
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     width = stoi(str);
+    //get height
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     height = stoi(str);
+    //get bytesPerPixel
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+    //Length of pixels
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];
-    //BMP::getPix(&pixels, &width, &height, &bytesPerPixel);
+    //Assign rgb values to arr
     for (int i=0; i<length; i++) {
+      //substring rgb num
       string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
+      //str 2 int
       unsigned int num = stoi(sm);
+      //assign
       pixels[i] = (num);
+      //delete from data
       if (data.find(NUM_SEPARATOR) != string::npos) {
         data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
         };
       };
+    //Write the image
     BMP::WriteImage(filename, pixels, width, height, bytesPerPixel);
   };
 
@@ -619,6 +624,8 @@ namespace encryption {
 
   //so it will be like this
   //.{extension}~{data}
+  //In the case of bitmaps it will be like this
+  //.bmp~{width}:{height}:{bytesPerPixel}:{rgb int},{rgb int},etc...
   
   //Extension: .aesenc
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
@@ -626,14 +633,14 @@ namespace encryption {
   const string AES::FILES::KEYFILE_EXT = ".aeskey";
   const string AES::FILES::TXT::identifier[id_len] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   const string AES::FILES::BMP_::identifier = ".bmp";
-
+  //Classify type of file
   void AES::FILES::classify(string ext, AES::FILES::CLASSIFIER &type) {
     for (int i=0; i < AES::FILES::TXT::id_len; i++) {
       if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
     };
     
     if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
-  }
+  };
 
   //Key File
   bool AES::FILES::gen_key_file(string path) {
@@ -708,13 +715,7 @@ namespace encryption {
     path.erase(path.rfind('.'), path.length());
     path+=FILES::FILE_EXTENSION;
 
-    //Create new file
-    ofstream {path};
-
-    ofstream outfile(path);
-    outfile << data;
-    outfile.close();
-    data.clear();
+    FILES::TXT::out(path, data);
     return true;
   };
 
@@ -725,15 +726,12 @@ namespace encryption {
       infile.close();
       return false;
     };
-
     string data;
-
     //Just like in encryptFile
     AES::FILES::TXT::get(path, data);
 
     if (keyFilePath != "") {AES::FILES::in_key_file(keyFilePath);}
-    else {AES::FILES::in_key_file(path);};
-    
+    else {AES::FILES::in_key_file(path);};    
 
     //Decrypt
     data = decrypt(data);
@@ -743,12 +741,9 @@ namespace encryption {
     string ext = data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
     path += ext; //add extension to path
 
-
     //Erase that part of the decrypted data
     data.erase(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
-
-    
 
     FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
     FILES::classify(ext, type);

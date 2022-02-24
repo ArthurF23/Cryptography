@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.0
+### v1.8.1
 
 ### What's new?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
