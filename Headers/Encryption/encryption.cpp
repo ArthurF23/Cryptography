@@ -674,14 +674,14 @@ namespace encryption {
     return true;
   }
 
+  bool path_is_good(string path) {
+    ifstream infile(path);
+    return infile.good(); infile.close();
+  }
+
   bool AES::encryptFile(string path) {
     //checks if path is valid
-    ifstream infile(path);
-    if (infile.good() == false) {
-      infile.close();
-      return false;
-    };
-    infile.close();
+    if(path_is_good(path) == false) {return false;}
     
     AES::FILES::gen_key_file(path);
 
@@ -721,11 +721,7 @@ namespace encryption {
 
   bool AES::decryptFile(string path, string keyFilePath) {
      //checks if path is valid
-    ifstream infile(path, std::ifstream::binary);
-    if (infile.good() == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {
-      infile.close();
-      return false;
-    };
+     if(path_is_good(path) == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {return false;}
     string data;
     //Just like in encryptFile
     AES::FILES::TXT::get(path, data);
@@ -747,6 +743,7 @@ namespace encryption {
 
     FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
     FILES::classify(ext, type);
+    ext.clear(); //Not needed, free memory
     
     switch (type) {
       case FILES::CLASSIFIER::_RETURN:

@@ -261,6 +261,7 @@ namespace encryption {
         static bool gen_key_file(string path);
         static bool in_key_file(string path);
         static void classify(string ext, CLASSIFIER &clasif);
+        static bool path_is_good(string path);
         
         class TXT {
           public:
