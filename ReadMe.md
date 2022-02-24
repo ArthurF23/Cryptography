@@ -206,6 +206,9 @@ decryptFF(path);
 
 If you were wondering the FF means from file. Also, this only works with .txt file so please only use those.
 
+### Whole File Encryption
+
+
 #### `encryptFile()`
 Works just like `encryptFF()` with parameters except this genrates a new file with extension `.aesenc`
 
