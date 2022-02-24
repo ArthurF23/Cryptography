@@ -560,13 +560,22 @@ namespace encryption {
     infile.close();    
   };
 
+  void AES::FILES::TXT::out(string path, string data) {
+    //Original File
+    ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
+    ofstream outfile(path, ios::out | ios::trunc);
+    outfile << data; //write to file
+    outfile.close(); //close file
+  }
+
   void AES::FILES::BMP_::get(string path, string& data) {
+    char* filename = const_cast<char*>(path.c_str());
     BMPbyte *pixels;
     int32 width;
     int32 height;
     int32 bytesPerPixel;
     //Get size of pixel arr with width*height*bytesPerPixel
-    BMP::ReadImage("img.bmp", &pixels, &width, &height, &bytesPerPixel);
+    BMP::ReadImage(filename, &pixels, &width, &height, &bytesPerPixel);
     data+=to_string(width)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(height)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(bytesPerPixel)+FILES::BMP_::DATA_SEPARATOR;
@@ -576,10 +585,7 @@ namespace encryption {
   };
 
   void AES::FILES::BMP_::out(string path, string data) {
-    char filename[path.length()];
-    for (int x = 0; x<path.length(); x++) {
-      filename[x] = path[x];
-    }
+    char* filename = const_cast<char*>(path.c_str());
     data.erase(0, data.find_first_of(AES::FILES::EXTENSION_SEPERATOR)+1);
     int32 width;
     int32 height;
@@ -600,9 +606,6 @@ namespace encryption {
     for (int i=0; i<length; i++) {
       string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
       unsigned int num = stoi(sm);
-      if (i <= 10) {
-        cout << sm << " " << num << endl;
-        };
       pixels[i] = (num);
       if (data.find(NUM_SEPARATOR) != string::npos) {
         data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
@@ -672,22 +675,21 @@ namespace encryption {
     //Add the extension + seperator to the data string
     string data = ext + FILES::EXTENSION_SEPERATOR;
 
-    //Only can do text based
-    int isValid = 0; //0 - return //1 - text //1 - bmp
+    FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
+    
     for (int i=0; i < AES::FILES::TXT::id_len; i++) {
-      if (ext == FILES::TXT::identifier[i]) {isValid=1;break;};
+      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
     };
-    if (ext == FILES::BMP_::identifier) {isValid=2;};
-    switch (isValid) {
-      case 0:
-        return false;
-      case 1:
+    
+    if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+    
+    switch (type) {
+      case FILES::CLASSIFIER::_TEXT:
         FILES::TXT::get(path, data);
         break;
-      case 2:
+      case FILES::CLASSIFIER::_BITMAP:
         FILES::BMP_::get(path,data);
-        break;
-      
+        break;      
       default:
         return false;
     };
@@ -743,34 +745,31 @@ namespace encryption {
     data.erase(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR)+1);
     data.erase(data.length(), data.length());
 
-     //Original File
-    ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
-    ofstream outfile(path, ios::out | ios::trunc);
+    
 
-    //Only can do text based
-    int isValid = 0; //0 - return //1 - text //1 - bmp
+    FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
+    
     for (int i=0; i < AES::FILES::TXT::id_len; i++) {
-      if (ext == FILES::TXT::identifier[i]) {isValid=1;break;};
+      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
     };
-    if (ext == FILES::BMP_::identifier) {isValid=2;};
-
-    switch (isValid) {
-      case 0:
+    
+    if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+    
+    switch (type) {
+      case FILES::CLASSIFIER::_RETURN:
         return false;
-      case 1:
-        //Write to file
-        outfile << data;
-        //Close the file
-        outfile.close();
+      
+      case FILES::CLASSIFIER::_TEXT:
+        FILES::TXT::out(path,data);
         break;
-      case 2:
-        FILES::BMP_::out(path, data);
+      
+      case FILES::CLASSIFIER::_BITMAP:
+        FILES::BMP_::out(path,data);
         break;
       
       default:
-        break;
+        return false;
     };
-
     return true;
   };
 

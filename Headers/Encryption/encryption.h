@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.7.1";
+    static string ver = "v1.8.0";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -249,6 +249,11 @@ namespace encryption {
 
       class FILES {
         public:
+        enum CLASSIFIER {
+          _RETURN = 0b00000000,
+          _TEXT = 0b00000001,
+          _BITMAP = 0b00000010
+        };
         static const string FILE_EXTENSION;
         static const string KEYFILE_NAME;
         static const string KEYFILE_EXT;
@@ -261,6 +266,7 @@ namespace encryption {
           static constexpr short id_len = 6;
           static const string identifier[id_len];
           static void get(string path, string& data);
+          static void out(string path, string data);
         };
         class BMP_ {
           public:
