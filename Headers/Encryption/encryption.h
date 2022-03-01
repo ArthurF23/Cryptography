@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.8.3";
+    static string ver = "v1.8.4";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }

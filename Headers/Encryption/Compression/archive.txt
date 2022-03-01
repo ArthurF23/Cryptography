@@ -1,0 +1,91 @@
+unsigned long int x = 0;
+      //finds how many times a chunk repeats
+      for (x = i; x<chunk_count; x++) {
+        if (chunks[x] != chunks[i]) {x=firstLayerMultiplier[0]-1;break;};
+        if (x == firstLayerMultiplier[0]-1) {break;};
+      };
+      cout << chunks[i] << endl;
+      cout << x << endl;
+      
+      //if a segment repeats more than once, start compression
+      if (x-i > 1) {
+        //Change commas to #
+        for (int y = 0; y<chunks[i].length(); y++) {
+          if (chunks[i][y] == separator) {chunks[i][y] = _separator[0];};
+        };
+        //add repeated chunk to chunk
+        inp += sectionStart + chunks[i] + sectionEnd + firstLayerMulRChars[x][1] + separator;
+        //add x to i to skip
+        i+=x;
+      } else { //if not then change some commas to # and move on to next
+        for (int y = 0; y<chunks[i].length()-1; y++) {
+          if (chunks[i][y] == separator) {chunks[i][y] = _separator[0];};
+        };
+        inp+=chunks[i];
+        i++;
+      };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//isnt assigning section properly and is repeating too many times 2/25/22
+    for (int i=0; i<chunk_count; i++) {
+      if (chunks[i][0] == sectionStart[0]) {
+        string section = chunks[i];
+        for (int x=0; x<section.length(); x++) {
+          if (section[x] == _separator) {
+            section[x] = separator;
+          };
+        };
+        ////- tbd -//////////
+        int pos;
+        for (int x=0; x<firstLayerMultiplier[0]; x++) {
+          if (section[section.length()-2] == firstLayerMulRChars[x][1][0]) {
+            pos = x;
+            break;
+          };
+        };
+        ////////////
+        
+        //good////
+        section.erase(section.length()-2, section.length());
+        for (int x=0; x<section.length(); x++) {
+          if (section[x] == sectionStart[0]) {section.erase(0, x+1);};
+          if (section[x] == sectionEnd[0]) {section.erase(x, x+1);};
+        };
+        ////////
+
+        ///// -tbd- ////
+        for (int x=0; x<pos/*+1*/; x++) {
+          inp += section;
+        };
+        //////////
+        
+      } else {
+        for (int y = 0; y<chunks[i].length()-1; y++) {
+          if (chunks[i][y] == _separator) {chunks[i][y] = separator;};
+        };
+        inp += chunks[i];
+      };
+    };

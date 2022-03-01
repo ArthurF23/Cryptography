@@ -168,6 +168,14 @@ void vigenereExample() {
 string text[8] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Vigenere cypher = 6", "Please input the cooresponding number to your desired example"};
 
 int main() {
+  /*string ez = "255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,255,123,245,123,123,100,123,123,100,123,123,100,123,123,100,123,123,100,123,123,100,123,123,100,122,22,10,122,22,10,";
+  string clone = ez;
+  rgb_compression::compress(ez, ',');
+  cout << ez << endl;
+  rgb_compression::decompress(ez, ',');
+  cout << ez << endl;
+  cout << bool(ez == clone) << endl;
+  return 0;*/
   cout << text[0] << endl;
   cout << text[1] << endl;
   cout << text[2] << endl;

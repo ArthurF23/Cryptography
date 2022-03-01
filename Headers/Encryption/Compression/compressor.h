@@ -26,11 +26,12 @@ namespace COMPRESSION {
     static void decompress(string &inp, char separator);
 
     private:
+    static void replaceSeparator(string &inp, char sep, char repl);
     static void get_chunk_count(unsigned int &inp, string clone, char separator, bool div = true);
-    static const string _separator;
+    static const char _separator = '#';
     static const string sectionStart;
     static const string sectionEnd;
-    static constexpr short firstLayerMultiplier[2] = {10, 2};
+    static constexpr short firstLayerMultiplier[2] = {11, 2};
     static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
   };
 };
