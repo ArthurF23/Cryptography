@@ -398,11 +398,7 @@ namespace COMPRESSION {
       //Do compression thing if repeat > 1
       if (rep > 1) {
         string temp;
-        temp += sectionStart;
-        temp += chunks[i];
-        temp += sectionEnd;
-        temp += firstLayerMulRChars[rep][1];
-        temp += separator;
+        temp += sectionStart + chunks[i] + sectionEnd + firstLayerMulRChars[rep][1] + separator;
         //Do thing with commas to make code go brrrrr
         replaceSeparator(temp, separator, _separator); inp += temp; temp.clear();
         i += rep;
