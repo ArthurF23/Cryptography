@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.8.1";
+    static string ver = "v1.8.3";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -277,7 +277,7 @@ namespace encryption {
           static constexpr char NUM_SEPARATOR = ',';
           static void get(string path, string& data);
           static void out(string path, string data);
-        };
+        };      
       };
 
       public:
@@ -304,7 +304,6 @@ namespace encryption {
       //Encrypt File 
       static bool encryptFile(string path);
       static bool decryptFile(string path, string keyFilePath = "");
-
     };
 
     class DUO {

@@ -321,4 +321,136 @@ namespace COMPRESSION {
     };
     input = output; output.clear();
   };
+
+  /////////////////////////
+  ///  RGB  ///////////////
+  /////////////////////////
+  const string rgb_compression::firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]] {
+    {"0", ""}, //Will not be used
+    {"1", ""}, // ^
+    {"2", "|"},
+    {"3", "$"},
+    {"4", "'"},
+    {"5", "]"},
+    {"6", "["},
+    {"7", "="},
+    {"8", "+"},
+    {"9", "-"}
+  };
+  const string rgb_compression::sectionStart = "{";
+  const string rgb_compression::sectionEnd = "}";
+  const string rgb_compression::_separator = "#";
+
+  void rgb_compression::get_chunk_count(unsigned int &inp, string clone, char separator, bool div) {
+    inp = count(clone.begin(), clone.end(), separator);
+    //since each pixel is 3 values, divide by 3 to get actual chunk value
+    if (div == true) {
+      inp/=3;
+    };
+  }
+
+  void rgb_compression::compress(string &inp, char separator) {
+    const int length = inp.length();
+    string clone = inp;
+    //count chunks
+    unsigned int chunk_count; get_chunk_count(chunk_count, clone, separator);
+    string chunks[chunk_count];
+    //assign chunks to arr
+    for (int i=0; i<chunk_count && clone.length() != 0; i++) {
+      if (clone.length() == 0) {break;};
+      int first = clone.find_first_of(separator) + 1;
+      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+
+      if (clone.length() == 0) {break;};
+      first = clone.find_first_of(separator) + 1;
+      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+      
+      if (clone.length() == 0) {break;};
+      first = clone.find_first_of(separator) + 1;
+      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+      if (clone[0] == ' ') {break;};
+    };
+    inp.clear(); clone.clear();
+    //Find matching chunks and pair them accordingly
+    for (unsigned int i = 0; i<chunk_count;) {
+      int x = 0;
+      //finds how many times a chunk repeats
+      for (x = i; x<chunk_count; x++) {
+        if (x == firstLayerMultiplier[0]) {break;};
+        if (x > firstLayerMultiplier[0]) {x=firstLayerMultiplier[0]; break;};
+        if (chunks[x] != chunks[i]) {break;};
+      };
+      //if a segment repeats more than once, start compression
+      if (x-i > 1) {
+        //Change commas to #
+        for (int y = 0; y<chunks[i].length(); y++) {
+          if (chunks[i][y] == separator) {chunks[i][y] = _separator[0];};
+        };
+        //add repeated chunk to chunk
+        inp += sectionStart + chunks[i] + sectionEnd + firstLayerMulRChars[x-1][1] + separator;
+        //add x to i to skip
+        i+=x;
+      } else { //if not then change some commas to # and move on to next
+        for (int y = 0; y<chunks[i].length()-1; y++) {
+          if (chunks[i][y] == separator) {chunks[i][y] = _separator[0];};
+        };
+        inp+=chunks[i];
+        i++;
+      };
+    }
+  };
+
+  void rgb_compression::decompress(string &inp, char separator) {
+    //get all chunks
+    unsigned int chunk_count = 0; 
+    get_chunk_count(chunk_count, inp, separator, false);
+    string clone = inp;
+    string chunks[chunk_count];
+    //assign chunks to arr
+    for (int i=0; i<chunk_count; i++) {
+      int first = clone.find_first_of(separator) + 1;
+      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+    };
+    clone.clear(); inp.clear();
+    //isnt assigning section properly and is repeating too many times 2/25/22
+    for (int i=0; i<chunk_count; i++) {
+      if (chunks[i][0] == sectionStart[0]) {
+        string section = chunks[i];
+        for (int x=0; x<section.length(); x++) {
+          if (section[x] == _separator[0]) {
+            section[x] = separator;
+          };
+        };
+        ////- tbd -//////////
+        int pos;
+        for (int x=0; x<firstLayerMultiplier[0]; x++) {
+          if (section[section.length()-2] == firstLayerMulRChars[x][1][0]) {
+            pos = x;
+            break;
+          };
+        };
+        ////////////
+        
+        //good////
+        section.erase(section.length()-2, section.length());
+        for (int x=0; x<section.length(); x++) {
+          if (section[x] == sectionStart[0]) {section.erase(0, x+1);};
+          if (section[x] == sectionEnd[0]) {section.erase(x, x+1);};
+        };
+        ////////
+
+        ///// -tbd- ////
+        for (int x=0; x<pos+1; x++) {
+          inp += section;
+        };
+        //////////
+        
+      } else {
+        for (int y = 0; y<chunks[i].length()-1; y++) {
+          if (chunks[i][y] == _separator[0]) {chunks[i][y] = separator;};
+        };
+        inp += chunks[i];
+      };
+    };
+  };
 };

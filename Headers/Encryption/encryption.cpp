@@ -576,9 +576,13 @@ namespace encryption {
     data+=to_string(width)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(height)+FILES::BMP_::DATA_SEPARATOR;
     data+=to_string(bytesPerPixel)+FILES::BMP_::DATA_SEPARATOR;
+    string pix;
     for (unsigned int i=0; i<(width*height*bytesPerPixel); i++) {
-      data+=to_string(pixels[i]) + NUM_SEPARATOR;
+      pix+=to_string(pixels[i]) + NUM_SEPARATOR;
     };
+    rgb_compression::compress(pix, NUM_SEPARATOR);
+    data+=pix;
+    pix.clear();
   };
 
   void AES::FILES::BMP_::out(string path, string data) {
@@ -599,6 +603,8 @@ namespace encryption {
     str = data.substr(0, data.find_first_of(DATA_SEPARATOR));
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
+
+    rgb_compression::decompress(data, NUM_SEPARATOR);
     //Length of pixels
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];
@@ -606,6 +612,7 @@ namespace encryption {
     for (int i=0; i<length; i++) {
       //substring rgb num
       string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
+      if (sm == "") {break;};
       //str 2 int
       unsigned int num = stoi(sm);
       //assign
@@ -681,7 +688,7 @@ namespace encryption {
 
   bool AES::encryptFile(string path) {
     //checks if path is valid
-    if(path_is_good(path) == false) {return false;}
+    if(path_is_good(path) == false) {return false;};
     
     AES::FILES::gen_key_file(path);
 

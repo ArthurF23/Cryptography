@@ -19,4 +19,18 @@ namespace COMPRESSION {
     static const string fifthLayerMulRChars[fifthLayerMultiplier[0]][fifthLayerMultiplier[1]];
     static constexpr char breakChar = ';';
   };
+
+  class rgb_compression {
+    public:
+    static void compress(string &inp, char separator);
+    static void decompress(string &inp, char separator);
+
+    private:
+    static void get_chunk_count(unsigned int &inp, string clone, char separator, bool div = true);
+    static const string _separator;
+    static const string sectionStart;
+    static const string sectionEnd;
+    static constexpr short firstLayerMultiplier[2] = {10, 2};
+    static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
+  };
 };
