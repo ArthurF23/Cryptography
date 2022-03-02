@@ -22,12 +22,20 @@ namespace COMPRESSION {
 
   class rgb_compression {
     public:
+    //Compress an RGB string.
     static void compress(string &inp, char separator);
+    //Decompress a compressed RGB string
     static void decompress(string &inp, char separator);
 
     private:
+    class compressionCore {
+      public:
+      static void compress(string &inp, char separator);
+      static bool loop_params(unsigned int len, string cln, char sep);
+      static constexpr unsigned int sizeLimit = 1000;//115100;
+    };
     static void replaceSeparator(string &inp, char sep, char repl);
-    static void get_chunk_count(unsigned int &inp, string clone, char separator, bool div = true);
+    static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
     static const char _separator = '#';
     static const string sectionStart;
     static const string sectionEnd;

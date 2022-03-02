@@ -581,6 +581,7 @@ namespace encryption {
       pix+=to_string(pixels[i]) + NUM_SEPARATOR;
     };
     rgb_compression::compress(pix, NUM_SEPARATOR);
+    
     data+=pix;
     pix.clear();
   };
@@ -721,7 +722,7 @@ namespace encryption {
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
     path+=FILES::FILE_EXTENSION;
-
+    //Simple write so why not use txt out
     FILES::TXT::out(path, data);
     return true;
   };
@@ -769,7 +770,6 @@ namespace encryption {
     };
     return true;
   };
-
 
   /////////////////////////////////
   ///DUO encryption & decryption///

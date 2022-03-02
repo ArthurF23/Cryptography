@@ -341,29 +341,40 @@ namespace COMPRESSION {
   const string rgb_compression::sectionStart = "{";
   const string rgb_compression::sectionEnd = "}";
 
-  void rgb_compression::get_chunk_count(unsigned int &inp, string clone, char separator, bool div) {
+  void rgb_compression::get_chunk_count(unsigned long int &inp, string clone, char separator, bool div) {
     inp = count(clone.begin(), clone.end(), separator);
     //since each pixel is 3 values, divide by 3 to get actual chunk value
     if (div == true) {
       inp/=3;
     };
-  }
+  };
 
   void rgb_compression::replaceSeparator(string &inp, char sep, char repl) {
     int len = inp.length()-1;
     for (int y = 0; y<len; y++) {
       if (inp[y] == sep) {inp[y] = repl;};
     };
-  }
+  };
 
-  void rgb_compression::compress(string &inp, char separator) {
-    const int length = inp.length();
-    string clone = inp;
+  bool rgb_compression::compressionCore::loop_params(unsigned int len, string cln, char sep) {
+    if (len > /*sizeLimit*/100) {
+      unsigned long int cnt; rgb_compression::get_chunk_count(cnt, cln, sep, false);
+      if (cnt%3 == 0) {return false;} else {return true;};
+    };
+    return true;
+  };
+
+
+  void rgb_compression::compressionCore::compress(string &inp, char separator) {
+     string clone = inp;
     //count chunks
-    unsigned int chunk_count; get_chunk_count(chunk_count, clone, separator);
-    string chunks[chunk_count];
+    unsigned long int chunk_count; get_chunk_count(chunk_count, clone, separator);
+    string chunks[chunk_count]; //Big memory allocation
+
     //assign chunks to arr
     for (int i=0; i<chunk_count && clone.length() != 0; i++) {
+      //Three at a time since a chunk consists of 3 values like so
+      //255,98,23,
       if (clone.length() == 0) {break;};
       int first = clone.find_first_of(separator) + 1;
       chunks[i] += clone.substr(0, first);  clone.erase(0, first);
@@ -377,12 +388,14 @@ namespace COMPRESSION {
       chunks[i] += clone.substr(0, first);  clone.erase(0, first);
       if (clone[0] == ' ') {break;};
     };
+    //Free memory
     inp.clear(); clone.clear();
 
-    //////////////////////////
-    //////////////////////////
-    //////////////////////////
-
+    //////                           //////
+    ///////////////////////////////////////
+    /// This is where the magic happens ///
+    ///////////////////////////////////////
+    //////                           //////
     
     //Find matching chunks and pair them accordingly
     for (unsigned long int i = 0; i<chunk_count;) {
@@ -407,13 +420,32 @@ namespace COMPRESSION {
         replaceSeparator(chunks[i], separator, _separator);
         inp += chunks[i];
         i++;
-      }
+      };
     };
+  };
+
+  void rgb_compression::compress(string &inp, char separator) {
+    //This is so it doesnt allocate too much memory at a time
+    const unsigned int len = inp.length();
+    if (len > compressionCore::sizeLimit) {
+      string clone = inp, temp = inp; inp.clear();
+      while (clone.length() > 0) {
+        string section;
+        for (;compressionCore::loop_params(section.length(), section, separator);) {
+          if (compressionCore::loop_params(section.length(), section, separator)==false) {break;};
+          if (clone.length() == 0) {break;};
+          int first = clone.find_first_of(separator) + 1;
+          section += clone.substr(0, first); clone.erase(0, first);
+        };
+        compressionCore::compress(section, separator);
+        inp+=section;
+      };
+    } else {compressionCore::compress(inp, separator);};
   };
 
   void rgb_compression::decompress(string &inp, char separator) {
     //get all chunks
-    unsigned int chunk_count = 0; get_chunk_count(chunk_count, inp, separator, false);
+    unsigned long int chunk_count = 0; get_chunk_count(chunk_count, inp, separator, false);
     string clone = inp;
     string chunks[chunk_count];
     //assign chunks to arr
@@ -423,11 +455,11 @@ namespace COMPRESSION {
     };
     clone.clear(); inp.clear();
     
-
-    ///////////////////////
-    ///////////////////////
-    ///////////////////////
-
+    //////                           //////
+    ///////////////////////////////////////
+    /// This is where the magic happens ///
+    ///////////////////////////////////////
+    //////                           //////
     
     for (int i=0; i<chunk_count; i++) {
       string section = chunks[i];
