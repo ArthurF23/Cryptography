@@ -605,7 +605,9 @@ namespace encryption {
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
 
-    rgb_compression::decompress(data, NUM_SEPARATOR);
+    thread tt(rgb_compression::decompress, ref(data), NUM_SEPARATOR);
+    tt.join();
+    
     //Length of pixels
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];

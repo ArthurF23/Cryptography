@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.6
+### v1.8.8
 
 ### What's new?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
@@ -16,7 +16,7 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 ###### v1.8.5
 ##### Bug fixes in RGB compression
 
-###### v1.8.6 & 
+###### v1.8.6, v1.8.7, & v1.8.8
 ##### Bug fixes in RGB compression. There *was* a problem that would try to allocate the file size in ram before compressing. It now will only allocate a `115100` character string at a time and compress `115100` characters at a time
 
 ## Basic Encryption

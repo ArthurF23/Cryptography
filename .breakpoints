@@ -7,6 +7,14 @@
         "version": 20,
         "index": 134
       }
+    ],
+    "testFiles/bitmap/img.aesenc": [
+      {
+        "id": "ee246cba-b87c-439a-a7a7-c48240e6171e",
+        "line": 1,
+        "version": 13,
+        "index": 0
+      }
     ]
   }
 }

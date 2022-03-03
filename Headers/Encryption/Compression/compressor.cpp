@@ -356,8 +356,8 @@ namespace COMPRESSION {
     };
   };
 
-  bool rgb_compression::compressionCore::loop_params(unsigned int len, string cln, char sep) {
-    if (len > /*sizeLimit*/100) {
+  bool rgb_compression::CORE::COMP::loop_params(unsigned int len, string cln, char sep) {
+    if (len > sizeLimit) {
       unsigned long int cnt; rgb_compression::get_chunk_count(cnt, cln, sep, false);
       if (cnt%3 == 0) {return false;} else {return true;};
     };
@@ -365,7 +365,7 @@ namespace COMPRESSION {
   };
 
 
-  void rgb_compression::compressionCore::compress(string &inp, char separator) {
+  void rgb_compression::CORE::COMP::compress(string &inp, char separator) {
      string clone = inp;
     //count chunks
     unsigned long int chunk_count; get_chunk_count(chunk_count, clone, separator);
@@ -427,23 +427,61 @@ namespace COMPRESSION {
   void rgb_compression::compress(string &inp, char separator) {
     //This is so it doesnt allocate too much memory at a time
     const unsigned int len = inp.length();
-    if (len > compressionCore::sizeLimit) {
+    if (len > CORE::COMP::sizeLimit) {
       string clone = inp, temp = inp; inp.clear();
       while (clone.length() > 0) {
-        string section;
-        for (;compressionCore::loop_params(section.length(), section, separator);) {
-          if (compressionCore::loop_params(section.length(), section, separator)==false) {break;};
+        string section, section2;
+        //////////
+        //////////
+        //////////
+        for (;CORE::COMP::loop_params(section.length(), section, separator);) {
+          if (CORE::COMP::loop_params(section.length(), section, separator)==false) {break;};
           if (clone.length() == 0) {break;};
           int first = clone.find_first_of(separator) + 1;
           section += clone.substr(0, first); clone.erase(0, first);
         };
-        compressionCore::compress(section, separator);
-        inp+=section;
+        //////////
+        //////////
+        thread th1(CORE::COMP::compress, ref(section), separator);
+        //////////
+        //////////
+        if (clone.length() == 0) {
+          th1.join();
+          inp+=section;
+          break;
+        };
+        for (;CORE::COMP::loop_params(section2.length(), section2, separator);) {
+          if (CORE::COMP::loop_params(section2.length(), section2, separator)==false) {break;};
+          if (clone.length() == 0) {break;};
+          int first = clone.find_first_of(separator) + 1;
+          section2 += clone.substr(0, first); clone.erase(0, first);
+        };
+        
+        thread th2(CORE::COMP::compress, ref(section2), separator);
+        th1.join(); th2.join();
+        inp+=section; inp+=section2;
       };
-    } else {compressionCore::compress(inp, separator);};
+    } else {CORE::COMP::compress(inp, separator);};
   };
 
-  void rgb_compression::decompress(string &inp, char separator) {
+  /////////////////////////////
+  /// Decompression //////////
+  ///////////////////////////
+
+  string rgb_compression::CORE::DECOMP::halfify(string &cln, char sep) {
+    unsigned int len = cln.length();
+    unsigned int param = (len/2)+10;
+    int i;
+    for (i=0; i<param; i++) {
+      if (param-i < 10 && cln[i] == sep) {break;};
+    }
+    i++;
+    string ret = cln.substr(0, i); 
+    cln.erase(0, i);
+    return ret;
+  };
+
+  void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator) {
     //get all chunks
     unsigned long int chunk_count = 0; get_chunk_count(chunk_count, inp, separator, false);
     string clone = inp;
@@ -484,4 +522,28 @@ namespace COMPRESSION {
       };
     };
   };
+
+  void rgb_compression::decompress(string &inp, char separator) {
+    string str1 = CORE::DECOMP::halfify(inp, separator);
+    string str2 = inp; inp.clear();
+    thread th(rgb_compression::CORE::DECOMP::decompress, ref(str1), separator);
+    thread th2(rgb_compression::CORE::DECOMP::decompress, ref(str2), separator);
+    th.join(); th2.join();
+    
+    string sbt = str2.substr(str2.length()-2, str2.length()-1);
+    stringstream ss;
+    ss << separator; ss << separator;
+    
+    if (sbt == ss.str()) {
+      str2.erase(str2.length()-1, str2.length()-1);
+    };
+    inp+=str1+str2;    
+  };
+
+//Multithread example
+/*int d = 2;
+  thread th(&foo, ref(d)); //int& in func
+  th.join();
+  cout << d << endl;
+  */
 };

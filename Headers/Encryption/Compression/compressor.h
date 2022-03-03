@@ -28,11 +28,20 @@ namespace COMPRESSION {
     static void decompress(string &inp, char separator);
 
     private:
-    class compressionCore {
+    class CORE {
       public:
-      static void compress(string &inp, char separator);
-      static bool loop_params(unsigned int len, string cln, char sep);
-      static constexpr unsigned int sizeLimit = 1000;//115100;
+      class COMP {
+        public:
+        static void compress(string &inp, char separator);
+        static bool loop_params(unsigned int len, string cln, char sep);
+        static constexpr unsigned int sizeLimit = 115100;
+      };
+
+      class DECOMP {
+        public:
+        static void decompress(string &inp, char separator);
+        static string halfify(string &cln, char sep);
+      };
     };
     static void replaceSeparator(string &inp, char sep, char repl);
     static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
