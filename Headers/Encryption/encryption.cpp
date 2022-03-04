@@ -739,7 +739,7 @@ namespace encryption {
 
     //Decrypt
     data = decrypt(data);
-
+    
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
     string ext = data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));

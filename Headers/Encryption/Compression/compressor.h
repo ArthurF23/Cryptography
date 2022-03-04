@@ -27,12 +27,24 @@ namespace COMPRESSION {
     //Decompress a compressed RGB string
     static void decompress(string &inp, char separator);
 
-    private:
-    class compressionCore {
+    //private:
+    class CORE {
       public:
-      static void compress(string &inp, char separator);
-      static bool loop_params(unsigned int len, string cln, char sep);
-      static constexpr unsigned int sizeLimit = 1000;//115100;
+      class COMP {
+        public:
+        static void compress(string &inp, char separator);
+        static bool loop_params(unsigned int len, string cln, char sep);
+        static constexpr unsigned int sizeLimit = 115100;
+      };
+
+      class DECOMP {
+        public:
+        static void decompress(string &inp, char separator);
+        static string halfify(string &cln, char sep);
+        static constexpr short vCharLen = 10;
+        static constexpr char validChars[vCharLen] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+        static void errorChecker(string &cln, char sep);
+      };
     };
     static void replaceSeparator(string &inp, char sep, char repl);
     static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);

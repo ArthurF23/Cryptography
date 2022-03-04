@@ -101,44 +101,31 @@ void textFromFileExample() {
 };
 
 //5
-void wholeFileEncryptionExample() {
+inline void wholeFileEncryptionExample() {
   AES::aes_init(AES::OPTIONS::doGenerateKey);
   
-  cout << "Generated key: ";
+  /*cout << "Generated key: ";
   for(int i=0; i<sizeof(AES::KEY::key)/sizeof(AES::KEY::key[0]); ++i) {
     cout << AES::KEY::key[i] << " ";
   };
   cout << endl << endl << endl;
-  
+  */
   string input;
-  cout << "Please input the path to the file: " << endl;
+  //printf("Please input the path to the file: \n");
   cin.ignore();
   cin >> input;
   
   
   if (!AES::encryptFile(input)) {return;}; //returns false if path is bad
 
-  string line;
-  cout << "Please input new path to .aesenc file" << endl;
+  //printf("Please input new path to .aesenc file\n");
   cin.ignore();
   string newInput;
   cin >> newInput;
-  cout << "Encrypted: " << endl;
-  
-  ifstream readfile(newInput);
-  while ( getline (readfile,line) ) {
-      cout << line << endl;
-  };
-  readfile.close();
-
-  cout << "Reading key File..." << endl;
-  if (!AES::decryptFile(newInput)) {return;};
-  readfile.open(input);
-  cout << "Decrypted: " << endl;
-  while ( getline (readfile,line) ) {
-      cout << line << endl;
-  };
-  readfile.close();
+  //printf("encrypted");
+  //if (!AES::decryptFile(newInput)) {return;};
+  thread br(AES::decryptFile, newInput, "");
+  br.join();
 };
 
 //6
@@ -168,16 +155,6 @@ void vigenereExample() {
 string text[8] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Vigenere cypher = 6", "Please input the cooresponding number to your desired example"};
 
 int main() {
-  /*int d = 2;
-  thread th(&foo, ref(d)); //int& in func
-  th.join();
-  cout << d << endl;
-  */
-
-  //AES::encryptFile("testFiles/bitmap/img.bmp");
-  //AES::decryptFile("testFiles/bitmap/img.aesenc");
-  //return 0;
-  
   cout << text[0] << endl;
   cout << text[1] << endl;
   cout << text[2] << endl;
