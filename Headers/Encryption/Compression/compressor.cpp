@@ -472,7 +472,7 @@ namespace COMPRESSION {
     unsigned int len = cln.length();
     unsigned int param = (len/2)+10;
     int i;
-    for (i=0; i<param; i++) {
+    for (i=0; i<len; i++) {
       if (param-i < 10 && cln[i] == sep) {break;};
     }
     i++;
@@ -521,24 +521,59 @@ namespace COMPRESSION {
         inp+=section;
       };
     };
+    errorChecker(inp, separator);
   };
 
   void rgb_compression::decompress(string &inp, char separator) {
-    string str1 = CORE::DECOMP::halfify(inp, separator);
-    string str2 = inp; inp.clear();
+    string half1 = CORE::DECOMP::halfify(inp, separator);
+    string half2 = inp;
+    string str1 = CORE::DECOMP::halfify(half1, separator);
+    string str2 = half1;
+    string str3 = CORE::DECOMP::halfify(half2, separator);
+    string str4 = half2;
+    inp.clear(); half1.clear(); half2.clear();
+    
     thread th(rgb_compression::CORE::DECOMP::decompress, ref(str1), separator);
     thread th2(rgb_compression::CORE::DECOMP::decompress, ref(str2), separator);
-    th.join(); th2.join();
-    
-    string sbt = str2.substr(str2.length()-2, str2.length()-1);
-    stringstream ss;
-    ss << separator; ss << separator;
-    
-    if (sbt == ss.str()) {
-      str2.erase(str2.length()-1, str2.length()-1);
-    };
-    inp+=str1+str2;    
+    thread th3(rgb_compression::CORE::DECOMP::decompress, ref(str3), separator);
+    thread th4(rgb_compression::CORE::DECOMP::decompress, ref(str4), separator);
+    th.join(); 
+    inp+=str1;
+    th2.join();
+    inp+=str2;
+    th3.join(); 
+    inp+=str3;
+    th4.join();
+    inp+=str4;
+    CORE::DECOMP::errorChecker(inp, separator);
   };
+
+  void rgb_compression::CORE::DECOMP::errorChecker(string &cln, char sep) {
+    constexpr short offset = 2;
+    //check for repeating commas
+    for (int i=0; i<cln.length(); i++) {
+      if (cln[i] == sep) {
+        if (cln[i+1] == sep) {
+          cln.erase(i, 1); i-=offset;
+        };
+      };
+    };
+    //Remove invalid characters
+    for (int i = 0; i<cln.length(); i++) {
+      
+      bool isGood = false;
+      
+      for (int x=0; x<vCharLen; x++) {  
+        if (cln[i] == validChars[x] || cln[i] == sep) {
+          isGood = true; break;    
+        };
+      };
+      
+      if (isGood == false) {
+        cln.erase(i, 1); i-=offset;
+      };
+    };
+  }
 
 //Multithread example
 /*int d = 2;

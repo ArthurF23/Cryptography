@@ -605,9 +605,7 @@ namespace encryption {
     bytesPerPixel = stoi(str);
     data.erase(0, data.find_first_of(DATA_SEPARATOR)+1);
 
-    thread tt(rgb_compression::decompress, ref(data), NUM_SEPARATOR);
-    tt.join();
-    
+    rgb_compression::decompress(data, NUM_SEPARATOR);
     //Length of pixels
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];
@@ -741,7 +739,7 @@ namespace encryption {
 
     //Decrypt
     data = decrypt(data);
-
+    
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
     string ext = data.substr(data.find_first_of('.'), data.find_first_of(FILES::EXTENSION_SEPERATOR));
