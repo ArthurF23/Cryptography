@@ -356,15 +356,6 @@ namespace COMPRESSION {
     };
   };
 
-  bool rgb_compression::CORE::COMP::loop_params(unsigned int len, string cln, char sep) {
-    if (len > sizeLimit) {
-      unsigned long int cnt; rgb_compression::get_chunk_count(cnt, cln, sep, false);
-      if (cnt%3 == 0) {return false;} else {return true;};
-    };
-    return true;
-  };
-
-
   void rgb_compression::CORE::COMP::compress(string &inp, char separator) {
      string clone = inp;
     //count chunks
@@ -425,42 +416,55 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::compress(string &inp, char separator) {
-    //This is so it doesnt allocate too much memory at a time
-    const unsigned int len = inp.length();
-    if (len > CORE::COMP::sizeLimit) {
-      string clone = inp, temp = inp; inp.clear();
-      while (clone.length() > 0) {
-        string section, section2;
-        //////////
-        //////////
-        //////////
-        for (;CORE::COMP::loop_params(section.length(), section, separator);) {
-          if (CORE::COMP::loop_params(section.length(), section, separator)==false) {break;};
-          if (clone.length() == 0) {break;};
-          int first = clone.find_first_of(separator) + 1;
-          section += clone.substr(0, first); clone.erase(0, first);
-        };
-        //////////
-        //////////
-        thread th1(CORE::COMP::compress, ref(section), separator);
-        //////////
-        //////////
-        if (clone.length() == 0) {
-          th1.join();
-          inp+=section;
-          break;
-        };
-        for (;CORE::COMP::loop_params(section2.length(), section2, separator);) {
-          if (CORE::COMP::loop_params(section2.length(), section2, separator)==false) {break;};
-          if (clone.length() == 0) {break;};
-          int first = clone.find_first_of(separator) + 1;
-          section2 += clone.substr(0, first); clone.erase(0, first);
-        };
-        
-        thread th2(CORE::COMP::compress, ref(section2), separator);
-        th1.join(); th2.join();
-        inp+=section; inp+=section2;
-      };
+    if (inp.length() > CORE::COMP::sizeLimit) {
+      //Chop up input into halfs
+      string half1 = CORE::FUNC::halfify(inp, separator);
+      string half2 = inp; inp.clear();
+      
+      string quarter1 = CORE::FUNC::halfify(half1, separator);
+      string quarter2 = half1; half1.clear();      
+      
+      //quarters to eights and launch threads
+      string eighth1 = CORE::FUNC::halfify(quarter1, separator);
+      thread th1(CORE::COMP::compress, ref(eighth1), separator);
+      
+      string eighth2 = quarter1; quarter1.clear();
+      thread th2(CORE::COMP::compress, ref(eighth2), separator);
+      
+      string eighth3 = CORE::FUNC::halfify(quarter2, separator);
+      thread th3(CORE::COMP::compress, ref(eighth3), separator);
+      
+      string eighth4 = quarter2; quarter2.clear();
+      thread th4(CORE::COMP::compress, ref(eighth4), separator);
+
+      ////////////////
+      string quarter3 = CORE::FUNC::halfify(half2, separator);      
+      string quarter4 = half2; half2.clear();
+      ////////////////
+      
+      string eighth5 = CORE::FUNC::halfify(quarter3, separator);
+      thread th5(CORE::COMP::compress, ref(eighth5), separator);
+      
+      string eighth6 = quarter3; quarter3.clear();
+      thread th6(CORE::COMP::compress, ref(eighth6), separator);
+      
+      string eighth7 = CORE::FUNC::halfify(quarter4, separator);
+      thread th7(CORE::COMP::compress, ref(eighth7), separator);
+      
+      string eighth8 = quarter4; quarter4.clear();
+      thread th8(CORE::COMP::compress, ref(eighth8), separator);
+
+      
+      th1.join(); th2.join(); th3.join(); th4.join();
+      th5.join(); th6.join(); th7.join(); th8.join();
+      inp+=eighth1;
+      inp+=eighth2;
+      inp+=eighth3;
+      inp+=eighth4;   
+      inp+=eighth5;
+      inp+=eighth6;
+      inp+=eighth7;
+      inp+=eighth8;   
     } else {CORE::COMP::compress(inp, separator);};
   };
 
@@ -468,7 +472,7 @@ namespace COMPRESSION {
   /// Decompression //////////
   ///////////////////////////
 
-  string rgb_compression::CORE::DECOMP::halfify(string &cln, char sep) {
+  string rgb_compression::CORE::FUNC::halfify(string &cln, char sep) {
     unsigned int len = cln.length();
     unsigned int param = (len/2)+10;
     int i;
@@ -525,26 +529,54 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::decompress(string &inp, char separator) {
-    string half1 = CORE::DECOMP::halfify(inp, separator);
-    string half2 = inp;
-    string str1 = CORE::DECOMP::halfify(half1, separator);
-    string str2 = half1;
-    string str3 = CORE::DECOMP::halfify(half2, separator);
-    string str4 = half2;
-    inp.clear(); half1.clear(); half2.clear();
+    //Chop up input into halfs
+    string half1 = CORE::FUNC::halfify(inp, separator);
+    string half2 = inp; inp.clear();
     
-    thread th(rgb_compression::CORE::DECOMP::decompress, ref(str1), separator);
-    thread th2(rgb_compression::CORE::DECOMP::decompress, ref(str2), separator);
-    thread th3(rgb_compression::CORE::DECOMP::decompress, ref(str3), separator);
-    thread th4(rgb_compression::CORE::DECOMP::decompress, ref(str4), separator);
-    th.join(); 
-    inp+=str1;
-    th2.join();
-    inp+=str2;
-    th3.join(); 
-    inp+=str3;
-    th4.join();
-    inp+=str4;
+    string quarter1 = CORE::FUNC::halfify(half1, separator);
+    string quarter2 = half1; half1.clear();      
+    
+    //quarters to eights and launch threads
+    string eighth1 = CORE::FUNC::halfify(quarter1, separator);
+    thread th1(CORE::DECOMP::decompress, ref(eighth1), separator);
+    
+    string eighth2 = quarter1; quarter1.clear();
+    thread th2(CORE::DECOMP::decompress, ref(eighth2), separator);
+    
+    string eighth3 = CORE::FUNC::halfify(quarter2, separator);
+    thread th3(CORE::DECOMP::decompress, ref(eighth3), separator);
+    
+    string eighth4 = quarter2; quarter2.clear();
+    thread th4(CORE::DECOMP::decompress, ref(eighth4), separator);
+
+    ////////////////
+    string quarter3 = CORE::FUNC::halfify(half2, separator);      
+    string quarter4 = half2; half2.clear();
+    ////////////////
+    
+    string eighth5 = CORE::FUNC::halfify(quarter3, separator);
+    thread th5(CORE::DECOMP::decompress, ref(eighth5), separator);
+    
+    string eighth6 = quarter3; quarter3.clear();
+    thread th6(CORE::DECOMP::decompress, ref(eighth6), separator);
+    
+    string eighth7 = CORE::FUNC::halfify(quarter4, separator);
+    thread th7(CORE::DECOMP::decompress, ref(eighth7), separator);
+    
+    string eighth8 = quarter4; quarter4.clear();
+    thread th8(CORE::DECOMP::decompress, ref(eighth8), separator);
+
+    
+    th1.join(); th2.join(); th3.join(); th4.join();
+    th5.join(); th6.join(); th7.join(); th8.join();
+    inp+=eighth1;
+    inp+=eighth2;
+    inp+=eighth3;
+    inp+=eighth4;   
+    inp+=eighth5;
+    inp+=eighth6;
+    inp+=eighth7;
+    inp+=eighth8;   
     CORE::DECOMP::errorChecker(inp, separator);
   };
 
@@ -557,12 +589,9 @@ namespace COMPRESSION {
           cln.erase(i, 1); i-=offset;
         };
       };
-    };
-    //Remove invalid characters
-    for (int i = 0; i<cln.length(); i++) {
-      
-      bool isGood = false;
-      
+
+      //remove invalid characters
+      bool isGood = false;      
       for (int x=0; x<vCharLen; x++) {  
         if (cln[i] == validChars[x] || cln[i] == sep) {
           isGood = true; break;    
@@ -573,7 +602,7 @@ namespace COMPRESSION {
         cln.erase(i, 1); i-=offset;
       };
     };
-  }
+  };
 
 //Multithread example
 /*int d = 2;

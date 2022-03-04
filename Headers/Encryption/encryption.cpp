@@ -717,7 +717,7 @@ namespace encryption {
     ext.clear(); //Delete because it's useless
     
     //Encrypt it
-    data = encrypt(data);
+    //data = encrypt(data);
       
     //Make new file & path using old path by removing the extension from the string
     path.erase(path.rfind('.'), path.length());
@@ -738,7 +738,7 @@ namespace encryption {
     else {AES::FILES::in_key_file(path);};    
 
     //Decrypt
-    data = decrypt(data);
+    //data = decrypt(data);
     
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
