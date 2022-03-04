@@ -416,13 +416,14 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::compress(string &inp, char separator) {
+    ofstream o("b.txt"); o << inp; o.close();
     if (inp.length() > CORE::COMP::sizeLimit) {
       //Chop up input into halfs
       string half1 = CORE::FUNC::halfify(inp, separator);
       string half2 = inp; inp.clear();
       
       string quarter1 = CORE::FUNC::halfify(half1, separator);
-      string quarter2 = half1; half1.clear();      
+      string quarter2 = half1; half1.clear();
       
       //quarters to eights and launch threads
       string eighth1 = CORE::FUNC::halfify(quarter1, separator);
@@ -457,6 +458,7 @@ namespace COMPRESSION {
       
       th1.join(); th2.join(); th3.join(); th4.join();
       th5.join(); th6.join(); th7.join(); th8.join();
+      
       inp+=eighth1;
       inp+=eighth2;
       inp+=eighth3;
@@ -464,7 +466,8 @@ namespace COMPRESSION {
       inp+=eighth5;
       inp+=eighth6;
       inp+=eighth7;
-      inp+=eighth8;   
+      inp+=eighth8;
+      
     } else {CORE::COMP::compress(inp, separator);};
   };
 
@@ -505,24 +508,26 @@ namespace COMPRESSION {
     
     for (int i=0; i<chunk_count; i++) {
       string section = chunks[i];
-      replaceSeparator(section, _separator, separator);
-      //if first char is { then we know its a compressed chunk big brain
-      if (section[0] == sectionStart[0]) {
-        char mul = section[section.length()-2];
-        section = section.substr(1, section.length()-4);
-        int rep;
-        //how many times to make repeat loop go brrrr
-        for (rep = 0; rep<firstLayerMultiplier[0]; rep++) {
-          if (firstLayerMulRChars[rep][1][0] == mul) {break;};
-        };
-        //Repeat chunk to str
-        for (int x=0; x<rep; x++) {
+      if (corruptChunk(section, separator) == false) {
+        replaceSeparator(section, _separator, separator);
+        //if first char is { then we know its a compressed chunk big brain
+        if (section[0] == sectionStart[0]) {
+          char mul = section[section.length()-2];
+          section = section.substr(1, section.length()-4);
+          int rep;
+          //how many times to make repeat loop go brrrr
+          for (rep = 0; rep<firstLayerMultiplier[0]; rep++) {
+            if (firstLayerMulRChars[rep][1][0] == mul) {break;};
+          };
+          //Repeat chunk to str
+          for (int x=0; x<rep; x++) {
+            inp+=section;
+          };
+        }
+        //Pretty self explanatory
+        else {
           inp+=section;
         };
-      }
-      //Pretty self explanatory
-      else {
-        inp+=section;
       };
     };
     errorChecker(inp, separator);
@@ -534,7 +539,7 @@ namespace COMPRESSION {
     string half2 = inp; inp.clear();
     
     string quarter1 = CORE::FUNC::halfify(half1, separator);
-    string quarter2 = half1; half1.clear();      
+    string quarter2 = half1; half1.clear();
     
     //quarters to eights and launch threads
     string eighth1 = CORE::FUNC::halfify(quarter1, separator);
@@ -569,6 +574,7 @@ namespace COMPRESSION {
     
     th1.join(); th2.join(); th3.join(); th4.join();
     th5.join(); th6.join(); th7.join(); th8.join();
+    
     inp+=eighth1;
     inp+=eighth2;
     inp+=eighth3;
@@ -576,8 +582,10 @@ namespace COMPRESSION {
     inp+=eighth5;
     inp+=eighth6;
     inp+=eighth7;
-    inp+=eighth8;   
+    inp+=eighth8;
+    
     CORE::DECOMP::errorChecker(inp, separator);
+    ofstream o("bb.txt"); o << inp; o.close();
   };
 
   void rgb_compression::CORE::DECOMP::errorChecker(string &cln, char sep) {
@@ -602,6 +610,22 @@ namespace COMPRESSION {
         cln.erase(i, 1); i-=offset;
       };
     };
+  };
+
+  bool rgb_compression::CORE::DECOMP::corruptChunk(string cnk, char sep) {
+    bool containsEndRep = false;
+    bool containsStartRep = false;
+    
+    if (cnk[0] == sectionStart[0]) {containsStartRep = true;};
+    if (cnk[cnk.length()-3] == rgb_compression::sectionEnd[0]) {containsEndRep =  true;};
+    
+    //Is it a repeated chunk?
+    if (containsStartRep != containsEndRep) {return true;};
+    
+    //Does it end in a sep
+    if (cnk[cnk.length()-1] != sep) {return true;};
+    
+    return false;
   };
 
 //Multithread example

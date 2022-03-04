@@ -42,6 +42,7 @@ namespace COMPRESSION {
         static constexpr short vCharLen = 10;
         static constexpr char validChars[vCharLen] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         static void errorChecker(string &cln, char sep);
+        static bool corruptChunk(string cnk, char sep);
       };
 
       class FUNC {
@@ -51,7 +52,7 @@ namespace COMPRESSION {
     };
     static void replaceSeparator(string &inp, char sep, char repl);
     static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
-    static const char _separator = '#';
+    static constexpr char _separator = '#';
     static const string sectionStart;
     static const string sectionEnd;
     static constexpr short firstLayerMultiplier[2] = {11, 2};
