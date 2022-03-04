@@ -104,28 +104,26 @@ void textFromFileExample() {
 inline void wholeFileEncryptionExample() {
   AES::aes_init(AES::OPTIONS::doGenerateKey);
   
-  /*cout << "Generated key: ";
+  cout << "Generated key: ";
   for(int i=0; i<sizeof(AES::KEY::key)/sizeof(AES::KEY::key[0]); ++i) {
     cout << AES::KEY::key[i] << " ";
   };
   cout << endl << endl << endl;
-  */
+  
   string input;
-  //printf("Please input the path to the file: \n");
+  printf("Please input the path to the file: \n");
   cin.ignore();
   cin >> input;
   
   
   if (!AES::encryptFile(input)) {return;}; //returns false if path is bad
 
-  //printf("Please input new path to .aesenc file\n");
+  printf("Please input new path to .aesenc file\n");
   cin.ignore();
   string newInput;
   cin >> newInput;
-  //printf("encrypted");
-  //if (!AES::decryptFile(newInput)) {return;};
-  thread br(AES::decryptFile, newInput, "");
-  br.join();
+  printf("encrypted\n");
+  if (!AES::decryptFile(newInput)) {return;};
 };
 
 //6
