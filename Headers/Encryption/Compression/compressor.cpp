@@ -416,7 +416,6 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::compress(string &inp, char separator) {
-    ofstream o("b.txt"); o << inp; o.close();
     if (inp.length() > CORE::COMP::sizeLimit) {
       //Chop up input into halfs
       string half1 = CORE::FUNC::halfify(inp, separator);
@@ -585,7 +584,6 @@ namespace COMPRESSION {
     inp+=eighth8;
     
     CORE::DECOMP::errorChecker(inp, separator);
-    ofstream o("bb.txt"); o << inp; o.close();
   };
 
   void rgb_compression::CORE::DECOMP::errorChecker(string &cln, char sep) {
