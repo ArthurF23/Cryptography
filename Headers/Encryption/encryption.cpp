@@ -717,7 +717,7 @@ namespace encryption {
     ext.clear(); //Delete because it's useless
     
     //Encrypt it
-    //data = encrypt(data);
+    data = encrypt(data);
       
     //Make new file & path using old path by removing the extension from the string
     if (flags == FILE_FLAGS::deleteInputFile) {remove(path.c_str());};
@@ -739,7 +739,7 @@ namespace encryption {
     else {AES::FILES::in_key_file(path);};    
 
     //Decrypt
-    //data = decrypt(data);
+    data = decrypt(data);
 
     if (flags & AES::FILE_FLAGS::deleteAesencFile) {remove(path.c_str());};
     if (flags & AES::FILE_FLAGS::deleteKeyFile) {
