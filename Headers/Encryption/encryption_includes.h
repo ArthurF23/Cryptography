@@ -5,6 +5,7 @@
 #include <bitset>
 #include <fstream>
 #include <cstdlib>
+#include <cstdio>
 using namespace std;
 
 #include "Compression/compressor.h"

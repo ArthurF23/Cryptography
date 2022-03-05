@@ -325,7 +325,7 @@ namespace COMPRESSION {
   /////////////////////////
   ///  RGB  ///////////////
   /////////////////////////
-  const string rgb_compression::firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]] {
+  const string rgb_compression::CORE::VAR::firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]] {
     {"0", ""}, //Will not be used
     {"1", ""}, // ^
     {"2", "|"},
@@ -338,10 +338,10 @@ namespace COMPRESSION {
     {"9", "-"},
     {"10", "@"}
   };
-  const string rgb_compression::sectionStart = "{";
-  const string rgb_compression::sectionEnd = "}";
+  const string rgb_compression::CORE::VAR::sectionStart = "{";
+  const string rgb_compression::CORE::VAR::sectionEnd = "}";
 
-  void rgb_compression::get_chunk_count(unsigned long int &inp, string clone, char separator, bool div) {
+  void rgb_compression::CORE::FUNC::get_chunk_count(unsigned long int &inp, string clone, char separator, bool div) {
     inp = count(clone.begin(), clone.end(), separator);
     //since each pixel is 3 values, divide by 3 to get actual chunk value
     if (div == true) {
@@ -349,7 +349,7 @@ namespace COMPRESSION {
     };
   };
 
-  void rgb_compression::replaceSeparator(string &inp, char sep, char repl) {
+  void rgb_compression::CORE::FUNC::replaceSeparator(string &inp, char sep, char repl) {
     int len = inp.length()-1;
     for (int y = 0; y<len; y++) {
       if (inp[y] == sep) {inp[y] = repl;};
@@ -359,7 +359,7 @@ namespace COMPRESSION {
   void rgb_compression::CORE::COMP::compress(string &inp, char separator) {
      string clone = inp;
     //count chunks
-    unsigned long int chunk_count; get_chunk_count(chunk_count, clone, separator);
+    unsigned long int chunk_count; CORE::FUNC::get_chunk_count(chunk_count, clone, separator);
     string chunks[chunk_count]; //Big memory allocation
 
     //assign chunks to arr
@@ -393,8 +393,8 @@ namespace COMPRESSION {
       unsigned long int rep = 0;
       
       //Find repeating chunks
-      for (; rep < firstLayerMultiplier[0]-1;) {
-        if (rep > firstLayerMultiplier[0]-1) {break;};
+      for (; rep < CORE::VAR::firstLayerMultiplier[0]-1;) {
+        if (rep > CORE::VAR::firstLayerMultiplier[0]-1) {break;};
         if (chunks[rep + i] == chunks[i]) {rep++;}
         else {break;};
       };
@@ -402,13 +402,13 @@ namespace COMPRESSION {
       //Do compression thing if repeat > 1
       if (rep > 1) {
         string temp;
-        temp += sectionStart + chunks[i] + sectionEnd + firstLayerMulRChars[rep][1] + separator;
+        temp += CORE::VAR::sectionStart + chunks[i] + CORE::VAR::sectionEnd + CORE::VAR::firstLayerMulRChars[rep][1] + separator;
         //Do thing with commas to make code go brrrrr
-        replaceSeparator(temp, separator, _separator); inp += temp; temp.clear();
+        CORE::FUNC::replaceSeparator(temp, separator, CORE::VAR::_separator); inp += temp; temp.clear();
         i += rep;
       }
       else {
-        replaceSeparator(chunks[i], separator, _separator);
+        CORE::FUNC::replaceSeparator(chunks[i], separator, CORE::VAR::_separator);
         inp += chunks[i];
         i++;
       };
@@ -489,7 +489,7 @@ namespace COMPRESSION {
 
   void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator) {
     //get all chunks
-    unsigned long int chunk_count = 0; get_chunk_count(chunk_count, inp, separator, false);
+    unsigned long int chunk_count = 0; CORE::FUNC::get_chunk_count(chunk_count, inp, separator, false);
     string clone = inp;
     string chunks[chunk_count];
     //assign chunks to arr
@@ -508,15 +508,15 @@ namespace COMPRESSION {
     for (int i=0; i<chunk_count; i++) {
       string section = chunks[i];
       if (corruptChunk(section, separator) == false) {
-        replaceSeparator(section, _separator, separator);
+        CORE::FUNC::replaceSeparator(section, CORE::VAR::_separator, separator);
         //if first char is { then we know its a compressed chunk big brain
-        if (section[0] == sectionStart[0]) {
+        if (section[0] == CORE::VAR::sectionStart[0]) {
           char mul = section[section.length()-2];
           section = section.substr(1, section.length()-4);
           int rep;
           //how many times to make repeat loop go brrrr
-          for (rep = 0; rep<firstLayerMultiplier[0]; rep++) {
-            if (firstLayerMulRChars[rep][1][0] == mul) {break;};
+          for (rep = 0; rep<CORE::VAR::firstLayerMultiplier[0]; rep++) {
+            if (CORE::VAR::firstLayerMulRChars[rep][1][0] == mul) {break;};
           };
           //Repeat chunk to str
           for (int x=0; x<rep; x++) {
@@ -614,8 +614,8 @@ namespace COMPRESSION {
     bool containsEndRep = false;
     bool containsStartRep = false;
     
-    if (cnk[0] == sectionStart[0]) {containsStartRep = true;};
-    if (cnk[cnk.length()-3] == rgb_compression::sectionEnd[0]) {containsEndRep =  true;};
+    if (cnk[0] == CORE::VAR::sectionStart[0]) {containsStartRep = true;};
+    if (cnk[cnk.length()-3] == CORE::VAR::sectionEnd[0]) {containsEndRep =  true;};
     
     //Is it a repeated chunk?
     if (containsStartRep != containsEndRep) {return true;};

@@ -12,7 +12,7 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.8.10";
+    static string ver = "v1.8.11";
     //Major, Minor, Patch
     //for major or minor, change patch to 0
   }
@@ -287,7 +287,13 @@ namespace encryption {
       };
       enum OPTIONS {
         doGenerateKey = 0b00000000, 
-        noGenerateKey = 0b00000001,
+        noGenerateKey = 0b00000001
+      };
+      enum FILE_FLAGS {
+        nothing = 0b00000000,
+        deleteInputFile = 0b00000001,
+        deleteKeyFile = 0b00000010,
+        deleteAesencFile = 0b00000011
       };
       //Encrypt
       static string encrypt(string input);
@@ -302,9 +308,8 @@ namespace encryption {
       static void aes_init(OPTIONS genkey, string dummykey = "");
 
       //Encrypt File 
-      static bool encryptFile(string path);
-      static bool decryptFile(string path, string keyFilePath = "");
-
+      static bool encryptFile(string path, FILE_FLAGS flags = FILE_FLAGS::nothing);
+      static bool decryptFile(string path, string keyFilePath = "", FILE_FLAGS flags = nothing);
     };
 
     class DUO {

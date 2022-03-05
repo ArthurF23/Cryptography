@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.10
+### v1.8.11
 
 ### What's new in v1.8.0?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
@@ -21,6 +21,9 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 
 ###### v1.8.10
 ##### Optimization and multithreading. RGB decompression bug fixes
+
+###### v1.8.11
+##### Added flags to `encryptFile()` & `decryptFile()` that will delete certian files... See section below for usage.
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
@@ -241,6 +244,27 @@ The only difference is that there is a second overloaded parameter...
 `decryptFile(path, keyFilePath)`
 
 If the key file is not in the same directory as the first path/the file being decrypted, specify it in the second param. 
+
+#### **FLAG USAGE**
+To use flags on `encryptFile()` simply do this:
+```
+encryptFile(pathStr, AES::FILE_FLAGS::deleteInputFile);
+```
+The default is nothing, so if you leave the 2nd param blank it's fine
+
+To use flags on `decryptFile()` there is a tiny bit more to it.
+
+Delete keyfile:
+`decryptFile(pathStr, AES::FILE_FLAGS::deleteKeyFile);`
+
+Delete .aesenc file:
+`decryptFile(pathStr, AES::FILE_FLAGS::deleteAesencFile);`
+
+Do both:
+```
+decryptFile(pathStr, (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile));
+```
+
 ## DUO
 
 #### `init()`

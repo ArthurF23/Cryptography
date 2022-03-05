@@ -48,14 +48,19 @@ namespace COMPRESSION {
       class FUNC {
         public:
         static string halfify(string &cln, char sep);
+        static void replaceSeparator(string &inp, char sep, char repl);
+        static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
+      };
+
+      class VAR {
+        public:
+        static constexpr char _separator = '#';
+        static const string sectionStart;
+        static const string sectionEnd;
+        static constexpr short firstLayerMultiplier[2] = {11, 2};
+        static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
       };
     };
-    static void replaceSeparator(string &inp, char sep, char repl);
-    static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
-    static constexpr char _separator = '#';
-    static const string sectionStart;
-    static const string sectionEnd;
-    static constexpr short firstLayerMultiplier[2] = {11, 2};
-    static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
+   
   };
 };

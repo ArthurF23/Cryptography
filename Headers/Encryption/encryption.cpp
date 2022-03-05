@@ -687,7 +687,7 @@ namespace encryption {
     return infile.good(); infile.close();
   }
 
-  bool AES::encryptFile(string path) {
+  bool AES::encryptFile(string path, FILE_FLAGS flags) {
     //checks if path is valid
     if(path_is_good(path) == false) {return false;};
     
@@ -717,9 +717,10 @@ namespace encryption {
     ext.clear(); //Delete because it's useless
     
     //Encrypt it
-    data = encrypt(data);
+    //data = encrypt(data);
       
     //Make new file & path using old path by removing the extension from the string
+    if (flags == FILE_FLAGS::deleteInputFile) {remove(path.c_str());};
     path.erase(path.rfind('.'), path.length());
     path+=FILES::FILE_EXTENSION;
     //Simple write so why not use txt out
@@ -727,7 +728,7 @@ namespace encryption {
     return true;
   };
 
-  bool AES::decryptFile(string path, string keyFilePath) {
+  bool AES::decryptFile(string path, string keyFilePath, FILE_FLAGS flags) {
      //checks if path is valid
      if(path_is_good(path) == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {return false;}
     string data;
@@ -738,7 +739,16 @@ namespace encryption {
     else {AES::FILES::in_key_file(path);};    
 
     //Decrypt
-    data = decrypt(data);
+    //data = decrypt(data);
+
+    if (flags & AES::FILE_FLAGS::deleteAesencFile) {remove(path.c_str());};
+    if (flags & AES::FILE_FLAGS::deleteKeyFile) {
+      string pa = path;
+      pa.erase(pa.rfind('.'), pa.length()); //Erase extension
+      pa+=FILES::KEYFILE_NAME;//edit name
+      pa+=FILES::KEYFILE_EXT;//add extension
+      remove(pa.c_str()); pa.clear();
+    };
     
     //Make new path
     path.erase(path.find_last_of('.'), path.length());
