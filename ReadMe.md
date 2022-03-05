@@ -258,11 +258,11 @@ Delete keyfile:
 `decryptFile(pathStr, AES::FILE_FLAGS::deleteKeyFile);`
 
 Delete .aesenc file:
-`decryptFile(pathStr, AES::FILE_FLAGS::deleteAesencFile);`
+`decryptFile(pathStr, "", AES::FILE_FLAGS::deleteAesencFile);`
 
 Do both:
 ```
-decryptFile(pathStr, (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile));
+decryptFile(pathStr, "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile));
 ```
 
 ## DUO

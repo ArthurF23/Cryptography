@@ -123,7 +123,7 @@ inline void wholeFileEncryptionExample() {
   string newInput;
   cin >> newInput;
   printf("encrypted\n");
-  if (!AES::decryptFile(newInput)) {return;};
+  if (!AES::decryptFile(newInput, "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile))) {return;};
 };
 
 //6
