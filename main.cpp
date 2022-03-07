@@ -100,6 +100,7 @@ void textFromFileExample() {
   readfile.close();
 };
 
+
 //5
 inline void wholeFileEncryptionExample() {
   AES::aes_init(AES::OPTIONS::doGenerateKey);
@@ -111,7 +112,7 @@ inline void wholeFileEncryptionExample() {
   cout << endl << endl << endl;
   
   string input;
-  printf("Please input the path to the file: \n");
+  printf("Please input the path to the file (please see testFiles folder): \n");
   cin.ignore();
   cin >> input;
   
@@ -122,8 +123,9 @@ inline void wholeFileEncryptionExample() {
   cin.ignore();
   string newInput;
   cin >> newInput;
-  printf("encrypted\n");
-  if (!AES::decryptFile(newInput, "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile))) {return;};
+  printf("encrypted\ndecrypting...\n");
+  thread dec(AES::decryptFile, ref(newInput), "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile));
+  dec.join();
 };
 
 //6
@@ -161,8 +163,10 @@ int main() {
   cout << text[5] << endl;
   cout << text[6] << endl;
   cout << text[7] << endl;
+  
   char input;
   cin >> input;
+  
   switch (input) {
     case '1':
       encdecExample();

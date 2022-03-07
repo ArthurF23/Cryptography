@@ -336,10 +336,19 @@ namespace COMPRESSION {
     {"7", "="},
     {"8", "+"},
     {"9", "-"},
-    {"10", "@"}
+    {"10", "@"},
+    {"15", "!"},
+    {"20", ">"},
+    {"30", "<"},
+    {"40", "/"},
+    {"50", "?"},
+    {"100", "_"},
+    {"1000", "\""},
+    {"5000", "\\"},
+    {"10000", "a"},
+    {"100000", "b"},
+    {"1000000", "c"}
   };
-  const string rgb_compression::CORE::VAR::sectionStart = "{";
-  const string rgb_compression::CORE::VAR::sectionEnd = "}";
 
   void rgb_compression::CORE::FUNC::get_chunk_count(unsigned long int &inp, string clone, char separator, bool div) {
     inp = count(clone.begin(), clone.end(), separator);
@@ -510,7 +519,7 @@ namespace COMPRESSION {
       if (corruptChunk(section, separator) == false) {
         CORE::FUNC::replaceSeparator(section, CORE::VAR::_separator, separator);
         //if first char is { then we know its a compressed chunk big brain
-        if (section[0] == CORE::VAR::sectionStart[0]) {
+        if (section[0] == CORE::VAR::sectionStart) {
           char mul = section[section.length()-2];
           section = section.substr(1, section.length()-4);
           int rep;
@@ -614,8 +623,8 @@ namespace COMPRESSION {
     bool containsEndRep = false;
     bool containsStartRep = false;
     
-    if (cnk[0] == CORE::VAR::sectionStart[0]) {containsStartRep = true;};
-    if (cnk[cnk.length()-3] == CORE::VAR::sectionEnd[0]) {containsEndRep =  true;};
+    if (cnk[0] == CORE::VAR::sectionStart) {containsStartRep = true;};
+    if (cnk[cnk.length()-3] == CORE::VAR::sectionEnd) {containsEndRep =  true;};
     
     //Is it a repeated chunk?
     if (containsStartRep != containsEndRep) {return true;};

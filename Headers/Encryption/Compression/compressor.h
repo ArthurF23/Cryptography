@@ -55,12 +55,11 @@ namespace COMPRESSION {
       class VAR {
         public:
         static constexpr char _separator = '#';
-        static const string sectionStart;
-        static const string sectionEnd;
-        static constexpr short firstLayerMultiplier[2] = {11, 2};
+        static constexpr char sectionStart = '{';
+        static constexpr char sectionEnd = '}';
+        static constexpr short firstLayerMultiplier[2] = {22, 2};
         static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
       };
     };
-   
   };
 };
