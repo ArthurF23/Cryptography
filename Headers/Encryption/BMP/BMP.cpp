@@ -28,7 +28,6 @@ namespace BITMAP {
       fread(currentRowPointer, 1, unpaddedRowSize, imageFile);
       currentRowPointer -= unpaddedRowSize;
     }
-
     fclose(imageFile);
   };
 

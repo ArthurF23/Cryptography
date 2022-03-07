@@ -580,6 +580,7 @@ namespace encryption {
     for (unsigned int i=0; i<(width*height*bytesPerPixel); i++) {
       pix+=to_string(pixels[i]) + NUM_SEPARATOR;
     };
+    
     rgb_compression::compress(pix, NUM_SEPARATOR);
     
     data+=pix;
@@ -609,20 +610,33 @@ namespace encryption {
     //Length of pixels
     unsigned int length = width*height*bytesPerPixel;
     BMPbyte pixels[length];
+
+    
+    //////////////////////////////////////////
+    /// This loop slows down process HARD ////
+    //////////////////////////////////////////
+    
     //Assign rgb values to arr
-    for (int i=0; i<length; i++) {
+    for (unsigned int i=0; i<length; i++) {
       //substring rgb num
-      string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
+      unsigned long long fst = data.find_first_of(NUM_SEPARATOR);
+      string sm = data.substr(0, fst);
       if (sm == "") {break;};
       //str 2 int
       unsigned int num = stoi(sm);
       //assign
       pixels[i] = (num);
       //delete from data
-      if (data.find(NUM_SEPARATOR) != string::npos) {
+      if (fst != string::npos) {
         data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
-        };
       };
+    };
+
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+
+    
     //Write the image
     BMP::WriteImage(filename, pixels, width, height, bytesPerPixel);
   };
@@ -662,7 +676,9 @@ namespace encryption {
     for (int i = 0; i < AES::mtx_size; i++) {
       data+=AES::KEY::key[i].to_string();
     };
+    
     binary_compression::compress(data);
+    
     outFile << data;
     outFile.close();
     return true;
@@ -676,16 +692,18 @@ namespace encryption {
     if (inFile.good() == false) {inFile.close(); return false;};
     inFile.close();
     string data;
-    AES::FILES::TXT::get(path, data);    
+    AES::FILES::TXT::get(path, data);
+    
     binary_compression::decompress(data);
+    
     aes_init(AES::OPTIONS::noGenerateKey, data);
     return true;
-  }
+  };
 
   bool path_is_good(string path) {
     ifstream infile(path);
     return infile.good(); infile.close();
-  }
+  };
 
   bool AES::encryptFile(string path, FILE_FLAGS flags) {
     //checks if path is valid
@@ -737,7 +755,7 @@ namespace encryption {
 
     if (keyFilePath != "") {AES::FILES::in_key_file(keyFilePath);}
     else {AES::FILES::in_key_file(path);};    
-
+    
     //Decrypt
     data = decrypt(data);
 

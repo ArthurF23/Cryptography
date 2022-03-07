@@ -25,7 +25,7 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 ###### v1.8.11
 ##### Added flags to `encryptFile()` & `decryptFile()` that will delete certian files... See section below for usage.
 
-###### v1.8.12
+###### v1.8.12 & v1.8.13
 ##### RGB compression improvements
 
 ## Basic Encryption
