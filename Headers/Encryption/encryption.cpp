@@ -608,26 +608,24 @@ namespace encryption {
 
     rgb_compression::decompress(data, NUM_SEPARATOR);
     //Length of pixels
-    unsigned int length = width*height*bytesPerPixel;
-    BMPbyte pixels[length];
-
-    
+    const unsigned int length = width*height*bytesPerPixel;
+    BMPbyte* pixels;//[length];
+    /*
     //////////////////////////////////////////
     /// This loop slows down process HARD ////
     //////////////////////////////////////////
     
     //Assign rgb values to arr
-    for (unsigned int i=0; i<length; i++) {
+    for (int i=0; i<length; i++) {
       //substring rgb num
-      unsigned long long fst = data.find_first_of(NUM_SEPARATOR);
-      string sm = data.substr(0, fst);
+      string sm = data.substr(0, data.find_first_of(NUM_SEPARATOR));
       if (sm == "") {break;};
       //str 2 int
       unsigned int num = stoi(sm);
       //assign
       pixels[i] = (num);
       //delete from data
-      if (fst != string::npos) {
+      if (data.find(NUM_SEPARATOR) != string::npos) {
         data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
       };
     };
@@ -635,9 +633,13 @@ namespace encryption {
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////
-
-    
+    */
+    rgb_compression::asgnPix(&pixels, data, NUM_SEPARATOR, length);
+    data.clear();
+    cout << "\n\n ** PASSED ** \n\n";
     //Write the image
+    string newstr = "testFiles/bitmap/NewImg.bmp";
+    filename = const_cast<char*>(newstr.c_str());
     BMP::WriteImage(filename, pixels, width, height, bytesPerPixel);
   };
 
@@ -735,7 +737,7 @@ namespace encryption {
     ext.clear(); //Delete because it's useless
     
     //Encrypt it
-    data = encrypt(data);
+    //data = encrypt(data);
       
     //Make new file & path using old path by removing the extension from the string
     if (flags == FILE_FLAGS::deleteInputFile) {remove(path.c_str());};
@@ -757,7 +759,7 @@ namespace encryption {
     else {AES::FILES::in_key_file(path);};    
     
     //Decrypt
-    data = decrypt(data);
+    //data = decrypt(data);
 
     if (flags & AES::FILE_FLAGS::deleteAesencFile) {remove(path.c_str());};
     if (flags & AES::FILE_FLAGS::deleteKeyFile) {

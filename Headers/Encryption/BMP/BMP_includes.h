@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
+#include <functional>
 using namespace std;
 
 #define DATA_OFFSET_OFFSET 0x000A
