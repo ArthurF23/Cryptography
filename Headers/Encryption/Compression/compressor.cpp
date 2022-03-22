@@ -696,111 +696,111 @@ namespace COMPRESSION {
   //////////////////////////
   // ~ Pixel assignment ~ //
   //////////////////////////
-  void rgb_compression::asgnPix(unsigned char** pix, string data, char sep, size_t length) {
-    pix = (unsigned char**)malloc((length*8)*8); //Multiplied by 8 because 8 bits in a byte
+  void rgb_compression::asgnPix(unsigned char* &PIX, string data, char sep, size_t length) {
+    //Pointers for ease of reading and writing
+    unique_ptr<CORE::FUNC> func;
+    unique_ptr<CORE::PIXELS> pixels;
+    
+    //Allocate memory
+    char* pix = (char*)malloc(length); 
+    PIX = (unsigned char*)malloc(length);
+    
     //Figure out how to split input down into managable, threadable forms
     //Will be 8 threads
+    
     //Half
-    string str1 = CORE::FUNC::halfify(data, sep);
+    string str1 = func->halfify(data, sep);
     string str2 = data; data.clear();
 
     //Quarter
-    string quar1 = CORE::FUNC::halfify(str1, sep);
+    string quar1 = func->halfify(str1, sep);
     string quar2 = str1; str1.clear();
-    string quar3 = CORE::FUNC::halfify(str2, sep);
+    string quar3 = func->halfify(str2, sep);
     string quar4 = str2; str2.clear();
 
     //Eighth
-    string eth1 = CORE::FUNC::halfify(quar1, sep);
-    uInt _eth1[2] = {0, static_cast<uInt>(eth1.length())};
+    string eth1 = func->halfify(quar1, sep);
+    uInt _eth1[2] = {0, pixels->findLength(eth1, sep)};
     
     string eth2 = quar1; quar1.clear();
-    uInt _eth2[2] = {_eth1[1], static_cast<uInt>(eth2.length()+_eth1[1])};
+    uInt _eth2[2] = {_eth1[1], pixels->findLength(eth2, sep)+_eth1[1]};
     
-    string eth3 = CORE::FUNC::halfify(quar2, sep);
-    uInt _eth3[2] = {_eth2[1], static_cast<uInt>(eth3.length()+_eth2[1])};
+    string eth3 = func->halfify(quar2, sep);
+    uInt _eth3[2] = {_eth2[1], pixels->findLength(eth3, sep)+_eth2[1]};
     
     string eth4 = quar2; quar2.clear();
-    uInt _eth4[2] = {_eth3[1], static_cast<uInt>(eth4.length()+_eth3[1])};
+    uInt _eth4[2] = {_eth3[1], pixels->findLength(eth4, sep)+_eth3[1]};
     
-    string eth5 = CORE::FUNC::halfify(quar3, sep);
-    uInt _eth5[2] = {_eth4[1], static_cast<uInt>(eth5.length()+_eth4[1])};
+    string eth5 = func->halfify(quar3, sep);
+    uInt _eth5[2] = {_eth4[1], pixels->findLength(eth5, sep)+_eth4[1]};
     
     string eth6 = quar3; quar3.clear();
-    uInt _eth6[2] = {_eth5[1], static_cast<uInt>(eth6.length()+_eth5[1])};
+    uInt _eth6[2] = {_eth5[1], pixels->findLength(eth6, sep)+_eth5[1]};
     
-    string eth7 = CORE::FUNC::halfify(quar4, sep);
-    uInt _eth7[2] = {_eth6[1], static_cast<uInt>(eth7.length()+_eth6[1])};
+    string eth7 = func->halfify(quar4, sep);
+    uInt _eth7[2] = {_eth6[1], pixels->findLength(eth7, sep)+_eth6[1]};
     
     string eth8 = quar4; quar4.clear();
-    uInt _eth8[2] = {_eth7[1], static_cast<uInt>(eth8.length()+_eth7[1])};
+    uInt _eth8[2] = {_eth7[1], pixels->findLength(eth8, sep)+_eth7[1]};
     
+    thread asgn1(pixels->asgnPixThr, ref(pix), eth1, sep, _eth1[0], _eth1[1]);
+    thread asgn2(pixels->asgnPixThr, ref(pix), eth2, sep, _eth2[0], _eth2[1]);
+    thread asgn3(pixels->asgnPixThr, ref(pix), eth3, sep, _eth3[0], _eth3[1]);
+    thread asgn4(pixels->asgnPixThr, ref(pix), eth4, sep, _eth4[0], _eth4[1]);
+    thread asgn5(pixels->asgnPixThr, ref(pix), eth5, sep, _eth5[0], _eth5[1]);
+    thread asgn6(pixels->asgnPixThr, ref(pix), eth6, sep, _eth6[0], _eth6[1]);
+    thread asgn7(pixels->asgnPixThr, ref(pix), eth7, sep, _eth7[0], _eth7[1]);
+    thread asgn8(pixels->asgnPixThr, ref(pix), eth8, sep, _eth8[0], _eth8[1]);
     
-    //Note to self. Multithread now. multiplying length by 8 seemed to allocate enough so far for the one func. 8 for 8 bits in a byte.
-    thread asgn1(CORE::PIXELS::asgnPixThr, ref(pix), eth1, sep, _eth1[0], _eth1[1], "1.txt");
+    pixels.reset(); func.reset(); //free mem taken by smart pointers
+    
     asgn1.join();
-    thread asgn2(CORE::PIXELS::asgnPixThr, ref(pix), eth2, sep, _eth2[0], _eth2[1], "2.txt");
     asgn2.join();
-    thread asgn3(CORE::PIXELS::asgnPixThr, ref(pix), eth3, sep, _eth3[0], _eth3[1], "3.txt");
     asgn3.join();
-    thread asgn4(CORE::PIXELS::asgnPixThr, ref(pix), eth4, sep, _eth4[0], _eth4[1], "4.txt");
     asgn4.join();
-    thread asgn5(CORE::PIXELS::asgnPixThr, ref(pix), eth5, sep, _eth5[0], _eth5[1], "5.txt");
     asgn5.join();
-    thread asgn6(CORE::PIXELS::asgnPixThr, ref(pix), eth6, sep, _eth6[0], _eth6[1], "6.txt");
     asgn6.join();
-    thread asgn7(CORE::PIXELS::asgnPixThr, ref(pix), eth7, sep, _eth7[0], _eth7[1], "7.txt"); 
     asgn7.join();
-    thread asgn8(CORE::PIXELS::asgnPixThr, ref(pix), eth8, sep, _eth8[0], _eth8[1], "8.txt");
     asgn8.join();
     
-    cout << (size_t)*pix[0] << endl << endl;
+    PIX = reinterpret_cast<unsigned char*>(pix);
   };
 
-  void rgb_compression::CORE::PIXELS::asgnPixThr(unsigned char** pix, string data, char sep, uInt startPos, uInt endPos, string fname) {
-    cout << "LAUNCH " << fname << endl;
-    ofstream e(fname, ios::trunc);
-    ofstream w("PIX"+fname, ios::trunc);
-    e << data.length() << "\n\n ******************** \n\n" << startPos << "\n" << endPos <<"\n\n ******************** \n\n\n\n";
-    for (int i=startPos; i<endPos+1; i++) {
-      cout << i << " " << endPos << endl;
+  uInt rgb_compression::CORE::PIXELS::findLength(string str, char sep) {
+    uInt num = 0;
+    for (int i=0; i<str.length(); i++) {
+      if (str[i] == sep) {
+        num++;
+      };
+    };
+    return num;
+  };
+
+  void rgb_compression::CORE::PIXELS::asgnPixThr(char* &pix, string data, char sep, uInt startPos, uInt endPos) {
+    cout << "launch" << endl;
+    for (unsigned int i=startPos; i<endPos+1; i++) {
       //substring rgb num
-      if (data == "") {e << "DATA BREAK"<<data;break;};
+      if (data == "") {break;};
       size_t pos = data.find_first_of(sep);
-      if (pos == string::npos) {e<<"POS BREAK";break;}
+      if (pos == string::npos) {break;}
       string sm = data.substr(0, pos);
-      if (sm == "") {e<<"SM BREAK";break;};
-      //unsigned char* num = new unsigned char(stoi(sm));
-      size_t* num = (size_t*)malloc(sizeof(size_t)); *num = stoi(sm);
-      e << sm << " | " << *num << "\n";
-      sm.clear();
+      if (sm == "") {break;};
       
       //assign
-      unsigned char* ch = new unsigned char(*num); free(num);
-      pix[i] = (unsigned char*)malloc(*ch);//num;
-
-      unsigned char* p = ref(pix[i]);
-      p[0] = *((unsigned char*)malloc(sizeof(*ch))); //allocate mem
-      p[0] = ref(*ch); free(ch);
+      char uiui = stoi(sm);      
+      pix[i] = uiui;
       
-      w << *pix[i] << " | " << *p; w << '\n';
-      free(p);
       //delete from data
       if (data.find(sep) != string::npos && pos < data.length()) {
         data.erase(0, data.find_first_of(sep)+1);
-      } else {e<<"ELSE BREAK";break;};
-      e << "      " << data.substr(0, 8) << '\n';
+      } else {break;};
     };
-    e << "\n\n ** END **";
-    e.close();
   };
 
-//    note to self. fix corrupt assignment of ch to pix array
-
 //Multithread example
-/*int d = 2;
-  thread th(&foo, ref(d)); //int& in func
+  /*
+  int ex = 2;
+  thread th(&foo, ref(ex)); //int& in func
   th.join();
-  cout << d << endl;
   */
 };

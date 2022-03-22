@@ -27,14 +27,15 @@ namespace COMPRESSION {
     //Decompress a compressed RGB string
     static void decompress(string &inp, char separator);
 
-    static void asgnPix(unsigned char** pix, string str, char sep, size_t length);
+    static void asgnPix(unsigned char* &pix, string str, char sep, size_t length);
 
-    private:
+    //private:
     class CORE {
       public:
       class PIXELS {
-      public:
-      static void asgnPixThr(unsigned char** pix, string data, char sep, uInt startPos, uInt endPos, string fname);
+        public:
+        static void asgnPixThr(char* &pix, string data, char sep, uInt startPos, uInt endPos);
+        static unsigned int findLength(string str, char sep);
       };
       class COMP {
         public:

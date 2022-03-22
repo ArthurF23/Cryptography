@@ -156,8 +156,8 @@ string text[8] = {"Thank you for using my Encryption/Decryption header.\nPlease 
 
 int main() {
   AES::aes_init(AES::OPTIONS::doGenerateKey);
-  cout << AES::encryptFile("testFiles/bitmap/img.bmp") << endl;
-  cout << AES::decryptFile("testFiles/bitmap/img.aesenc", ""/*, (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile)*/) << endl;
+  cout << AES::encryptFile("testFiles/bitmap/image.bmp") << endl;
+  cout << AES::decryptFile("testFiles/bitmap/image.aesenc", "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile)) << endl;
   return 0;
   cout << text[0] << endl;
   cout << text[1] << endl;
