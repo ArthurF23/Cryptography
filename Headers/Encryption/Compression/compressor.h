@@ -27,12 +27,20 @@ namespace COMPRESSION {
     //Decompress a compressed RGB string
     static void decompress(string &inp, char separator);
 
-    private:
+    static void asgnPix(unsigned char* &pix, string str, char sep, size_t length);
+
+    //private:
     class CORE {
       public:
+      class PIXELS {
+        public:
+        static void asgnPixThr(char* &pix, string data, char sep, uInt startPos, uInt endPos);
+        static unsigned int findLength(string str, char sep);
+      };
       class COMP {
         public:
         static void compress(string &inp, char separator);
+        static void superCompress(string &inp, char separator);
         static constexpr unsigned int sizeLimit = 115100;
       };
 
@@ -57,7 +65,7 @@ namespace COMPRESSION {
         static constexpr char _separator = '#';
         static constexpr char sectionStart = '{';
         static constexpr char sectionEnd = '}';
-        static constexpr short firstLayerMultiplier[2] = {71, 2};
+        static constexpr short firstLayerMultiplier[2] = {80, 2};
         static const string firstLayerMulRChars[firstLayerMultiplier[0]][firstLayerMultiplier[1]];
       };
     };

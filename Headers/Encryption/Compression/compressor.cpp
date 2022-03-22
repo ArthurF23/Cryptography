@@ -396,8 +396,17 @@ namespace COMPRESSION {
     {"67", "W"},
     {"68", "X"},
     {"69", "Y"},
-    {"70", "Z"}
-  };
+    {"70", "Z"},
+    {"71", "€"},
+    {"72", "\2"},
+    {"73", "\1"},
+    {"74", "\7"},
+    {"75", "\13"},
+    {"76", "\16"},
+    {"77", "\17"},
+    {"78", "\6"},
+    {"79", "\27"}
+};
 
   void rgb_compression::CORE::FUNC::get_chunk_count(unsigned long int &inp, string clone, char separator, bool div) {
     inp = count(clone.begin(), clone.end(), separator);
@@ -474,44 +483,47 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::compress(string &inp, char separator) {
-    if (inp.length() > CORE::COMP::sizeLimit) {
+    unique_ptr<CORE::COMP> comp;
+    
+    if (inp.length() > comp->sizeLimit) {
+      unique_ptr<CORE::FUNC> func;
+      
       //Chop up input into halfs
-      string half1 = CORE::FUNC::halfify(inp, separator);
+      string half1 = func->halfify(inp, separator);
       string half2 = inp; inp.clear();
       
-      string quarter1 = CORE::FUNC::halfify(half1, separator);
+      string quarter1 = func->halfify(half1, separator);
       string quarter2 = half1; half1.clear();
       
       //quarters to eights and launch threads
-      string eighth1 = CORE::FUNC::halfify(quarter1, separator);
-      thread th1(CORE::COMP::compress, ref(eighth1), separator);
+      string eighth1 = func->halfify(quarter1, separator);
+      thread th1(comp->compress, ref(eighth1), separator);
       
       string eighth2 = quarter1; quarter1.clear();
-      thread th2(CORE::COMP::compress, ref(eighth2), separator);
+      thread th2(comp->compress, ref(eighth2), separator);
       
-      string eighth3 = CORE::FUNC::halfify(quarter2, separator);
-      thread th3(CORE::COMP::compress, ref(eighth3), separator);
+      string eighth3 = func->halfify(quarter2, separator);
+      thread th3(comp->compress, ref(eighth3), separator);
       
       string eighth4 = quarter2; quarter2.clear();
-      thread th4(CORE::COMP::compress, ref(eighth4), separator);
+      thread th4(comp->compress, ref(eighth4), separator);
 
       ////////////////
-      string quarter3 = CORE::FUNC::halfify(half2, separator);      
+      string quarter3 = func->halfify(half2, separator);      
       string quarter4 = half2; half2.clear();
       ////////////////
       
-      string eighth5 = CORE::FUNC::halfify(quarter3, separator);
-      thread th5(CORE::COMP::compress, ref(eighth5), separator);
+      string eighth5 = func->halfify(quarter3, separator);
+      thread th5(comp->compress, ref(eighth5), separator);
       
       string eighth6 = quarter3; quarter3.clear();
-      thread th6(CORE::COMP::compress, ref(eighth6), separator);
+      thread th6(comp->compress, ref(eighth6), separator);
       
-      string eighth7 = CORE::FUNC::halfify(quarter4, separator);
-      thread th7(CORE::COMP::compress, ref(eighth7), separator);
+      string eighth7 = func->halfify(quarter4, separator); func.reset();
+      thread th7(comp->compress, ref(eighth7), separator);
       
       string eighth8 = quarter4; quarter4.clear();
-      thread th8(CORE::COMP::compress, ref(eighth8), separator);
-
+      thread th8(comp->compress, ref(eighth8), separator);
       
       th1.join(); th2.join(); th3.join(); th4.join();
       th5.join(); th6.join(); th7.join(); th8.join();
@@ -525,7 +537,8 @@ namespace COMPRESSION {
       inp+=eighth7;
       inp+=eighth8;
       
-    } else {CORE::COMP::compress(inp, separator);};
+    } else {comp->compress(inp, separator);}; comp.reset();
+    
   };
 
   /////////////////////////////
@@ -591,42 +604,44 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::decompress(string &inp, char separator) {
+    unique_ptr<CORE::FUNC> func;
+    unique_ptr<CORE::DECOMP> decomp;
     //Chop up input into halfs
-    string half1 = CORE::FUNC::halfify(inp, separator);
+    string half1 = func->halfify(inp, separator);
     string half2 = inp; inp.clear();
     
-    string quarter1 = CORE::FUNC::halfify(half1, separator);
+    string quarter1 = func->halfify(half1, separator);
     string quarter2 = half1; half1.clear();
     
     //quarters to eights and launch threads
-    string eighth1 = CORE::FUNC::halfify(quarter1, separator);
-    thread th1(CORE::DECOMP::decompress, ref(eighth1), separator);
+    string eighth1 = func->halfify(quarter1, separator);
+    thread th1(decomp->decompress, ref(eighth1), separator);
     
     string eighth2 = quarter1; quarter1.clear();
-    thread th2(CORE::DECOMP::decompress, ref(eighth2), separator);
+    thread th2(decomp->decompress, ref(eighth2), separator);
     
-    string eighth3 = CORE::FUNC::halfify(quarter2, separator);
-    thread th3(CORE::DECOMP::decompress, ref(eighth3), separator);
+    string eighth3 = func->halfify(quarter2, separator);
+    thread th3(decomp->decompress, ref(eighth3), separator);
     
     string eighth4 = quarter2; quarter2.clear();
-    thread th4(CORE::DECOMP::decompress, ref(eighth4), separator);
+    thread th4(decomp->decompress, ref(eighth4), separator);
 
     ////////////////
-    string quarter3 = CORE::FUNC::halfify(half2, separator);      
+    string quarter3 = func->halfify(half2, separator);      
     string quarter4 = half2; half2.clear();
     ////////////////
     
-    string eighth5 = CORE::FUNC::halfify(quarter3, separator);
-    thread th5(CORE::DECOMP::decompress, ref(eighth5), separator);
+    string eighth5 = func->halfify(quarter3, separator);
+    thread th5(decomp->decompress, ref(eighth5), separator);
     
     string eighth6 = quarter3; quarter3.clear();
-    thread th6(CORE::DECOMP::decompress, ref(eighth6), separator);
+    thread th6(decomp->decompress, ref(eighth6), separator);
     
-    string eighth7 = CORE::FUNC::halfify(quarter4, separator);
-    thread th7(CORE::DECOMP::decompress, ref(eighth7), separator);
+    string eighth7 = func->halfify(quarter4, separator); func.reset();
+    thread th7(decomp->decompress, ref(eighth7), separator);
     
     string eighth8 = quarter4; quarter4.clear();
-    thread th8(CORE::DECOMP::decompress, ref(eighth8), separator);
+    thread th8(decomp->decompress, ref(eighth8), separator);
 
     
     th1.join(); th2.join(); th3.join(); th4.join();
@@ -641,7 +656,7 @@ namespace COMPRESSION {
     inp+=eighth7;
     inp+=eighth8;
     
-    CORE::DECOMP::errorChecker(inp, separator);
+    decomp->errorChecker(inp, separator); decomp.reset();
   };
 
   void rgb_compression::CORE::DECOMP::errorChecker(string &cln, char sep) {
@@ -684,10 +699,113 @@ namespace COMPRESSION {
     return false;
   };
 
+  //////////////////////////
+  // ~ Pixel assignment ~ //
+  //////////////////////////
+  void rgb_compression::asgnPix(unsigned char* &PIX, string data, char sep, size_t length) {
+    //Pointers for ease of reading and writing
+    unique_ptr<CORE::FUNC> func;
+    unique_ptr<CORE::PIXELS> pixels;
+    
+    //Allocate memory
+    char* pix = (char*)malloc(length); 
+    PIX = (unsigned char*)malloc(length);
+    
+    //Figure out how to split input down into managable, threadable forms
+    //Will be 8 threads
+    
+    //Half
+    string str1 = func->halfify(data, sep);
+    string str2 = data; data.clear();
+
+    //Quarter
+    string quar1 = func->halfify(str1, sep);
+    string quar2 = str1; str1.clear();
+    string quar3 = func->halfify(str2, sep);
+    string quar4 = str2; str2.clear();
+
+    //Eighth
+    string eth1 = func->halfify(quar1, sep);
+    uInt _eth1[2] = {0, pixels->findLength(eth1, sep)};
+    
+    string eth2 = quar1; quar1.clear();
+    uInt _eth2[2] = {_eth1[1], pixels->findLength(eth2, sep)+_eth1[1]};
+    
+    string eth3 = func->halfify(quar2, sep);
+    uInt _eth3[2] = {_eth2[1], pixels->findLength(eth3, sep)+_eth2[1]};
+    
+    string eth4 = quar2; quar2.clear();
+    uInt _eth4[2] = {_eth3[1], pixels->findLength(eth4, sep)+_eth3[1]};
+    
+    string eth5 = func->halfify(quar3, sep);
+    uInt _eth5[2] = {_eth4[1], pixels->findLength(eth5, sep)+_eth4[1]};
+    
+    string eth6 = quar3; quar3.clear();
+    uInt _eth6[2] = {_eth5[1], pixels->findLength(eth6, sep)+_eth5[1]};
+    
+    string eth7 = func->halfify(quar4, sep);
+    uInt _eth7[2] = {_eth6[1], pixels->findLength(eth7, sep)+_eth6[1]};
+    
+    string eth8 = quar4; quar4.clear();
+    uInt _eth8[2] = {_eth7[1], pixels->findLength(eth8, sep)+_eth7[1]};
+    
+    thread asgn1(pixels->asgnPixThr, ref(pix), eth1, sep, _eth1[0], _eth1[1]);
+    thread asgn2(pixels->asgnPixThr, ref(pix), eth2, sep, _eth2[0], _eth2[1]);
+    thread asgn3(pixels->asgnPixThr, ref(pix), eth3, sep, _eth3[0], _eth3[1]);
+    thread asgn4(pixels->asgnPixThr, ref(pix), eth4, sep, _eth4[0], _eth4[1]);
+    thread asgn5(pixels->asgnPixThr, ref(pix), eth5, sep, _eth5[0], _eth5[1]);
+    thread asgn6(pixels->asgnPixThr, ref(pix), eth6, sep, _eth6[0], _eth6[1]);
+    thread asgn7(pixels->asgnPixThr, ref(pix), eth7, sep, _eth7[0], _eth7[1]);
+    thread asgn8(pixels->asgnPixThr, ref(pix), eth8, sep, _eth8[0], _eth8[1]);
+    
+    pixels.reset(); func.reset(); //free mem taken by smart pointers
+    
+    asgn1.join();
+    asgn2.join();
+    asgn3.join();
+    asgn4.join();
+    asgn5.join();
+    asgn6.join();
+    asgn7.join();
+    asgn8.join();
+    
+    PIX = reinterpret_cast<unsigned char*>(pix);
+  };
+
+  uInt rgb_compression::CORE::PIXELS::findLength(string str, char sep) {
+    uInt num = 0;
+    for (int i=0; i<str.length(); i++) {
+      if (str[i] == sep) {
+        num++;
+      };
+    };
+    return num;
+  };
+
+  void rgb_compression::CORE::PIXELS::asgnPixThr(char* &pix, string data, char sep, uInt startPos, uInt endPos) {
+    for (unsigned int i=startPos; i<endPos+1; i++) {
+      //substring rgb num
+      if (data == "") {break;};
+      size_t pos = data.find_first_of(sep);      
+      if (pos == string::npos) {break;}
+      string sm = data.substr(0, pos);
+      if (sm == "") {break;};
+      
+      //assign
+      char uiui = stoi(sm);      
+      pix[i] = uiui;
+      
+      //delete from data
+      if (data.find(sep) != string::npos && pos < data.length()) {
+        data.erase(0, data.find_first_of(sep)+1);
+      } else {break;};
+    };
+  };
+
 //Multithread example
-/*int d = 2;
-  thread th(&foo, ref(d)); //int& in func
+  /*
+  int ex = 2;
+  thread th(&foo, ref(ex)); //int& in func
   th.join();
-  cout << d << endl;
   */
 };

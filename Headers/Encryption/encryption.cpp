@@ -608,34 +608,10 @@ namespace encryption {
 
     rgb_compression::decompress(data, NUM_SEPARATOR);
     //Length of pixels
-    unsigned int length = width*height*bytesPerPixel;
-    BMPbyte pixels[length];
-
+    const unsigned int length = height*(width*bytesPerPixel);
     
-    //////////////////////////////////////////
-    /// This loop slows down process HARD ////
-    //////////////////////////////////////////
-    
-    //Assign rgb values to arr
-    for (unsigned int i=0; i<length; i++) {
-      //substring rgb num
-      unsigned long long fst = data.find_first_of(NUM_SEPARATOR);
-      string sm = data.substr(0, fst);
-      if (sm == "") {break;};
-      //str 2 int
-      unsigned int num = stoi(sm);
-      //assign
-      pixels[i] = (num);
-      //delete from data
-      if (fst != string::npos) {
-        data.erase(0, data.find_first_of(NUM_SEPARATOR)+1);
-      };
-    };
-
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-
+    BMPbyte* pixels;    
+    rgb_compression::asgnPix(pixels, data, NUM_SEPARATOR, length); data.clear();
     
     //Write the image
     BMP::WriteImage(filename, pixels, width, height, bytesPerPixel);
