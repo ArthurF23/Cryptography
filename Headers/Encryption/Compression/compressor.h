@@ -40,6 +40,7 @@ namespace COMPRESSION {
       class COMP {
         public:
         static void compress(string &inp, char separator);
+        static void superCompress(string &inp, char separator);
         static constexpr unsigned int sizeLimit = 115100;
       };
 

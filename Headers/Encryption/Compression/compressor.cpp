@@ -483,44 +483,47 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::compress(string &inp, char separator) {
-    if (inp.length() > CORE::COMP::sizeLimit) {
+    unique_ptr<CORE::COMP> comp;
+    
+    if (inp.length() > comp->sizeLimit) {
+      unique_ptr<CORE::FUNC> func;
+      
       //Chop up input into halfs
-      string half1 = CORE::FUNC::halfify(inp, separator);
+      string half1 = func->halfify(inp, separator);
       string half2 = inp; inp.clear();
       
-      string quarter1 = CORE::FUNC::halfify(half1, separator);
+      string quarter1 = func->halfify(half1, separator);
       string quarter2 = half1; half1.clear();
       
       //quarters to eights and launch threads
-      string eighth1 = CORE::FUNC::halfify(quarter1, separator);
-      thread th1(CORE::COMP::compress, ref(eighth1), separator);
+      string eighth1 = func->halfify(quarter1, separator);
+      thread th1(comp->compress, ref(eighth1), separator);
       
       string eighth2 = quarter1; quarter1.clear();
-      thread th2(CORE::COMP::compress, ref(eighth2), separator);
+      thread th2(comp->compress, ref(eighth2), separator);
       
-      string eighth3 = CORE::FUNC::halfify(quarter2, separator);
-      thread th3(CORE::COMP::compress, ref(eighth3), separator);
+      string eighth3 = func->halfify(quarter2, separator);
+      thread th3(comp->compress, ref(eighth3), separator);
       
       string eighth4 = quarter2; quarter2.clear();
-      thread th4(CORE::COMP::compress, ref(eighth4), separator);
+      thread th4(comp->compress, ref(eighth4), separator);
 
       ////////////////
-      string quarter3 = CORE::FUNC::halfify(half2, separator);      
+      string quarter3 = func->halfify(half2, separator);      
       string quarter4 = half2; half2.clear();
       ////////////////
       
-      string eighth5 = CORE::FUNC::halfify(quarter3, separator);
-      thread th5(CORE::COMP::compress, ref(eighth5), separator);
+      string eighth5 = func->halfify(quarter3, separator);
+      thread th5(comp->compress, ref(eighth5), separator);
       
       string eighth6 = quarter3; quarter3.clear();
-      thread th6(CORE::COMP::compress, ref(eighth6), separator);
+      thread th6(comp->compress, ref(eighth6), separator);
       
-      string eighth7 = CORE::FUNC::halfify(quarter4, separator);
-      thread th7(CORE::COMP::compress, ref(eighth7), separator);
+      string eighth7 = func->halfify(quarter4, separator); func.reset();
+      thread th7(comp->compress, ref(eighth7), separator);
       
       string eighth8 = quarter4; quarter4.clear();
-      thread th8(CORE::COMP::compress, ref(eighth8), separator);
-
+      thread th8(comp->compress, ref(eighth8), separator);
       
       th1.join(); th2.join(); th3.join(); th4.join();
       th5.join(); th6.join(); th7.join(); th8.join();
@@ -534,7 +537,8 @@ namespace COMPRESSION {
       inp+=eighth7;
       inp+=eighth8;
       
-    } else {CORE::COMP::compress(inp, separator);};
+    } else {comp->compress(inp, separator);}; comp.reset();
+    
   };
 
   /////////////////////////////
@@ -600,42 +604,44 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::decompress(string &inp, char separator) {
+    unique_ptr<CORE::FUNC> func;
+    unique_ptr<CORE::DECOMP> decomp;
     //Chop up input into halfs
-    string half1 = CORE::FUNC::halfify(inp, separator);
+    string half1 = func->halfify(inp, separator);
     string half2 = inp; inp.clear();
     
-    string quarter1 = CORE::FUNC::halfify(half1, separator);
+    string quarter1 = func->halfify(half1, separator);
     string quarter2 = half1; half1.clear();
     
     //quarters to eights and launch threads
-    string eighth1 = CORE::FUNC::halfify(quarter1, separator);
-    thread th1(CORE::DECOMP::decompress, ref(eighth1), separator);
+    string eighth1 = func->halfify(quarter1, separator);
+    thread th1(decomp->decompress, ref(eighth1), separator);
     
     string eighth2 = quarter1; quarter1.clear();
-    thread th2(CORE::DECOMP::decompress, ref(eighth2), separator);
+    thread th2(decomp->decompress, ref(eighth2), separator);
     
-    string eighth3 = CORE::FUNC::halfify(quarter2, separator);
-    thread th3(CORE::DECOMP::decompress, ref(eighth3), separator);
+    string eighth3 = func->halfify(quarter2, separator);
+    thread th3(decomp->decompress, ref(eighth3), separator);
     
     string eighth4 = quarter2; quarter2.clear();
-    thread th4(CORE::DECOMP::decompress, ref(eighth4), separator);
+    thread th4(decomp->decompress, ref(eighth4), separator);
 
     ////////////////
-    string quarter3 = CORE::FUNC::halfify(half2, separator);      
+    string quarter3 = func->halfify(half2, separator);      
     string quarter4 = half2; half2.clear();
     ////////////////
     
-    string eighth5 = CORE::FUNC::halfify(quarter3, separator);
-    thread th5(CORE::DECOMP::decompress, ref(eighth5), separator);
+    string eighth5 = func->halfify(quarter3, separator);
+    thread th5(decomp->decompress, ref(eighth5), separator);
     
     string eighth6 = quarter3; quarter3.clear();
-    thread th6(CORE::DECOMP::decompress, ref(eighth6), separator);
+    thread th6(decomp->decompress, ref(eighth6), separator);
     
-    string eighth7 = CORE::FUNC::halfify(quarter4, separator);
-    thread th7(CORE::DECOMP::decompress, ref(eighth7), separator);
+    string eighth7 = func->halfify(quarter4, separator); func.reset();
+    thread th7(decomp->decompress, ref(eighth7), separator);
     
     string eighth8 = quarter4; quarter4.clear();
-    thread th8(CORE::DECOMP::decompress, ref(eighth8), separator);
+    thread th8(decomp->decompress, ref(eighth8), separator);
 
     
     th1.join(); th2.join(); th3.join(); th4.join();
@@ -650,7 +656,7 @@ namespace COMPRESSION {
     inp+=eighth7;
     inp+=eighth8;
     
-    CORE::DECOMP::errorChecker(inp, separator);
+    decomp->errorChecker(inp, separator); decomp.reset();
   };
 
   void rgb_compression::CORE::DECOMP::errorChecker(string &cln, char sep) {
@@ -777,11 +783,10 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::CORE::PIXELS::asgnPixThr(char* &pix, string data, char sep, uInt startPos, uInt endPos) {
-    cout << "launch" << endl;
     for (unsigned int i=startPos; i<endPos+1; i++) {
       //substring rgb num
       if (data == "") {break;};
-      size_t pos = data.find_first_of(sep);
+      size_t pos = data.find_first_of(sep);      
       if (pos == string::npos) {break;}
       string sm = data.substr(0, pos);
       if (sm == "") {break;};
