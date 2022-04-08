@@ -46,7 +46,7 @@ namespace COMPRESSION {
 
       class DECOMP {
         public:
-        static void decompress(string &inp, char separator);
+        static void decompress(string &inp, char separator, string id);
         static constexpr short vCharLen = 10;
         static constexpr char validChars[vCharLen] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         static void errorChecker(string &cln, char sep);
@@ -55,6 +55,8 @@ namespace COMPRESSION {
 
       class FUNC {
         public:
+        static string hexify(unsigned short inp);
+        static void dehexify(string &inp);
         static string halfify(string &cln, char sep);
         static void replaceSeparator(string &inp, char sep, char repl);
         static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
@@ -62,6 +64,8 @@ namespace COMPRESSION {
 
       class VAR {
         public:
+        static constexpr short hexSize = 16;
+        static constexpr char hexArr[hexSize] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
         static constexpr char _separator = '#';
         static constexpr char sectionStart = '{';
         static constexpr char sectionEnd = '}';

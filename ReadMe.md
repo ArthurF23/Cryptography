@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.13
+### v1.8.14
 
 ### What's new in v1.8.0?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
@@ -30,6 +30,9 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 
 ###### v1.8.13
 ##### Multithreaded RGB decompression pixel assignment
+
+###### v1.8.14
+##### Extreme RGB compression improvements
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.

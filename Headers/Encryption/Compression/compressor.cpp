@@ -424,9 +424,11 @@ namespace COMPRESSION {
   };
 
   void rgb_compression::CORE::COMP::compress(string &inp, char separator) {
-     string clone = inp;
+    unique_ptr<rgb_compression::CORE::FUNC> func;
+    unique_ptr<rgb_compression::CORE::VAR> var;
+    string clone = inp;
     //count chunks
-    unsigned long int chunk_count; CORE::FUNC::get_chunk_count(chunk_count, clone, separator);
+    unsigned long int chunk_count; func->get_chunk_count(chunk_count, clone, separator);
     string chunks[chunk_count]; //Big memory allocation
 
     //assign chunks to arr
@@ -435,33 +437,38 @@ namespace COMPRESSION {
       //255,98,23,
       if (clone.length() == 0) {break;};
       int first = clone.find_first_of(separator) + 1;
-      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)))/* + separator*/;
+      clone.erase(0, first);
 
       if (clone.length() == 0) {break;};
       first = clone.find_first_of(separator) + 1;
-      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)))/* + separator*/;
+      clone.erase(0, first);
       
       if (clone.length() == 0) {break;};
       first = clone.find_first_of(separator) + 1;
-      chunks[i] += clone.substr(0, first);  clone.erase(0, first);
+      chunks[i] += func->hexify(stoi(clone.substr(0, first-1))) + separator;
+      clone.erase(0, first);
       if (clone[0] == ' ') {break;};
     };
     //Free memory
     inp.clear(); clone.clear();
+    
 
     //////                           //////
     ///////////////////////////////////////
     /// This is where the magic happens ///
     ///////////////////////////////////////
     //////                           //////
+
     
     //Find matching chunks and pair them accordingly
     for (unsigned long int i = 0; i<chunk_count;) {
       unsigned long int rep = 0;
       
       //Find repeating chunks
-      for (; rep < CORE::VAR::firstLayerMultiplier[0]-1;) {
-        if (rep > CORE::VAR::firstLayerMultiplier[0]-1) {break;};
+      for (; rep < var->firstLayerMultiplier[0]-1;) {
+        if (rep > var->firstLayerMultiplier[0]-1) {break;};
         if (chunks[rep + i] == chunks[i]) {rep++;}
         else {break;};
       };
@@ -469,13 +476,14 @@ namespace COMPRESSION {
       //Do compression thing if repeat > 1
       if (rep > 1) {
         string temp;
-        temp += CORE::VAR::sectionStart + chunks[i] + CORE::VAR::sectionEnd + CORE::VAR::firstLayerMulRChars[rep][1] + separator;
+        temp += var->sectionStart + chunks[i] + var->sectionEnd + var->firstLayerMulRChars[rep][1] + separator;
         //Do thing with commas to make code go brrrrr
-        CORE::FUNC::replaceSeparator(temp, separator, CORE::VAR::_separator); inp += temp; temp.clear();
+        func->replaceSeparator(temp, separator, var->_separator);
+        inp += temp; temp.clear();
         i += rep;
       }
       else {
-        CORE::FUNC::replaceSeparator(chunks[i], separator, CORE::VAR::_separator);
+        func->replaceSeparator(chunks[i], separator, var->_separator);
         inp += chunks[i];
         i++;
       };
@@ -550,17 +558,19 @@ namespace COMPRESSION {
     unsigned int param = (len/2)+10;
     int i;
     for (i=0; i<len; i++) {
-      if (param-i < 10 && cln[i] == sep) {break;};
+      if (param-i < 20 && cln[i] == sep) {break;}
     }
     i++;
-    string ret = cln.substr(0, i); 
+    string ret = cln.substr(0, i);
     cln.erase(0, i);
     return ret;
   };
 
-  void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator) {
+  void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator, string id) {
+    unique_ptr<rgb_compression::CORE::FUNC> func;
+    unique_ptr<rgb_compression::CORE::VAR> var;
     //get all chunks
-    unsigned long int chunk_count = 0; CORE::FUNC::get_chunk_count(chunk_count, inp, separator, false);
+    unsigned long int chunk_count = 0; func->get_chunk_count(chunk_count, inp, separator, false);
     string clone = inp;
     string chunks[chunk_count];
     //assign chunks to arr
@@ -570,11 +580,48 @@ namespace COMPRESSION {
     };
     clone.clear(); inp.clear();
     
+    
     //////                           //////
     ///////////////////////////////////////
     /// This is where the magic happens ///
     ///////////////////////////////////////
     //////                           //////
+
+    
+    for (int i=0; i<chunk_count; i++) {
+      string str = chunks[i];
+      
+      string mulChar;
+      bool isCompressed = false;
+      if (str[0] == var->sectionStart) {
+        isCompressed=true;
+        str.erase(0,1);
+        mulChar = str[str.length()-2];
+        str.erase(str.length()-4, 4); 
+        };
+      
+      string str1, str2, str3;
+      str1 = str.substr(0,2); str.erase(0,2);
+      str2 = str.substr(0,2); str.erase(0,2);
+      str3 = str.substr(0,2); str.erase(0,2);
+      func->dehexify(str1); func->dehexify(str2); func->dehexify(str3);
+      str.clear();
+
+      //rebuild chunk
+      if (isCompressed) {
+        str+=var->sectionStart;
+      };
+      str+=str1+var->_separator+str2+var->_separator+str3;
+      if (isCompressed) {
+        str+=var->_separator;
+        str+=var->sectionEnd;
+        str+=mulChar;
+        str+=separator;
+      } else {
+        str+=separator;
+      };
+      chunks[i]=str;
+    };
     
     for (int i=0; i<chunk_count; i++) {
       string section = chunks[i];
@@ -615,16 +662,16 @@ namespace COMPRESSION {
     
     //quarters to eights and launch threads
     string eighth1 = func->halfify(quarter1, separator);
-    thread th1(decomp->decompress, ref(eighth1), separator);
+    thread th1(decomp->decompress, ref(eighth1), separator, "1");
     
     string eighth2 = quarter1; quarter1.clear();
-    thread th2(decomp->decompress, ref(eighth2), separator);
+    thread th2(decomp->decompress, ref(eighth2), separator, "2");
     
     string eighth3 = func->halfify(quarter2, separator);
-    thread th3(decomp->decompress, ref(eighth3), separator);
+    thread th3(decomp->decompress, ref(eighth3), separator, "3");
     
     string eighth4 = quarter2; quarter2.clear();
-    thread th4(decomp->decompress, ref(eighth4), separator);
+    thread th4(decomp->decompress, ref(eighth4), separator, "4");
 
     ////////////////
     string quarter3 = func->halfify(half2, separator);      
@@ -632,16 +679,16 @@ namespace COMPRESSION {
     ////////////////
     
     string eighth5 = func->halfify(quarter3, separator);
-    thread th5(decomp->decompress, ref(eighth5), separator);
+    thread th5(decomp->decompress, ref(eighth5), separator, "5");
     
     string eighth6 = quarter3; quarter3.clear();
-    thread th6(decomp->decompress, ref(eighth6), separator);
+    thread th6(decomp->decompress, ref(eighth6), separator, "6");
     
     string eighth7 = func->halfify(quarter4, separator); func.reset();
-    thread th7(decomp->decompress, ref(eighth7), separator);
+    thread th7(decomp->decompress, ref(eighth7), separator, "7");
     
     string eighth8 = quarter4; quarter4.clear();
-    thread th8(decomp->decompress, ref(eighth8), separator);
+    thread th8(decomp->decompress, ref(eighth8), separator, "8");
 
     
     th1.join(); th2.join(); th3.join(); th4.join();
@@ -800,6 +847,50 @@ namespace COMPRESSION {
         data.erase(0, data.find_first_of(sep)+1);
       } else {break;};
     };
+  };
+
+  //HEX COMPRESSION
+  string rgb_compression::CORE::FUNC::hexify(unsigned short inp) {
+    unique_ptr<rgb_compression::CORE::FUNC> func;
+    unique_ptr<rgb_compression::CORE::VAR> var;
+    float num = inp; num/=var->hexSize;
+    //Remove trailing 0s
+    stringstream ss;
+    ss << setprecision(4) << num;
+    string result;
+    string nu;
+    ss >> nu;
+    string fnum, snum; //first and second number
+
+    bool sec = false;
+    for (int i=0; i<nu.length(); i++){
+      if (nu[i] == '.') {sec=true;};
+      if (!sec) {fnum+=nu[i];}
+      else if (sec && nu[i]!='.') {snum+=nu[i]; if(snum.length()==2){break;};};
+    };
+    nu.clear();
+    
+    float ssnum = 0; 
+    if (snum.length() > 0) {
+      ssnum = stof(snum) * .01; 
+      ssnum *= var->hexSize;
+    };
+    int ffnum = stoi(fnum); int sssnum = ssnum;
+    result = var->hexArr[ffnum]; result += var->hexArr[sssnum];
+    return result;
+  };
+
+  void rgb_compression::CORE::FUNC::dehexify(string &inp) {
+    unique_ptr<rgb_compression::CORE::VAR> var;
+    string result;
+    int res1 = 0; int res2 = 0;
+    for (short i=0; i<var->hexSize; i++) {
+      if (inp[0] == var->hexArr[i]) {res1=i*var->hexSize;};
+      if (inp[1] == var->hexArr[i]) {res2=i;};
+    };
+    res1+=res2;
+    result = to_string(res1);
+    inp=result;
   };
 
 //Multithread example
