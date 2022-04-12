@@ -14,5 +14,10 @@ using namespace COMPRESSION;
 #include "BMP/BMP.h"
 using namespace BITMAP;
 
+#include "FileOP/FileOP.h"
+using namespace LINUXFILEOP;
+
+#include "VersionInfo/VersionInfo.h"
+
 typedef bitset<8> AESbyte;  
 typedef bitset<32> AESword;

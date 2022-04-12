@@ -152,9 +152,19 @@ void vigenereExample() {
   cout << "Key:" << endl << VIGENERE_KEY::key << endl << text << endl; 
 };
 
-string text[8] = {"Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " + VERSION::ver + "\n\n##########################\n" + "\nWhich example would you like to use?", "encdec = 1", "AES = 2", "DUO = 3", "AES text from file = 4", "AES whole file encryption = 5", "Vigenere cypher = 6", "Please input the cooresponding number to your desired example"};
+string text[8] = {
+"encdec = 1", 
+"AES = 2", 
+"DUO = 3", 
+"AES text from file = 4",
+"AES whole file encryption = 5", 
+"Vigenere cypher = 6", 
+"List all test files = 7",
+"Please input the cooresponding number to your desired example"};
 
 int main() {
+  cout << "Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " << VERSION::ver << "\n\n##########################\n" << "\nWhich example would you like to use?" << endl;
+  
   cout << text[0] << endl;
   cout << text[1] << endl;
   cout << text[2] << endl;
@@ -166,7 +176,7 @@ int main() {
   
   char input;
   cin >> input;
-  
+  string files, folders;
   switch (input) {
     case '1':
       encdecExample();
@@ -186,10 +196,14 @@ int main() {
     case '6':
       vigenereExample();
       break;
+    case '7':
+      FileOP::searchDir((char*)"testFiles/", files, folders, true);
+      cout << " ------ " << endl << files << endl << " ------ " << endl;
+      break;
       
     default:
-      cout << "Err please input 1, 2, 3, 4, 5, or 6" << endl;
+      cout << "Err please input 1, 2, 3, 4, 5, 6, or 7" << endl;
       return main();
   };
   return main();
-}
+};

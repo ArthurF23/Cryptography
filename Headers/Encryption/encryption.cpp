@@ -676,14 +676,9 @@ namespace encryption {
     return true;
   };
 
-  bool path_is_good(string path) {
-    ifstream infile(path);
-    return infile.good(); infile.close();
-  };
-
   bool AES::encryptFile(string path, FILE_FLAGS flags) {
     //checks if path is valid
-    if(path_is_good(path) == false) {return false;};
+    if(FileOP::isRealDir(path) == false) {return false;};
     
     AES::FILES::gen_key_file(path);
 
@@ -724,7 +719,7 @@ namespace encryption {
 
   bool AES::decryptFile(string path, string keyFilePath, FILE_FLAGS flags) {
      //checks if path is valid
-     if(path_is_good(path) == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {return false;}
+     if(FileOP::isRealDir(path) == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {return false;}
     string data;
     //Just like in encryptFile
     AES::FILES::TXT::get(path, data);

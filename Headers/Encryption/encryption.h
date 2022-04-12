@@ -12,10 +12,10 @@ constexpr unsigned short GLOBAL_MTX_SIZE = 4*4;
 namespace encryption {
 
   namespace VERSION {
-    static string ver = "v1.8.14";
+    static constexpr char* ver = VERSION_INFO::VERSION;
     //Major, Minor, Patch
     //for major or minor, change patch to 0
-  }
+  };
 
   namespace KEY {
     //The default key value
@@ -261,7 +261,6 @@ namespace encryption {
         static bool gen_key_file(string path);
         static bool in_key_file(string path);
         static void classify(string ext, CLASSIFIER &clasif);
-        static bool path_is_good(string path);
         
         class TXT {
           public:

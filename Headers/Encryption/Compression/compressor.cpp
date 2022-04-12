@@ -430,19 +430,18 @@ namespace COMPRESSION {
     //count chunks
     unsigned long int chunk_count; func->get_chunk_count(chunk_count, clone, separator);
     string chunks[chunk_count]; //Big memory allocation
-
     //assign chunks to arr
     for (int i=0; i<chunk_count && clone.length() != 0; i++) {
       //Three at a time since a chunk consists of 3 values like so
       //255,98,23,
       if (clone.length() == 0) {break;};
       int first = clone.find_first_of(separator) + 1;
-      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)))/* + separator*/;
+      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)));
       clone.erase(0, first);
 
       if (clone.length() == 0) {break;};
       first = clone.find_first_of(separator) + 1;
-      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)))/* + separator*/;
+      chunks[i] += func->hexify(stoi(clone.substr(0, first-1)));
       clone.erase(0, first);
       
       if (clone.length() == 0) {break;};
@@ -566,7 +565,7 @@ namespace COMPRESSION {
     return ret;
   };
 
-  void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator, string id) {
+  void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator) {
     unique_ptr<rgb_compression::CORE::FUNC> func;
     unique_ptr<rgb_compression::CORE::VAR> var;
     //get all chunks
@@ -662,16 +661,16 @@ namespace COMPRESSION {
     
     //quarters to eights and launch threads
     string eighth1 = func->halfify(quarter1, separator);
-    thread th1(decomp->decompress, ref(eighth1), separator, "1");
+    thread th1(decomp->decompress, ref(eighth1), separator);
     
     string eighth2 = quarter1; quarter1.clear();
-    thread th2(decomp->decompress, ref(eighth2), separator, "2");
+    thread th2(decomp->decompress, ref(eighth2), separator);
     
     string eighth3 = func->halfify(quarter2, separator);
-    thread th3(decomp->decompress, ref(eighth3), separator, "3");
+    thread th3(decomp->decompress, ref(eighth3), separator);
     
     string eighth4 = quarter2; quarter2.clear();
-    thread th4(decomp->decompress, ref(eighth4), separator, "4");
+    thread th4(decomp->decompress, ref(eighth4), separator);
 
     ////////////////
     string quarter3 = func->halfify(half2, separator);      
@@ -679,16 +678,16 @@ namespace COMPRESSION {
     ////////////////
     
     string eighth5 = func->halfify(quarter3, separator);
-    thread th5(decomp->decompress, ref(eighth5), separator, "5");
+    thread th5(decomp->decompress, ref(eighth5), separator);
     
     string eighth6 = quarter3; quarter3.clear();
-    thread th6(decomp->decompress, ref(eighth6), separator, "6");
+    thread th6(decomp->decompress, ref(eighth6), separator);
     
     string eighth7 = func->halfify(quarter4, separator); func.reset();
-    thread th7(decomp->decompress, ref(eighth7), separator, "7");
+    thread th7(decomp->decompress, ref(eighth7), separator);
     
     string eighth8 = quarter4; quarter4.clear();
-    thread th8(decomp->decompress, ref(eighth8), separator, "8");
+    thread th8(decomp->decompress, ref(eighth8), separator);
 
     
     th1.join(); th2.join(); th3.join(); th4.join();
