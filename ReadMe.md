@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.14
+### v1.8.16
 
 ### What's new in v1.8.0?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
@@ -36,6 +36,9 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 
 ###### v1.8.15
 ##### Added version header for version info organization in the future. I also added A fileOP header for file operation organization.
+
+###### v1.8.16
+##### Added more features for version header. Added entry in ReadMe for version header.
 
 ## Basic Encryption
 The program has the key which is located through `encryption::KEY::key`, you will need to set this before using the `encryption::encdec::decrypt()` function, since that function grabs from the namespace to use it and the only thing you pass to that function is the string. You must set the key before you call that function. It's not a problem for the `encrypt()` function since it generates a key each time its called. The generated key is the same varible `encryption::KEY::key`. Anytime you need to grab the key or set it, it is there, it will be nowhere else.
@@ -300,7 +303,7 @@ init("82468224", encryption::AES::OPTIONS::doGenerateKey, aeskey);
 #### `encrypt() & decrypt()`
 Both work the same, just input the appropriate string and it'll work, make sure to call `DUO::init()` first.
 
-### Vigenere Cypher
+## Vigenere Cypher
 
 #### `encrypt()`
 This is the encryption function. All you need to pass to this function is the string you want encrypted, there is no `init()` function for either `encrypt()` or `decrypt()`.
@@ -312,6 +315,19 @@ Same as encrypt except you need to pass the key to it, which is also a string. S
 
 #### `VIGENERE_KEY::key` 
 This is where the key is stored, if you ever need to access it, this is where it is. 
+
+## Version Header
+
+#### `VERSION_INFO::VERSION`
+Gets version
+
+#### `VERSION_INFO::REVISION_DATE`
+Gets the date of the last update
+
+#### `VERSION_INFO::GITLINK`
+Returns github link to this project
+
+##
 
 ### Notes
 ###### I plan to add more features and a lot more to this header in the future, thank you again for downloading.

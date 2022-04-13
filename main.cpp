@@ -160,10 +160,17 @@ string text[8] = {
 "AES whole file encryption = 5", 
 "Vigenere cypher = 6", 
 "List all test files = 7",
-"Please input the cooresponding number to your desired example"};
+"Please input the cooresponding number to your desired example"
+};
 
 int main() {
-  cout << "Thank you for using my Encryption/Decryption header.\nPlease visit my Github at ArthurF23\nVersion " << VERSION::ver << "\n\n##########################\n" << "\nWhich example would you like to use?" << endl;
+  cout << 
+    "Thank you for using my Encryption/Decryption header" << endl <<
+    "Please visit my Github at ArthurF23" << endl << 
+    VERSION_INFO::GITLINK << endl << 
+    "Version " << VERSION::ver << 
+    "\n\n##########################\n" << 
+    "\nWhich example would you like to use?" << endl;
   
   cout << text[0] << endl;
   cout << text[1] << endl;

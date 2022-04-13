@@ -29,7 +29,7 @@ namespace COMPRESSION {
 
     static void asgnPix(unsigned char* &pix, string str, char sep, size_t length);
 
-    //private:
+    private:
     class CORE {
       public:
       class PIXELS {

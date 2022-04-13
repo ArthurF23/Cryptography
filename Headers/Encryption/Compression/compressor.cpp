@@ -117,8 +117,6 @@ namespace COMPRESSION {
     {"5", "\5"}
     };
 
-  //So far the compressed size is 24.575% of the original size.
-
   void binary_compression::compress(string& input) {    
     string str;
 
@@ -625,15 +623,15 @@ namespace COMPRESSION {
     for (int i=0; i<chunk_count; i++) {
       string section = chunks[i];
       if (corruptChunk(section, separator) == false) {
-        CORE::FUNC::replaceSeparator(section, CORE::VAR::_separator, separator);
+        func->replaceSeparator(section, var->_separator, separator);
         //if first char is { then we know its a compressed chunk big brain
-        if (section[0] == CORE::VAR::sectionStart) {
+        if (section[0] == var->sectionStart) {
           char mul = section[section.length()-2];
           section = section.substr(1, section.length()-4);
           int rep;
           //how many times to make repeat loop go brrrr
-          for (rep = 0; rep<CORE::VAR::firstLayerMultiplier[0]; rep++) {
-            if (CORE::VAR::firstLayerMulRChars[rep][1][0] == mul) {break;};
+          for (rep = 0; rep<var->firstLayerMultiplier[0]; rep++) {
+            if (var->firstLayerMulRChars[rep][1][0] == mul) {break;};
           };
           //Repeat chunk to str
           for (int x=0; x<rep; x++) {
