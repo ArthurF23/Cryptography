@@ -780,7 +780,7 @@ namespace COMPRESSION {
     
     string eth4 = quar2; quar2.clear();
     uInt _eth4[2] = {_eth3[1], pixels->findLength(eth4, sep)+_eth3[1]};
-    
+     
     string eth5 = func->halfify(quar3, sep);
     uInt _eth5[2] = {_eth4[1], pixels->findLength(eth5, sep)+_eth4[1]};
     

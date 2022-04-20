@@ -374,7 +374,7 @@ namespace encryption {
   ////////Encrypt & Decrypt Functions///////////////////
   //////////////////////////////////////////////////////
 
-  void AES::cypher_encrypt(AESbyte in[mtx_size], AESword w[expanded_key_size]) {  
+  void AES::cypher_encrypt(AESbyte in[mtx_size], AESword w[expanded_key_size]) {
     AESword key[4];  
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -398,7 +398,7 @@ namespace encryption {
     clone.AddRoundKey(in, key);
   };  
 
-  void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[expanded_key_size])  {  
+  void AES::cypher_decrypt(AESbyte in[mtx_size], AESword w[expanded_key_size])  {
     AESword key[4];
     AES clone;
     for(int i=0; i<4; ++i) {
@@ -652,8 +652,13 @@ namespace encryption {
     for (int i = 0; i < AES::mtx_size; i++) {
       data+=AES::KEY::key[i].to_string();
     };
+
+    size_t key;
+    data = AKARE::encrypt(data, key);
     
     binary_compression::compress(data);
+
+    data = to_string(key) + '\n' + data;
     
     outFile << data;
     outFile.close();
@@ -669,8 +674,26 @@ namespace encryption {
     inFile.close();
     string data;
     AES::FILES::TXT::get(path, data);
+
+    short fst = data.find_first_of('\n');
+
+    if (fst != string::npos) {
+      string ky = data.substr(0, fst);
+
+      data = data.substr(fst+1, data.length()-fst);
+      
+      binary_compression::decompress(data);
+  
+      stringstream ss;
+      ss << ky;
+      size_t key;
+      ss >> key;
+      
+      data = AKARE::decrypt(data, key);
+    } else {
+      binary_compression::decompress(data);
+    };
     
-    binary_compression::decompress(data);
     
     aes_init(AES::OPTIONS::noGenerateKey, data);
     return true;
