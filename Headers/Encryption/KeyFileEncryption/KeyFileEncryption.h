@@ -15,7 +15,7 @@ namespace asymmetric {
     //Please change this to a different nonPrime, even number for actual usage
     // (just use evenGenerator but change the bounds so your max wont be absurd and your range will be wide enough)
     static constexpr size_t staticPrivateKey = 1417395678;
-    //Formula - mod(publicKey / privateKey) + mod(publicKey)
+    //Formula - sMod(mod(publicKey / privateKey) + mod(publicKey))
 
     struct bounds {
       public:
@@ -25,7 +25,7 @@ namespace asymmetric {
       static constexpr unsigned short bitsInByte = 8;
     };
 
-    static void seeder(size_t &inp);
+    static void sMod(size_t &inp);
     static size_t mod(size_t inp);
 
     static bool isDecimal(float inp);
