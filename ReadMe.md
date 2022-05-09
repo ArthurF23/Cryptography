@@ -1,6 +1,6 @@
 ## Thank you for using my header!
 
-### v1.8.18
+### v1.8.19
 
 ### What's new in v1.8.0?
 Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to encrypt a bitmap file. 
@@ -43,7 +43,7 @@ Added bitmap encryption. You can now pass a .bmp file to `AES::encryptFile()` to
 ###### v1.8.17
 ##### Added a ripoff RSA encryption for keyfiles, there is backwards compatibility although it isnt vunerable as it will try to decrypt with a shuffled key if the public key is deleted, there is no way around it.
 
-###### v1.8.18
+###### v1.8.18, v1.8.19
 ##### AKARE `sMod()` improvements.
 
 ## Basic Encryption

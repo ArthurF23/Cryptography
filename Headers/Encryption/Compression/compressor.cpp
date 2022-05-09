@@ -492,42 +492,43 @@ namespace COMPRESSION {
     
     if (inp.length() > comp->sizeLimit) {
       unique_ptr<CORE::FUNC> func;
-      
+      string half1, half2, quarter1, quarter2, quarter3, quarter4,
+      eighth1, eighth2, eighth3, eighth4, eighth5, eighth6, eighth7, eighth8;
       //Chop up input into halfs
-      string half1 = func->halfify(inp, separator);
-      string half2 = inp; inp.clear();
+      func->halfify(inp, separator, half1);
+      half2 = inp; inp.clear();
       
-      string quarter1 = func->halfify(half1, separator);
-      string quarter2 = half1; half1.clear();
+      func->halfify(half1, separator, quarter1);
+      quarter2 = half1; half1.clear();
       
       //quarters to eights and launch threads
-      string eighth1 = func->halfify(quarter1, separator);
+      func->halfify(quarter1, separator, eighth1);
       thread th1(comp->compress, ref(eighth1), separator);
       
-      string eighth2 = quarter1; quarter1.clear();
+      eighth2 = quarter1; quarter1.clear();
       thread th2(comp->compress, ref(eighth2), separator);
       
-      string eighth3 = func->halfify(quarter2, separator);
+      func->halfify(quarter2, separator, eighth3);
       thread th3(comp->compress, ref(eighth3), separator);
       
-      string eighth4 = quarter2; quarter2.clear();
+      eighth4 = quarter2; quarter2.clear();
       thread th4(comp->compress, ref(eighth4), separator);
 
       ////////////////
-      string quarter3 = func->halfify(half2, separator);      
-      string quarter4 = half2; half2.clear();
+      func->halfify(half2, separator, quarter3);      
+      quarter4 = half2; half2.clear();
       ////////////////
       
-      string eighth5 = func->halfify(quarter3, separator);
+      func->halfify(quarter3, separator, eighth5);
       thread th5(comp->compress, ref(eighth5), separator);
       
-      string eighth6 = quarter3; quarter3.clear();
+      eighth6 = quarter3; quarter3.clear();
       thread th6(comp->compress, ref(eighth6), separator);
       
-      string eighth7 = func->halfify(quarter4, separator); func.reset();
+      func->halfify(quarter4, separator, eighth7); func.reset();
       thread th7(comp->compress, ref(eighth7), separator);
       
-      string eighth8 = quarter4; quarter4.clear();
+      eighth8 = quarter4; quarter4.clear();
       thread th8(comp->compress, ref(eighth8), separator);
       
       th1.join(); th2.join(); th3.join(); th4.join();
@@ -550,7 +551,7 @@ namespace COMPRESSION {
   /// Decompression //////////
   ///////////////////////////
 
-  string rgb_compression::CORE::FUNC::halfify(string &cln, char sep) {
+  void rgb_compression::CORE::FUNC::halfify(string &cln, char sep, string &ret) {
     unsigned int len = cln.length();
     unsigned int param = (len/2)+10;
     int i;
@@ -558,9 +559,8 @@ namespace COMPRESSION {
       if (param-i < 20 && cln[i] == sep) {break;}
     }
     i++;
-    string ret = cln.substr(0, i);
+    ret = cln.substr(0, i);
     cln.erase(0, i);
-    return ret;
   };
 
   void rgb_compression::CORE::DECOMP::decompress(string &inp, char separator) {
@@ -650,41 +650,43 @@ namespace COMPRESSION {
   void rgb_compression::decompress(string &inp, char separator) {
     unique_ptr<CORE::FUNC> func;
     unique_ptr<CORE::DECOMP> decomp;
+    string half1, half2, quarter1, quarter2, quarter3, quarter4, eighth1,
+    eighth2, eighth3, eighth4, eighth5, eighth6, eighth7, eighth8;
     //Chop up input into halfs
-    string half1 = func->halfify(inp, separator);
-    string half2 = inp; inp.clear();
+    func->halfify(inp, separator, half1);
+    half2 = inp; inp.clear();
     
-    string quarter1 = func->halfify(half1, separator);
-    string quarter2 = half1; half1.clear();
+    func->halfify(half1, separator, quarter1);
+    quarter2 = half1; half1.clear();
     
     //quarters to eights and launch threads
-    string eighth1 = func->halfify(quarter1, separator);
+    func->halfify(quarter1, separator, eighth1);
     thread th1(decomp->decompress, ref(eighth1), separator);
     
-    string eighth2 = quarter1; quarter1.clear();
+    eighth2 = quarter1; quarter1.clear();
     thread th2(decomp->decompress, ref(eighth2), separator);
     
-    string eighth3 = func->halfify(quarter2, separator);
+    func->halfify(quarter2, separator, eighth3);
     thread th3(decomp->decompress, ref(eighth3), separator);
     
-    string eighth4 = quarter2; quarter2.clear();
+    eighth4 = quarter2; quarter2.clear();
     thread th4(decomp->decompress, ref(eighth4), separator);
 
     ////////////////
-    string quarter3 = func->halfify(half2, separator);      
-    string quarter4 = half2; half2.clear();
+    func->halfify(half2, separator, quarter3);      
+    quarter4 = half2; half2.clear();
     ////////////////
     
-    string eighth5 = func->halfify(quarter3, separator);
+    func->halfify(quarter3, separator, eighth5);
     thread th5(decomp->decompress, ref(eighth5), separator);
     
-    string eighth6 = quarter3; quarter3.clear();
+    eighth6 = quarter3; quarter3.clear();
     thread th6(decomp->decompress, ref(eighth6), separator);
     
-    string eighth7 = func->halfify(quarter4, separator); func.reset();
+    func->halfify(quarter4, separator, eighth7); func.reset();
     thread th7(decomp->decompress, ref(eighth7), separator);
     
-    string eighth8 = quarter4; quarter4.clear();
+    eighth8 = quarter4; quarter4.clear();
     thread th8(decomp->decompress, ref(eighth8), separator);
 
     
@@ -757,40 +759,42 @@ namespace COMPRESSION {
     
     //Figure out how to split input down into managable, threadable forms
     //Will be 8 threads
-    
+
+    string str1, str2, quar1, quar2, quar3, quar4, eth1, eth2, eth3, eth4, 
+    eth5, eth6, eth7, eth8;
     //Half
-    string str1 = func->halfify(data, sep);
-    string str2 = data; data.clear();
+    func->halfify(data, sep, str1);
+    str2 = data; data.clear();
 
     //Quarter
-    string quar1 = func->halfify(str1, sep);
-    string quar2 = str1; str1.clear();
-    string quar3 = func->halfify(str2, sep);
-    string quar4 = str2; str2.clear();
+    func->halfify(str1, sep, quar1);
+    quar2 = str1; str1.clear();
+    func->halfify(str2, sep, quar3);
+    quar4 = str2; str2.clear();
 
     //Eighth
-    string eth1 = func->halfify(quar1, sep);
+    func->halfify(quar1, sep, eth1);
     uInt _eth1[2] = {0, pixels->findLength(eth1, sep)};
     
-    string eth2 = quar1; quar1.clear();
+    eth2 = quar1; quar1.clear();
     uInt _eth2[2] = {_eth1[1], pixels->findLength(eth2, sep)+_eth1[1]};
     
-    string eth3 = func->halfify(quar2, sep);
+    func->halfify(quar2, sep, eth3);
     uInt _eth3[2] = {_eth2[1], pixels->findLength(eth3, sep)+_eth2[1]};
     
-    string eth4 = quar2; quar2.clear();
+    eth4 = quar2; quar2.clear();
     uInt _eth4[2] = {_eth3[1], pixels->findLength(eth4, sep)+_eth3[1]};
      
-    string eth5 = func->halfify(quar3, sep);
+    func->halfify(quar3, sep, eth5);
     uInt _eth5[2] = {_eth4[1], pixels->findLength(eth5, sep)+_eth4[1]};
     
-    string eth6 = quar3; quar3.clear();
+    eth6 = quar3; quar3.clear();
     uInt _eth6[2] = {_eth5[1], pixels->findLength(eth6, sep)+_eth5[1]};
     
-    string eth7 = func->halfify(quar4, sep);
+    func->halfify(quar4, sep, eth7);
     uInt _eth7[2] = {_eth6[1], pixels->findLength(eth7, sep)+_eth6[1]};
     
-    string eth8 = quar4; quar4.clear();
+    eth8 = quar4; quar4.clear();
     uInt _eth8[2] = {_eth7[1], pixels->findLength(eth8, sep)+_eth7[1]};
     
     thread asgn1(pixels->asgnPixThr, ref(pix), eth1, sep, _eth1[0], _eth1[1]);

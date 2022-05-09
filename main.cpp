@@ -225,6 +225,11 @@ void aes_debug() {
 	} else {
 		cout << "Test 2 Fail" << endl;
 	};
+
+  cout << "Testing bitmap, check image to verify test" << endl;
+  AES::encryptFile("testFiles/bitmap/img.bmp");
+  AES::decryptFile("testFiles/bitmap/img.aesenc", "", (AES::FILE_FLAGS)(AES::FILE_FLAGS::deleteAesencFile | AES::FILE_FLAGS::deleteKeyFile));
+  cout << "finished" << endl;
 };
 
 string text[9] = {
@@ -239,10 +244,6 @@ string text[9] = {
 	"Please input the cooresponding number to your desired example"};
 
 int main() {
-	// cout << "E: " << AES::encryptFile("testFiles/bitmap/img.bmp") << endl;
-	// cout << "D: " << AES::decryptFile("testFiles/bitmap/img.aesenc") << endl;
-	// return 0;
-
 	cout << "Thank you for using my Encryption/Decryption header" << endl
 		 << "Please visit my Github at ArthurF23" << endl
 		 << VERSION_INFO::GITLINK << endl

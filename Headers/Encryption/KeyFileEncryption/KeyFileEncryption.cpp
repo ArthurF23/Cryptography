@@ -53,8 +53,9 @@ namespace asymmetric {
 
   //Makes mod() seed for srand more random with a custom algorithm
   void AKARE::sMod(size_t &inp) {
-    srand(inp);
     if (inp > bounds::genMin*2) {inp/=2;};
+    
+    srand(inp - staticPrivateKey);
     
     stringstream ss;
     string str;

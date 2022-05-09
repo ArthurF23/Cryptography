@@ -442,6 +442,7 @@ namespace encryption {
       
       AESbyte hex_val[mtx_size] = {SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE, SPACE_BYTE};
 
+      //convert char to binary byte
       for (int x = 0; x < mtx_size; x++) {
         if ((loop+x) < length) {
           hex_val[x] = CONVERSIONS::char_to_byte_(input[loop+x]);

@@ -57,7 +57,7 @@ namespace COMPRESSION {
         public:
         static string hexify(unsigned short inp);
         static void dehexify(string &inp);
-        static string halfify(string &cln, char sep);
+        static void halfify(string &cln, char sep, string &ret);
         static void replaceSeparator(string &inp, char sep, char repl);
         static void get_chunk_count(unsigned long int &inp, string clone, char separator, bool div = true);
       };
