@@ -1,8 +1,8 @@
 ## Thank you for using my header!
 
-### v0.0.0
+### v1.9.0
 
-### What's new in v0.0.0
+### What's new in v1.9.0
 
 ##### Initial commit from forked repository. Changes from previous repository include: complete removal of `ENCDEC`, `DUO`, and `Viginere Cypher`, improvements to `AKARE` function which greatly improves security, it requires a password now which is factored into the calculations to increase security, and some functions moved to their own headers & refactored to cleanup the code.
 
