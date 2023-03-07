@@ -15,7 +15,7 @@ using namespace COMPRESSION;
 using namespace BITMAP;
 
 #include "FileOP/FileOP.h"
-using namespace LINUXFILEOP;
+using namespace FileOperations;
 
 #include "KeyFileEncryption/KeyFileEncryption.h"
 using namespace asymmetric;

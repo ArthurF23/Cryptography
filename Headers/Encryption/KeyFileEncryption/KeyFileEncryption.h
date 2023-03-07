@@ -11,7 +11,9 @@ namespace asymmetric {
     static string encrypt(string inp, size_t &key);
     static string decrypt(string inp, size_t key);
 
-    //private:
+
+    static string password_key;
+    private:
     //Please change this to a different nonPrime, even number for actual usage
     // (just use evenGenerator but change the bounds so your max wont be absurd and your range will be wide enough)
     static constexpr size_t staticPrivateKey = 1417395678;
@@ -19,7 +21,10 @@ namespace asymmetric {
 
     struct bounds {
       public:
-      static constexpr size_t genMin = asymmetric::AKARE::staticPrivateKey*2;
+      //Adjustment of this value is not reccomended
+      static constexpr unsigned short multiplier = 2;
+      static constexpr size_t genMin = asymmetric::AKARE::staticPrivateKey*multiplier;
+      
       static constexpr size_t genMax = 99999999999999;
       static constexpr unsigned short expectedLength = 128;
       static constexpr unsigned short bitsInByte = 8;
@@ -27,6 +32,7 @@ namespace asymmetric {
 
     static void sMod(size_t &inp);
     static size_t mod(size_t inp);
+    static size_t convertPassword();
 
     static bool isDecimal(float inp);
     static bool isValidNum(size_t num);
@@ -35,9 +41,11 @@ namespace asymmetric {
 
     static size_t evenGenerator(size_t min = bounds::genMin, size_t max = bounds::genMax);
 
+    static void numShuffleAlg(short &inp1, short &inp2, short &inp3, short &inp4, short &inp5, short &inp6, short &inp7, short &inp8, size_t randomseed, bool inverse=false);
+
+    static void numDeShuffleAlg(short &num1, short &num2, short &num3, short &num4, short &num5, short &num6, short &num7, short &num8);
+
     //Shuffle each key byte's bit
-    static string shuffle8(string inp, size_t looper);
-    //Unshuffle - Decryption
-    static string unshuffle8(string inp, size_t looper);
+    static string shuffle8(string inp, size_t looper, size_t realKey, bool unShuffle = false);
   };
 };

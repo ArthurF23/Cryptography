@@ -2,137 +2,6 @@
 
 #include "encryption.h"
 namespace encryption {
-  //These will make people think that they have found the pattern when they havent
-  string encdec::constants::useless_pattern::random_bs[encdec::constants::useless_pattern::arr_length] = {
-          ">._>",
-          ">>._",
-          ".>_>",
-          ">.>>",
-          "__>>",
-          ">..>",
-          "..>.",
-          ".>.>",
-          ">...",
-          ">>__",
-          ">.>_",
-          "_>..",
-          ">.__",
-          ">_..",
-          ">.>_",
-          ">>>>",
-          "____",
-          "....",
-          ">_>>",
-          "_.>>"
-        };
-        
-  bool encdec::isNumberString(string input) {
-    for (char &c : input) {
-      if (!isdigit(c)) {return false;};
-    };
-    return true;
-  }
-
-  unsigned int encdec::get_random_num(unsigned int min, unsigned int max) {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(min,max);
-    return dist6(rng);
-  }
-
-  unsigned int encdec::decide_scramble() {
-    for (int i=encdec::constants::scramble_info::starting_divisor; i < encdec::constants::scramble_info::ending_divisor+1; i++) {
-      if ((KEY::key%i) == 0) {
-        return i;
-      };
-    };
-    return 1;
-  }
-
-  unsigned int encdec::generate_key() {
-    return encdec::get_random_num(encdec::constants::key_info::key_min_value, encdec::constants::key_info::key_max_value);
-  }
-
-  char encdec::generate_ASCII_char() {
-    return (char)encdec::get_random_num(encdec::constants::char_info::valid_char_min, encdec::constants::char_info::valid_char_max);
-  }
-
-  bool encdec::assign_key(string inp) {
-    if (encdec::isNumberString(inp)) {
-      if (inp.length() == encdec::constants::key_info::key_length && stoi(inp) >= encdec::constants::key_info::key_min_value) {
-        KEY::key = stoi(inp);
-        return true;
-      };
-    }
-    else {
-      return false;
-    };
-    return false;
-  }
-
-  string encdec::get_bloat(unsigned int min = encdec::constants::bloat::bloat_min, unsigned int max = encdec::constants::bloat::bloat_max) {
-    int bloat = encdec::get_random_num(min, max); //How many random characters will bloat the actual message
-    string bloat_string;
-      for (int x = 0; x < bloat; x++) {
-        char bloat_char = encdec::generate_ASCII_char();
-        bloat_string += bloat_char;
-      }
-    return bloat_string;
-  }
-
-  string encdec::encrypt(string input, FLAGS bloat, FLAGS pattern) {
-    string output;
-    int scramble = encdec::decide_scramble();
-    //Hide the scramble number in a whole ton of bloat
-    output = (bloat == FLAGS::do_bloat ? encdec::get_bloat(10, 20) : "") + to_string(scramble) + (bloat == FLAGS::do_bloat ? encdec::get_bloat(10, 20) : "");
-    
-    for (int i = 0; i < input.length(); i++) {
-      char input_v2 = input[i];
-      int input_v3 = input_v2;
-      //Magic happens
-      //Bloat the string with nonsense to make it harder to decrypt
-      output += to_string(input_v3 + (KEY::key/scramble)) + (pattern == FLAGS::do_rand_pattern ? encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)] : "") + (bloat == FLAGS::do_bloat ? encdec::get_bloat() : "");
-      if (bloat == FLAGS::do_bloat) {
-        for (int x = 0; x < encdec::get_random_num(encdec::constants::bloat::bloat_repeat_min, encdec::constants::bloat::bloat_repeat_max); x++) {
-          output.insert(encdec::get_random_num(0, output.length()), encdec::get_bloat());
-        };
-      };
-    };
-    //Add more random patterns to the result to confuse those trying to decrypt the message
-    if (pattern == FLAGS::do_rand_pattern) {
-      for (int i = 0; i < encdec::get_random_num(encdec::constants::useless_pattern::repeat_min, encdec::constants::useless_pattern::repeat_max) + input.length(); i++) {
-        output.insert(encdec::get_random_num(0, output.length()), encdec::constants::useless_pattern::random_bs[encdec::get_random_num(0, encdec::constants::useless_pattern::arr_length-1)]);
-      };
-    };
-    return output;
-  }
-
-  string encdec::decrypt(string input) {
-    if (KEY::key == KEY::DEFAULT_KEY_NUM) {
-      return "ERR NO KEY\n Please use encryption::KEY::key = {key} to set the key before usage.";
-    };
-    string output;
-    string filtered;
-    for (char &c : input) {
-      //remove the bloat from the input string by filtering for only numbers
-      if (isdigit(c)) {
-        filtered += c;
-      };
-    };
-    
-    const unsigned short scramble = filtered[0]-'0';
-    filtered = filtered.substr(1, filtered.length());
-    for (int i = 0; i < filtered.length() - 1; i+=encdec::constants::key_info::key_length) {
-      string chunk;
-      //substr wouldnt work so heres a loop that grabs 8 characters
-      for (int x = 0; x < 8; x++) {
-        chunk += filtered[i+x];
-      }
-      output += char(stoi(chunk) - (KEY::key/scramble));
-    };
-    return output;
-  };
-  
   /////////////////////////////////////////////////////////
   ///////// AES ///////////////////////////////////////////
   /////////////////////////////////////////////////////////
@@ -542,32 +411,6 @@ namespace encryption {
   ///Making my own encrypted files///
   ///////////////////////////////////
 
-  void AES::FILES::TXT::get(string path, string& data) {
-    ifstream infile(path, ios::binary);
-    //get length of file:
-    infile.seekg (0, infile.end);
-    int length = infile.tellg();
-    infile.seekg (0, infile.beg);
-
-    //buffer for data
-    char * buffer = new char [length];
-
-    // read data as a block:
-    infile.read(buffer,length);
-    data += buffer;
-    //Don't need this anymore sooo...
-    delete[] buffer;
-    infile.close();    
-  };
-
-  void AES::FILES::TXT::out(string path, string data) {
-    //Original File
-    ofstream {path}; //Create... Doesn't matter if it's overwritten because it's about to be anyways
-    ofstream outfile(path, ios::out | ios::trunc);
-    outfile << data; //write to file
-    outfile.close(); //close file
-  }
-
   void AES::FILES::BMP_::get(string path, string& data) {
     char* filename = const_cast<char*>(path.c_str());
     BMPbyte *pixels;
@@ -630,12 +473,11 @@ namespace encryption {
   const string AES::FILES::FILE_EXTENSION = ".aesenc";
   const string AES::FILES::KEYFILE_NAME = "_KEYFILE";
   const string AES::FILES::KEYFILE_EXT = ".aeskey";
-  const string AES::FILES::TXT::identifier[id_len] = {".txt", ".md", ".cpp", ".h", ".cs", ".c"};
   const string AES::FILES::BMP_::identifier = ".bmp";
   //Classify type of file
   void AES::FILES::classify(string ext, AES::FILES::CLASSIFIER &type) {
-    for (int i=0; i < AES::FILES::TXT::id_len; i++) {
-      if (ext == FILES::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
+    for (int i=0; i < FileOP::TXT::id_len; i++) {
+      if (ext == FileOP::TXT::identifier[i]) {type=FILES::CLASSIFIER::_TEXT;break;};
     };
     
     if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
@@ -646,8 +488,7 @@ namespace encryption {
     path.erase(path.rfind('.'), path.length()); //Erase extension
     path+=KEYFILE_NAME;//edit name
     path+=KEYFILE_EXT;//add extension
-    ofstream outFile(path);
-    if (outFile.good() == false) {outFile.close(); return false;};
+    FileOP::mkFile(path);
     
     string data;
     for (int i = 0; i < AES::mtx_size; i++) {
@@ -658,23 +499,22 @@ namespace encryption {
     data = AKARE::encrypt(data, key);
     
     binary_compression::compress(data);
-
+    
     data = to_string(key) + '\n' + data;
     
-    outFile << data;
-    outFile.close();
+    FileOP::TXT::write(path, data);
     return true;
   };
 
   bool AES::FILES::in_key_file(string path) {
     path.erase(path.rfind('.'), path.length()); //Erase extension
+    
     path+=KEYFILE_NAME;//edit name
     path+=KEYFILE_EXT;//add extension
-    ifstream inFile(path);
-    if (inFile.good() == false) {inFile.close(); return false;};
-    inFile.close();
+    FileOP::checkPath(path);
+    
     string data;
-    AES::FILES::TXT::get(path, data);
+    FileOP::TXT::read(path, data);
 
     short fst = data.find_first_of('\n');
 
@@ -682,15 +522,15 @@ namespace encryption {
       string ky = data.substr(0, fst);
 
       data = data.substr(fst+1, data.length()-fst);
-      
       binary_compression::decompress(data);
-  
+ 
       stringstream ss;
       ss << ky;
       size_t key;
       ss >> key;
-      
+
       data = AKARE::decrypt(data, key);
+        
     } else {
       binary_compression::decompress(data);
     };
@@ -700,7 +540,8 @@ namespace encryption {
     return true;
   };
 
-  bool AES::encryptFile(string path, FILE_FLAGS flags) {
+  bool AES::encryptFile(string path, string password, FILE_FLAGS flags) {
+    AKARE::password_key = password;
     //checks if path is valid
     if(FileOP::isRealDir(path) == false) {return false;};
     
@@ -718,7 +559,7 @@ namespace encryption {
       case FILES::CLASSIFIER::_RETURN:
         return false;
       case FILES::CLASSIFIER::_TEXT:
-        FILES::TXT::get(path, data);
+        FileOP::TXT::read(path, data);
         break;
       case FILES::CLASSIFIER::_BITMAP:
         FILES::BMP_::get(path,data);
@@ -737,16 +578,17 @@ namespace encryption {
     path.erase(path.rfind('.'), path.length());
     path+=FILES::FILE_EXTENSION;
     //Simple write so why not use txt out
-    FILES::TXT::out(path, data);
+    FileOP::TXT::write(path, data);
     return true;
   };
 
-  bool AES::decryptFile(string path, string keyFilePath, FILE_FLAGS flags) {
+  bool AES::decryptFile(string path, string password, string keyFilePath, FILE_FLAGS flags) {
+     AKARE::password_key = password;
      //checks if path is valid
      if(FileOP::isRealDir(path) == false || path.substr(path.find_last_of('.'), path.length()) != FILES::FILE_EXTENSION) {return false;}
     string data;
     //Just like in encryptFile
-    AES::FILES::TXT::get(path, data);
+    FileOP::TXT::read(path, data);
 
     if (keyFilePath != "") {AES::FILES::in_key_file(keyFilePath);}
     else {AES::FILES::in_key_file(path);};    
@@ -775,13 +617,12 @@ namespace encryption {
     FILES::CLASSIFIER type = FILES::CLASSIFIER::_RETURN;
     FILES::classify(ext, type);
     ext.clear(); //Not needed, free memory
-    
     switch (type) {
       case FILES::CLASSIFIER::_RETURN:
         return false;
       
       case FILES::CLASSIFIER::_TEXT:
-        FILES::TXT::out(path,data);
+        FileOP::TXT::write(path, data);
         break;
       
       case FILES::CLASSIFIER::_BITMAP:
@@ -792,289 +633,5 @@ namespace encryption {
         return false;
     };
     return true;
-  };
-
-  /////////////////////////////////
-  ///DUO encryption & decryption///
-  /////////////////////////////////
-  
-  //last 2 params are overloaded
-  string DUO::encrypt(string input, encryption::encdec::FLAGS bloat, encryption::encdec::FLAGS pattern) {
-    input = encryption::AES::encrypt(input);
-    input = encryption::encdec::encrypt(input, bloat, pattern);
-    return input;
-  };
-
-  string DUO::decrypt(string input) {
-    input = encryption::encdec::decrypt(input);
-    input = encryption::AES::decrypt(input);
-    return input;
-  };
-
-
-  //Initilize both functions to be ready.
-  //1st param this is the key for encdec, you need to input this
-  //2nd param this is the option to generate a key, select false then fill the third param. this defaults to generate key so if you dont, then input the proper OPTION to select false then fill out the 3rd param
-  //3rd param this is the string of 16 bytes that is the AES key youll need to input this if you dont want to generate a key
-  void DUO::init(string encdecKey, encryption::AES::OPTIONS genKey, string aesKey) {
-    //encdec init key
-    if (!encryption::encdec::assign_key(encdecKey)) {
-      return;
-    };
-
-    //AES init
-    encryption::AES::aes_init(genKey, aesKey);
-  };
-
-  /////////////////////
-  ///Vigenere Cypher///
-  /////////////////////
-
-  int vigenere::translate(char message) {
-    switch (message) {
-    case 'A':
-      return 0;
-    case 'B':
-      return 1;
-    case 'C':
-      return 2;
-    case 'D':
-      return 3;
-    case 'E':
-      return 4;
-    case 'F':
-      return 5;
-    case 'G':
-      return 6;
-    case 'H':
-      return 7;
-    case 'I':
-      return 8;
-    case 'J':
-      return 9;
-    case 'K':
-      return 10;
-    case 'L':
-      return 11;
-    case 'M':
-      return 12;
-    case 'N':
-      return 13;
-    case 'O':
-      return 14;
-    case 'P':
-      return 15;
-    case 'Q':
-      return 16;
-    case 'R':
-      return 17;
-    case 'S':
-      return 18;
-    case 'T':
-      return 19;
-    case 'U':
-      return 20;
-    case 'V':
-      return 21;
-    case 'W':
-      return 22;
-    case 'X':
-      return 23;
-    case 'Y':
-      return 24;
-    case 'Z':
-      return 25;
-
-
-    case 'a':
-      return 0;
-    case 'b':
-      return 1;
-    case 'c':
-      return 2;
-    case 'd':
-      return 3;
-    case 'e':
-      return 4;
-    case 'f':
-      return 5;
-    case 'g':
-      return 6;
-    case 'h':
-      return 7;
-    case 'i':
-      return 8;
-    case 'j':
-      return 9;
-    case 'k':
-      return 10;
-    case 'l':
-      return 11;
-    case 'm':
-      return 12;
-    case 'n':
-      return 13;
-    case 'o':
-      return 14;
-    case 'p':
-      return 15;
-    case 'q':
-      return 16;
-    case 'r':
-      return 17;
-    case 's':
-      return 18;
-    case 't':
-      return 19;
-    case 'u':
-      return 20;
-    case 'v':
-      return 21;
-    case 'w':
-      return 22;
-    case 'x':
-      return 23;
-    case 'y':
-      return 24;
-    case 'z':
-      return 25;
-    default:
-      return -1; //exclude char
-    }
-    return -1;
-  };
-
-  int vigenere::translate(char message, char key) {
-    int key_row;
-    int letter_num;
-    //Find Key Row
-    for (int i = 0; i < 26; i++) {
-      if (key == vigenere::table[i][0]) {
-        key_row = i;
-        break;
-      }
-    }
-    //Find Letter In Key Row
-    for (int i = 0; i < 26; i++) {
-      if (vigenere::table[key_row][i] == message) {
-        letter_num = i;
-      }
-    }
-
-    switch (letter_num) {
-    case 0:
-      return table[0][0];
-    case 1:
-      return table[0][1];
-    case 2:
-      return table[0][2];
-    case 3:
-      return table[0][3];
-    case 4:
-      return table[0][4];
-    case 5:
-      return table[0][5];
-    case 6:
-      return table[0][6];
-    case 7:
-      return table[0][7];
-    case 8:
-      return table[0][8];
-    case 9:
-      return table[0][9];
-    case 10:
-      return table[0][10];
-    case 11:
-      return table[0][11];
-    case 12:
-      return table[0][12];
-    case 13:
-      return table[0][13];
-    case 14:
-      return table[0][14];
-    case 15:
-      return table[0][15];
-    case 16:
-      return table[0][16];
-    case 17:
-      return table[0][17];
-    case 18:
-      return table[0][18];
-    case 19:
-      return table[0][19];
-    case 20:
-      return table[0][20];
-    case 21:
-      return table[0][21];
-    case 22:
-      return table[0][22];
-    case 23:
-      return table[0][23];
-    case 24:
-      return table[0][24];
-    case 25:
-      return table[0][25];
-    default:
-      break;
-    };
-    return -1;
-  };
-
-  string vigenere::ModKey(string inp) {
-    string output;
-    //Remove spaces
-    for (int i=0; i<inp.length(); i++) {
-      if (inp[i] != ' ') {
-        output += inp[i];
-      };
-    };
-    //Make caps
-    return output;
-  };
-
-  string vigenere::generate_key(int message_length) {
-    string output;
-		for (int i = 0; i < message_length; i++) {
-			std::random_device rd;
-			std::mt19937 rng(rd());
-			std::uniform_int_distribution<int> uni(minGenVal, maxGenVal);
-			char letter = uni(rng);
-			output += letter;
-		}
-    return output;
-  };
-
-  void vigenere::init(int messageLength) {
-    VIGENERE_KEY::key = generate_key(messageLength);
-  };
-
-  void vigenere::init(string inpKey) {
-    VIGENERE_KEY::key = ModKey(inpKey);
-  };
-
-  /////////////////////////////
-  ///Encryption & Decryption///
-  /////////////////////////////
-  string VIGENERE_KEY::key = "NULL";
-  string vigenere::encrypt(string input) {
-    init(input.length());
-    string output;
-    for (int i = 0; i < input.length(); i++) {
-			int x = translate(input[i]); // message
-			int y = translate(VIGENERE_KEY::key[i]); // key
-			if (x != -1 && y != -1) {
-        input[i] = table[y][x];
-			};
-		};
-    
-    return input;
-  };
-
-  string vigenere::decrypt(string input, string _key) {
-    init(_key);
-		for (int i = 0; i < input.length(); i++) {
-			input[i] = translate(input[i], VIGENERE_KEY::key[i]);
-		};
-    return input;
   };
 };
