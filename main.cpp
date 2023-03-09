@@ -111,6 +111,7 @@ void aes_debug() {
 	cout << "Testing file functions" << endl << endl;
 	cout << "1mb" << endl;
 
+  cout << "Reading" << endl;
 	ifstream file("testFiles/1mb/1mb.txt");
 	file.seekg(0, file.end);
 	int length = file.tellg();
@@ -120,9 +121,13 @@ void aes_debug() {
 	string text = buffer;
 	delete[] buffer;
 	file.close();
+  cout << "Testing" << endl;
 
+  cout << "Init" << endl;
 	AES::aes_init(AES::OPTIONS::doGenerateKey);
+  cout << "Encrypting" << endl;
 	AES::encryptFile("testFiles/1mb/1mb.txt", "test");
+  cout << "Decrypting" << endl;
 	AES::decryptFile(
 		"testFiles/1mb/1mb.aesenc",
     "test",
@@ -131,6 +136,7 @@ void aes_debug() {
 			AES::FILE_FLAGS::deleteAesencFile |
 			AES::FILE_FLAGS::deleteKeyFile));
 
+  cout << "Comparing" << endl;
 	file.open("testFiles/1mb/1mb.txt");
 	file.seekg(0, file.end);
 	length = file.tellg();
@@ -144,6 +150,10 @@ void aes_debug() {
 	if (text == text2) {
 		cout << "Test 1 Success" << endl;
 	} else {
+    for (long int i = 0; i < text.length(); i++) {
+      cout << text[i] << " | " << text2[i] << " | " << (text[i] == text2[i]) << endl;
+      if (text[i] != text2[i]) {break;};
+    };
 		cout << "Test 1 Fail" << endl;
 	};
 

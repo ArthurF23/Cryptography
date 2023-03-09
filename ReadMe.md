@@ -1,10 +1,10 @@
 ## Thank you for using my header!
 
-### v1.9.0
+### v1.9.1
 
-### What's new in v1.9.0
+### What's new in v1.9.1
 
-##### Initial commit from forked repository. Changes from previous repository include: complete removal of `ENCDEC`, `DUO`, and `Viginere Cypher`, improvements to `AKARE` function which greatly improves security, it requires a password now which is factored into the calculations to increase security, and some functions moved to their own headers & refactored to cleanup the code.
+##### AKARE requires a password now, as it increases security. Further updates to AKARE algorithm which increases security.
 
 ## AES
 
@@ -97,14 +97,14 @@ If you were wondering the FF means from file. Also, this only works with .txt fi
 ### Whole File Encryption
 
 
-#### `encryptFile()`
+#### `encryptFile(string path, string password, FILE_FLAGS flags)`
 Works just like `encryptFF()` with parameters except this genrates a new file with extension `.aesenc`
 
 Usage is the exact same as well, just input the path to the file you want encrypted.
 
 This also generates a key File in the same directory, it encrypts the key with a ripoff RSA encryption I call AKARE, and it does compress the key afterwards. The first line in the keyfile is the public key, the second line is the compressed encrypted key for the AES encrypted file. It is stored in a file like so... `{original file name} + {_KEYFILE}.aeskey`
 
-#### `decryptFile()`
+#### `decryptFile(string path, string password, string keyFilePath = "", FILE_FLAGS)`
 Same as `decryptFF` except you will need to input the path to the `.aesenc` file that you want decrypted. The decrypted file will be under the same name except with the extenstion `.txt`.
 
 The only difference is that there is a second overloaded parameter...

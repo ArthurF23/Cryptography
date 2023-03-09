@@ -9,7 +9,8 @@ namespace asymmetric {
       num += rand() % 100 + 1;
       num += rand();
       num += rand() % num + 1;
-      srand(rand()+num);
+      srand(rand() + num + entropy::Val2);
+      num += entropy::Val1;
       num += rand();
     };
     srand(num); srand(num+rand());
@@ -62,7 +63,7 @@ namespace asymmetric {
   //Generate valid even number based on the public key
   size_t AKARE::mod(size_t inp) {
     sMod(inp);
-    srand(inp + convertPassword());
+    srand(inp + convertPassword() + entropy::Val4);
     
     size_t val = rand();
     while (1) {
@@ -75,6 +76,7 @@ namespace asymmetric {
   //Makes mod() seed for srand more random with a custom algorithm. This should produce enough convoluded semi-randomness that an output is unpredictible without the function
   void AKARE::sMod(size_t &inp) {
     if (inp > bounds::genMin*2) {inp/=2;};
+    inp += entropy::Val3;
     
     srand(inp - staticPrivateKey);
     if ((rand() % 100 + 1) > 50) {
@@ -124,7 +126,7 @@ namespace asymmetric {
 
     ra = rand() % 2 + 1; ra--;
 
-    if (ra == 1) {inp*=2;}
+    if (ra == 1) {inp*=2; inp -= entropy::Val1;}
     else {inp/=2;};
     
     srand(inp+convertPassword());
@@ -136,6 +138,8 @@ namespace asymmetric {
     srand(ra3);
     
     inp += ra + ra2 + ra3 + rand() + rand() + rand();
+
+    inp += entropy::Val2;
 
     srand(rand() + rand() + rand() + ra3 + rand());
 
@@ -160,7 +164,7 @@ namespace asymmetric {
 
     if (ra < 50) {inp -= fmod(rand(), rand()); inp -= convertPassword();};
     if (ra < 25) {inp -= (fmod(rand(), rand()) * fmod(rand(), ra2));};
-    if (ra > 75) {inp-=rand()*rand()*rand();};
+    if (ra > 75) {inp-=rand()*rand()*rand(); inp -= entropy::Val3;};
     ra2 = rand() % 100 + 1;
 
     for (int i = 0; i < ra*ra2; i++) {
@@ -179,7 +183,7 @@ namespace asymmetric {
     };
     
     ra = fmod(rand(), rand());
-    inp-=ra;
+    inp-=ra; inp += entropy::Val4;
 
     for (int i = 0; i < (rand()%100+1); i++) {
       srand(fmod(rand(), rand()));
@@ -188,6 +192,7 @@ namespace asymmetric {
 
     srand(staticPrivateKey*rand()+rand()*rand());
     ra = rand();
+    srand(entropy::Val1+ra);
     ra *= rand() + staticPrivateKey;
 
     inp -= ra;
@@ -333,7 +338,7 @@ namespace asymmetric {
     
     string result;
     key = evenGenerator();
-    size_t realKey = mod(key / staticPrivateKey) + mod(key);
+    size_t realKey = mod(key / staticPrivateKey) + mod(key) + convertPassword();
     sMod(realKey);
     
     srand(realKey);
@@ -350,7 +355,7 @@ namespace asymmetric {
     if (inp.length() != bounds::expectedLength) {return "ERR INVALID LENGTH";};
     
     string result;
-    size_t realKey = mod(key / staticPrivateKey) + mod(key);
+    size_t realKey = mod(key / staticPrivateKey) + mod(key) + convertPassword();
     sMod(realKey);
     
     srand(realKey);

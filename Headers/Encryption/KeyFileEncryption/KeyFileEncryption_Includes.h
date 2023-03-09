@@ -16,6 +16,6 @@ but the seeds for srand() and the times rand() is used is randomized so the
 output should be unpredictable although consistant with the correct public key
 inserted. 
 
-It is reccomended you set your own private key, that way your private key isnt 
+It is reccomended you set your own private key & entropy values, that way your private key & entropy isnt 
 publicly availible on github.
 */
