@@ -1,10 +1,10 @@
 ## Thank you for using my header!
 
-### v1.9.1
+### v1.9.2
 
-### What's new in v1.9.1
+### What's new in v1.9.2
 
-##### AKARE requires a password now, as it increases security. Further updates to AKARE algorithm which increases security.
+##### `encryptFile()` can now handle `.png` files.
 
 ## AES
 

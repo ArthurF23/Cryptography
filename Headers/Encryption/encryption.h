@@ -117,7 +117,8 @@ namespace encryption {
         enum CLASSIFIER {
           _RETURN = 0b00000000,
           _TEXT = 0b00000001,
-          _BITMAP = 0b00000010
+          _BITMAP = 0b00000010,
+          _PNG = 0b00000100
         };
         static const string FILE_EXTENSION;
         static const string KEYFILE_NAME;

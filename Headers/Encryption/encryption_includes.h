@@ -22,5 +22,8 @@ using namespace asymmetric;
 
 #include "VersionInfo/VersionInfo.h"
 
+#include "PNG/PNG.h"
+using namespace PNG_H;
+
 typedef bitset<8> AESbyte;  
 typedef bitset<32> AESword;

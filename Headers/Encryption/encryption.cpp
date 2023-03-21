@@ -474,6 +474,7 @@ namespace encryption {
   const string AES::FILES::KEYFILE_NAME = "_KEYFILE";
   const string AES::FILES::KEYFILE_EXT = ".aeskey";
   const string AES::FILES::BMP_::identifier = ".bmp";
+
   //Classify type of file
   void AES::FILES::classify(string ext, AES::FILES::CLASSIFIER &type) {
     for (int i=0; i < FileOP::TXT::id_len; i++) {
@@ -481,6 +482,8 @@ namespace encryption {
     };
     
     if (ext == FILES::BMP_::identifier) {type=FILES::CLASSIFIER::_BITMAP;};
+
+    if (ext == PNG::ID) {type=FILES::CLASSIFIER::_PNG;};
   };
 
   //Key File
@@ -558,12 +561,19 @@ namespace encryption {
     switch (type) {
       case FILES::CLASSIFIER::_RETURN:
         return false;
+      
       case FILES::CLASSIFIER::_TEXT:
         FileOP::TXT::read(path, data);
         break;
+      
       case FILES::CLASSIFIER::_BITMAP:
         FILES::BMP_::get(path,data);
-        break;      
+        break;
+      
+      case FILES::CLASSIFIER::_PNG:
+        PNG::read(path, data);
+        break;
+      
       default:
         return false;
     };
@@ -627,6 +637,10 @@ namespace encryption {
       
       case FILES::CLASSIFIER::_BITMAP:
         FILES::BMP_::out(path,data);
+        break;
+
+      case FILES::CLASSIFIER::_PNG:
+        PNG::write(path, data);
         break;
       
       default:

@@ -317,7 +317,7 @@ namespace asymmetric {
     numShuffleAlg(num1, num2, num3, num4, num5, num6, num7, num8, realKey, unShuffle);
     
     if (inp.length() != 8) {return "ERR INVALID LENGTH";};
-    for (size_t i = 0; i < looper; i++) {      
+    for (size_t i = 0; i < looper; i++) {
       //Shuffle string
       string str;
       str = inp[num1];

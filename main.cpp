@@ -183,7 +183,8 @@ string text[6] = {
 	"Please input the cooresponding number to your desired example"};
 
 bool firstRun = false;
-int main() {  
+
+int main() {   
   if (firstRun == false) {
     cout << "Thank you for using my Encryption/Decryption header" << endl 
       << "Please visit my Github at ArthurF23" << endl
